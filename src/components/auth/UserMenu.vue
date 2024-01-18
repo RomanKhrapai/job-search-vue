@@ -1,25 +1,28 @@
 <template>
     <div class="menu-container">
         <div class="menu-btn" @click="useLogOut()" v-tooltip="'Вийти'">
-            <v-icon size="large" :icon="'mdi-account'"></v-icon>
+            <img v-if="image" loading="lazy" :src="image" height="40" width="40" alt="avatar">
+            <v-icon v-else size="large" :icon="'mdi-account'"></v-icon>
             {{ name }}
+
         </div>
     </div>
 </template>
   
 <script setup>
-// import { useAuthStore } from "../../store/authStore"
+import { useAuthStore } from "../../store/authStore"
 import { storeToRefs } from "pinia"
 import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
 const router = useRouter()
-// const { name } = storeToRefs(useAuthStore())
-// const { logOut } = useAuthStore()
+const { name, image } = storeToRefs(useAuthStore())
+
+const { logOut } = useAuthStore()
 
 function useLogOut() {
 
-    // logOut();
+    logOut();
     if (route.meta?.auth === 'user') {
         router.push({ name: 'home' })
     }

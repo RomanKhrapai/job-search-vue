@@ -6,22 +6,18 @@ import SearchForm from "./components/shared/form/SearchForm.vue";
 import Loader from "./components/Loader.vue";
 import { useAuthStore } from "./store/authStore"
 import { storeToRefs } from "pinia"
-import { useFilmStore } from "./store/filmStore";
 import { ref, watch, onBeforeMount } from "vue";
 import { useRouter, useRoute } from 'vue-router';
-import { useGenreStore } from "./store/genresStore";
 
 const auth = useAuthStore();
-const film = useFilmStore();
-const genres = useGenreStore();
+
 const router = useRouter();
 const route = useRoute();
 
 const isNightMode = ref(null)
 const tab = ref(null)
 
-const { isAuthorized, path, uid } = storeToRefs(auth)
-const { isLoading } = storeToRefs(film)
+const { isAuthorized, path } = storeToRefs(auth)
 
 watch(() => route.meta.id, (id) => {
   tab.value = id;
@@ -34,7 +30,6 @@ watch(isAuthorized, (newVal) => {
   }
 })
 watch(isNightMode, (val) => localStorage.setItem("isNight", val))
-watch(uid, auth.getLibrari)
 
 onBeforeMount(() => {
   const isNight = JSON.parse(localStorage.getItem("isNight"))
@@ -45,7 +40,6 @@ onBeforeMount(() => {
   isNightMode.value = isNight === null ? !hasDarkPreference : isNight
 })
 
-genres.getgenres();
 auth.onAuth();
 </script>
 
@@ -60,21 +54,21 @@ auth.onAuth();
           <router-link to="/">
             <v-tab :value="1" size="x-large" hide-slider variant="text">
               <span class="logo">
-                <v-icon size="x-large" :icon="'mdi-video-vintage'"></v-icon>
-                Filmoteka
+                <v-icon size="x-large" :icon="'mdi-earth'"></v-icon>
+                Employment
               </span>
             </v-tab>
           </router-link>
           <router-link to="/films">
-            <v-tab :value="2"> фільми</v-tab>
+            <v-tab :value="2"> blok 1</v-tab>
           </router-link>
 
           <router-link v-if="isAuthorized" to="/library">
-            <v-tab :value="3">Бібліотека</v-tab>
+            <v-tab :value="3">blok 2</v-tab>
           </router-link>
           <div class="auth">
             <router-link v-if="!isAuthorized" to="/auth/login">
-              <v-tab :value="6">Увійти</v-tab>
+              <v-tab :value="6">log in</v-tab>
             </router-link>
 
           </div>
@@ -86,7 +80,7 @@ auth.onAuth();
     </div>
     <main class="container">
       <RouterView />
-      <Loader v-if="isLoading" />
+      <!-- <Loader v-if="isLoading" /> -->
       <div :class="{ masck: !isNightMode }"></div>
     </main>
     <TogleDayOrNight v-model="isNightMode" />

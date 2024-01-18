@@ -1,16 +1,16 @@
 <template>
     <div class="form-box">
         <form class=form-name @submit.prevent="searchFilm">
-            <input class=form-input :value="search" @input="updateValue" type=text autocomplete=off
-                placeholder='Назва фільму' />
-            <button v-tooltip="'Шукати'" class=form-button aria-label=search type=submit>Пошук</button>
+            <!-- <input class=form-input :value="search" @input="updateValue" type=text autocomplete=off
+                placeholder='Назва фільму' /> -->
+            <!-- <button v-tooltip="'Шукати'" class=form-button aria-label=search type=submit>Пошук</button> -->
         </form>
         <span class="form-error" v-if="error">{{ error }}</span>
     </div>
 </template>
 
 <script setup>
-import { useFilmStore } from '../../../store/filmStore';
+// import { useFilmStore } from '../../../store/filmStore';
 import { searchValidation } from '../../../utils/searchValidation'
 import { ref } from 'vue'
 import { storeToRefs } from 'pinia';
@@ -23,8 +23,6 @@ const inputValue = ref('')
 const error = ref(null)
 const timer = ref(null)
 
-const { getSearchFilms } = useFilmStore();
-const { search } = storeToRefs(useFilmStore());
 
 function updateValue(e) {
     inputValue.value = e.target.value;

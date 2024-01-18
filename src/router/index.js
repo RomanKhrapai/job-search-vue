@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
 // import { useAuthStore } from "../store/authStore";
-import { useFilmStore } from "../store/filmStore";
 import NotFound from "../components/pages/NotFoundPage.vue";
 
 const routes = [
@@ -95,24 +94,19 @@ function query(store, to, from) {
 }
 
 router.beforeEach((to, from, next) => {
-    const store = useFilmStore();
     if (to.path !== from.path) {
-        store.clearStore();
     }
 
     const authStatus = false;
 
     if (!authStatus) {
-        query(store, to, from);
         next();
     } else if (to.path === "/library" || to.path === "/library/favorite") {
         auth.setPath(to.path);
         next({ name: "home" });
     } else if (authStatus === "guest") {
-        query(store, to, from);
         next();
     } else if (authStatus === "user") {
-        query(store, to, from);
         next();
     } else next({ name: "NotFound" });
 });

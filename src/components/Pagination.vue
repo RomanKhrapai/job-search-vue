@@ -10,14 +10,13 @@
     </div>
 </template>
 <script setup>
-import { useFilmStore } from '../store/filmStore'
 import { storeToRefs } from "pinia"
 import { watch } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter();
-const { nextPage, prevPage, setPage } = useFilmStore();
-const { page, pages } = storeToRefs(useFilmStore())
+
+const pages = null;
 
 function validation(e) {
     if (!Number.isFinite(+e.target.value)) {
@@ -27,11 +26,7 @@ function validation(e) {
     setPage(e.target.value)
 }
 
-watch(page, () => {
-    router.push({
-        query: { ...router.query, page: page.value }
-    })
-})
+
 
 </script>
 

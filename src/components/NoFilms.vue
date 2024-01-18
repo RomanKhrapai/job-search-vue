@@ -4,7 +4,7 @@
             <div class="box">
                 <img src="/src/assets/images/camera.jpg" alt="Фільми відсутні">
             </div>
-            <h2> ФІЛЬМІВ НЕ ЗНАЙДЕНО </h2>
+            <h2> EMPLOYMENT NOT FOUND </h2>
         </v-card>
     </div>
 </template>

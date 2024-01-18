@@ -5,11 +5,9 @@
 </template>
 <script setup>
 import { onMounted } from "vue";
-import { useFilmStore } from "../../store/filmStore";
 
-const { falseLoading } = useFilmStore()
 
-onMounted(() => falseLoading())
+
 
 </script>
   

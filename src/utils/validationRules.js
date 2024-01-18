@@ -26,7 +26,6 @@ export const pageValidation = (num) => {
 export const passwordValidation = (str) => {
     if (!str?.trim()) return "пароль не може бути пустим";
     if (str.length < 6) return "має бути більше 6 символів";
-    if (str.toLowerCase() === str) return "має бути хоча б одна велика буква";
     if (!str.split("").some((e) => Number.isFinite(+e) && e !== " "))
         return "має бути хоч одна цифра";
     return null;
