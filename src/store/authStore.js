@@ -12,13 +12,14 @@ export const useAuthStore = defineStore("auth", () => {
         isAuthorized: false,
         oldPath: null,
         user: {
-            uid: null,
+            role: null,
             name: null,
             email: null,
             image: null,
         },
     });
 
+    const role = computed(() => auth.value.user.role);
     const name = computed(() => auth.value.user.name);
     const image = computed(
         () => "http://127.0.0.1:8080/" + auth.value.user.image
@@ -45,10 +46,10 @@ export const useAuthStore = defineStore("auth", () => {
         axiosInstance
             .get(`user`)
             .then((response) => {
-                console.log(response.data);
                 auth.value.user.name = response.data.name;
                 auth.value.user.email = response.data.email;
                 auth.value.user.image = response.data.image;
+                auth.value.user.role = response.data.role_id;
                 auth.value.isAuthorized = true;
                 auth.value.isLoading = false;
             })
@@ -65,6 +66,7 @@ export const useAuthStore = defineStore("auth", () => {
                 auth.value.user.name = response.data.user.name;
                 auth.value.user.email = response.data.user.email;
                 auth.value.user.image = response.data.user.image;
+                auth.value.user.role = response.data.role_id;
 
                 localStorage.access_token = response.data.access_token;
                 axiosInstance.defaults.headers.common[
@@ -84,6 +86,7 @@ export const useAuthStore = defineStore("auth", () => {
                 auth.value.user.name = "";
                 auth.value.user.email = "";
                 auth.value.user.image = "";
+                auth.value.user.role = "";
                 localStorage.removeItem("access_token");
                 auth.value.isAuthorized = false;
                 auth.value.isLoading = false;
@@ -92,14 +95,15 @@ export const useAuthStore = defineStore("auth", () => {
     }
     async function registerUser(payload) {
         auth.value.isLoading = true;
-        const { email, password, name } = payload;
+        const { email, password, name, role } = payload;
         console.log(payload);
         axiosInstance
-            .post(`register`, { email, password, name })
+            .post(`register`, { email, password, name, role_id: role })
             .then((response) => {
                 auth.value.user.name = response.data.user.name;
                 auth.value.user.email = response.data.user.email;
                 auth.value.user.image = response.data.user.image;
+                auth.value.user.role = response.data.role_id;
 
                 localStorage.access_token = response.data.access_token;
                 axiosInstance.defaults.headers.common[
@@ -115,6 +119,7 @@ export const useAuthStore = defineStore("auth", () => {
     return {
         auth,
         isAuthorized,
+        role,
         name,
         path,
         setPath,

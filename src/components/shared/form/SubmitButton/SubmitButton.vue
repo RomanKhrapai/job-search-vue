@@ -22,12 +22,14 @@ const props = defineProps({
 </script>
     
 <style lang="scss" scoped>
+@import "../../../../assets/scss/variables.scss";
+
 .btn {
     position: relative;
     display: inline-block;
     font-size: 18px;
-    background: #ff662d;
-    color: #fff;
+    background: $active-button-color;
+    color: $bg-primary-color;
     cursor: pointer;
     min-width: 220px;
     border: 1px solid transparent;
@@ -37,15 +39,15 @@ const props = defineProps({
     margin-bottom: 10px;
 
     &:hover {
-        background: #fff;
-        color: #ff662d;
-        border: 1px solid #ff662d;
+        background: $bg-primary-color;
+        color: $active-button-color;
+        border: 1px solid $active-button-color;
     }
 
     &--outlined {
         background: none;
-        border: 1px solid #ff662d;
-        color: #ff662d;
+        border: 1px solid $active-button-color;
+        color: $active-button-color;
     }
 
     &__content {

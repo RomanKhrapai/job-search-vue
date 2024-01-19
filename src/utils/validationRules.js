@@ -1,6 +1,6 @@
 export const nameValidation = (str) => {
     if (str.length <= 2) return "логін занадто короткий";
-    if (str.length >= 20) return "логін занадто довгий";
+    if (str.length >= 200) return "логін занадто довгий";
     if (/[. _ / \\ |]/g.test(str)) return `не має включати символы . _ / \\ | `;
     return null;
 };

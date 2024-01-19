@@ -1,22 +1,28 @@
 <template>
     <AuthContainer class="registration">
-        <MainTitle class="registration__title">Реєстрація</MainTitle>
+        <MainTitle class="registration__title">Sign up</MainTitle>
         <CustomForm ref="form" class="registration__form" @submit.prevent="handleSubmit">
-            <CustomInput v-model="name" autocomplete="username" placeholder="Ім`я" name="name" :label="'Ім`я'"
+            <CustomInput v-model="name" autocomplete="username" placeholder="Name" name="name" :label="'Name'"
                 :rules="nameRules" class="registration__input" />
-            <CustomInput v-model="email" autocomplete="email" placeholder="Електронна пошта" name="email"
-                :rules="emailRules" class="registration__input" :label="'Електронна пошта'" />
-            <CustomInput v-model="password" type="password" autocomplete="current-password" placeholder="Пароль"
-                name="password" :rules="passwordRules" class="registration__input" :label="'Пароль'" />
+            <CustomInput v-model="email" autocomplete="email" placeholder="Email" name="email" :rules="emailRules"
+                class="registration__input" :label="'Email'" />
+            <CustomInput v-model="password" type="password" autocomplete="current-password" placeholder="Password"
+                name="password" :rules="passwordRules" class="registration__input" :label="'Password'" />
             <CustomInput v-model="confirmPassword" type="password" autocomplete="current-password"
-                placeholder="Підтвердити пароль" name="password" :rules="confirmPasswordRules" class="registration__input"
-                :label="'Підтвердити пароль'" />
+                placeholder="Confirm password" name="password" :rules="confirmPasswordRules" class="registration__input"
+                :label="'Confirm password'" />
+
+            <CustomRadio v-model="role" type="radio" name="role" value='3' class="registration__input check-box__input"
+                :label="'Employer'" />
+            <CustomRadio v-model="role" type="radio" name="role" value='2' class="registration__input check-box__input"
+                :label="'Worker'" />
+
             <CustomCheckBox v-model="agreeToRules" type="checkbox" name="rules" :rules="checkBoxRules"
-                class="registration__input check-box__input" :label="'Згода з правилами сайту'"
+                class="registration__input check-box__input" :label="'Agreement with the rules of the site'"
                 :labelClass="'line__label'" />
-            <SubmitButton class="registration__btn" type="submit">Зареєструватися</SubmitButton>
+            <SubmitButton class="registration__btn" type="submit">Sign up</SubmitButton>
         </CustomForm>
-        <span class="link" @click="$router.push({ name: 'login' })">Вже зареєстрований</span>
+        <span class="link" @click="$router.push({ name: 'login' })">Already registered</span>
 
     </AuthContainer>
 </template>
@@ -25,6 +31,7 @@
 import CustomForm from "../../shared/form/CustomForm.vue";
 import AuthContainer from "../AuthContainer.vue"
 import CustomInput from "../../shared/form/CustomInput/CustomInput.vue";
+import CustomRadio from "../../shared/form/CustomInput/CustomRadio.vue";
 import CustomCheckBox from "../../shared/form/CustomInput/CustomCheckBox.vue";
 import SubmitButton from "../../shared/form/SubmitButton/SubmitButton.vue";
 import {
@@ -40,6 +47,7 @@ const router = useRouter()
 
 const name = ref("")
 const email = ref("")
+const role = ref("3")
 const password = ref("")
 const confirmPassword = ref("")
 const agreeToRules = ref(false)
@@ -54,13 +62,13 @@ const { isAuthorized } = storeToRefs(useAuthStore())
 const nameRules = computed(() => [isRequired, nameValidation]);
 const emailRules = computed(() => [isRequired, emailValidation])
 const passwordRules = computed(() => [isRequired, passwordValidation])
-const confirmPasswordRules = computed(() => [(val) => val !== password.value ? "Паролі не збігаються" : null])
-const checkBoxRules = computed(() => [() => !agreeToRules.value ? "Згоду не підтверджено" : null])
+const confirmPasswordRules = computed(() => [(val) => val !== password.value ? "Passwords do not match" : null])
+const checkBoxRules = computed(() => [() => !agreeToRules.value ? "Consent not confirmed" : null])
 
 function handleSubmit() {
     const isFormValid = form.value.validate()
     if (isFormValid) {
-        registerUser({ name: name.value, email: email.value, password: password.value });
+        registerUser({ name: name.value, role: role.value, email: email.value, password: password.value });
         form.value.reset()
     }
 }

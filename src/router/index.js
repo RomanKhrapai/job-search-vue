@@ -17,6 +17,7 @@ const routes = [
         props: (route) => ({ id: route.params.id }),
         meta: { id: 1 },
     },
+
     {
         path: "/films",
         component: () => import("../components/pages/FilmsPage.vue"),
@@ -34,22 +35,15 @@ const routes = [
         ],
     },
     {
-        path: "/library",
-        component: () => import("../components/pages/LibraryPage.vue"),
-        meta: { auth: "user", id: 3 },
-        children: [
-            {
-                path: "",
-                component: () => import("../components/PlannedFilms.vue"),
-                //alias: "",
-            },
-            {
-                path: "favorite",
-                component: () => import("../components/FavoriteFilms.vue"),
-            },
-        ],
+        path: "/addresume",
+        component: () => import("../components/pages/AddResume.vue"),
+        meta: { role: "3", id: 3 },
     },
-
+    {
+        path: "/addvacancy",
+        component: () => import("../components/pages/AddVacancy.vue"),
+        meta: { role: "2", id: 4 },
+    },
     {
         path: "/auth/registration",
         name: "registration",
@@ -99,16 +93,17 @@ router.beforeEach((to, from, next) => {
 
     const authStatus = false;
 
-    if (!authStatus) {
-        next();
-    } else if (to.path === "/library" || to.path === "/library/favorite") {
-        auth.setPath(to.path);
-        next({ name: "home" });
-    } else if (authStatus === "guest") {
-        next();
-    } else if (authStatus === "user") {
-        next();
-    } else next({ name: "NotFound" });
+    // if (!authStatus) {
+    //     next();
+    // } else if (to.path === "/library" || to.path === "/library/favorite") {
+    //     auth.setPath(to.path);
+    //     next({ name: "home" });
+    // } else if (authStatus === "guest") {
+    //     next();
+    // } else if (authStatus === "user") {
+    //     next();
+    // } else next({ name: "NotFound" });
+    next();
 });
 
 export default router;

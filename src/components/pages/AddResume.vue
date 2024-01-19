@@ -1,13 +1,13 @@
 <template>
     <div>
-        <v-btn @click="redirectTo('/library')">
+        addresume
+        <!-- <v-btn @click="redirectTo('/library')">
             Заплановані
         </v-btn>
         <v-btn @click="redirectTo('/library/favorite')">
             Улюблені
-        </v-btn>
-        <router-view></router-view>
-
+        </v-btn> -->
+        <!-- <router-view></router-view> -->
     </div>
 </template>
 

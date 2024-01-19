@@ -17,7 +17,7 @@ const route = useRoute();
 const isNightMode = ref(null)
 const tab = ref(null)
 
-const { isAuthorized, path } = storeToRefs(auth)
+const { isAuthorized, path, role } = storeToRefs(auth)
 
 watch(() => route.meta.id, (id) => {
   tab.value = id;
@@ -60,11 +60,14 @@ auth.onAuth();
             </v-tab>
           </router-link>
           <router-link to="/films">
-            <v-tab :value="2"> blok 1</v-tab>
+            <v-tab :value="2"> blok 1 </v-tab>
           </router-link>
 
-          <router-link v-if="isAuthorized" to="/library">
-            <v-tab :value="3">blok 2</v-tab>
+          <router-link v-if="role === 3" to="/addresume">
+            <v-tab :value="3">addresume</v-tab>
+          </router-link>
+          <router-link v-if="role === 2" to="/addvacancy">
+            <v-tab :value="4">addvacancy</v-tab>
           </router-link>
           <div class="auth">
             <router-link v-if="!isAuthorized" to="/auth/login">
