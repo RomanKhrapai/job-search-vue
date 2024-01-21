@@ -1,9 +1,7 @@
 <template>
     <div>
         addvacancy
-        <AuthSection>
-            <VacancyForm title="Add vacancy" />
-        </AuthSection>
+        <VacancyForm titleText="Add vacancy" />
     </div>
 </template>
 

@@ -1,49 +1,53 @@
 export const nameValidation = (str) => {
-    if (str.length <= 2) return "логін занадто короткий";
-    if (str.length >= 200) return "логін занадто довгий";
-    if (/[. _ / \\ |]/g.test(str)) return `не має включати символы . _ / \\ | `;
+    if (str.length <= 2) return "name is too short";
+    if (str.length >= 200) return "name is too long";
+    if (/[. _ / \\ |]/g.test(str))
+        return `must not include the characters . _ / \\ |`;
     return null;
 };
 export const emailValidation = (str) => {
-    if (str?.trim().length === 0) return "Введіть пошту";
+    if (str?.trim().length === 0) return "Enter your mail";
     const arr = str.split("@");
     if (arr.length !== 2 || arr[1].split(".").length !== 2)
-        return "повинен бути формат text@text.text";
+        return "must be text@text.text format";
     return null;
 };
-export const ageValidation = (num) => {
-    if (num.trim() === "") return "Введіть число";
-    if (!Number.isFinite(+num)) return "може бути лише числом";
-    if (+num >= 150) return "повинне бути більше 150";
-    if (+num <= 5) return "повинне бути більше пяти";
+export const phoneValidation = (num) => {
+    if (num.trim() === "") return "number cannot be empty";
+    if (!Number.isFinite(+num)) return "can only be a number";
+    if (str.length <= 6) return "number is too short";
+    if (str.length >= 15) return "number is too long";
+    if (!/^\+?[0-9\s-]+$/.test(yourString))
+        return "must not contain extra characters";
     return null;
 };
-export const pageValidation = (num) => {
-    if (String(num).trim() === "") return "поле номеру сторінки пусте";
-    if (!Number.isFinite(+num)) return "сторінка має бути числом";
-    return null;
-};
+
 export const passwordValidation = (str) => {
-    if (!str?.trim()) return "пароль не може бути пустим";
-    if (str.length < 6) return "має бути більше 6 символів";
+    if (!str?.trim()) return "password cannot be empty";
+    if (str.length < 6) return "must be more than 6 characters";
     if (!str.split("").some((e) => Number.isFinite(+e) && e !== " "))
-        return "має бути хоч одна цифра";
+        return "must be at least one digit";
     return null;
 };
 
 export const isRequired = (val) => {
-    return !val?.trim() ? "поле не може бути пустим" : null;
+    return !val?.trim() ? "field cannot be empty" : null;
 };
 
-export const charLimit = (limit) => (val) => {
-    return val.length <= limit ? "потрібно більше символів" : null;
+export const minString = (limit) => (val) => {
+    return val.length <= limit ? `must be less than ${limit} characters` : null;
+};
+
+export const maxString = (limit) => (val) => {
+    return val.length >= limit ? `must be more than ${limit} characters` : null;
 };
 
 export default {
     isRequired,
-    charLimit,
     nameValidation,
     emailValidation,
     passwordValidation,
-    ageValidation,
+    phoneValidation,
+    maxString,
+    minString,
 };

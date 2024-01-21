@@ -6,7 +6,7 @@
                 :rules="emailRules" class="login__input" :label="'Електронна пошта'" />
             <CustomInput v-model="password" type="password" autocomplete="current-password" placeholder="Пароль"
                 name="password" :rules="passwordRules" class="login__input" :label="'Пароль'" />
-            <SubmitButton class="login__btn" type="submit">Увійти</SubmitButton>
+            <Button class="login__btn" type="submit">Увійти</Button>
         </CustomForm>
         <span class="link" @click="$router.push({ name: 'registration' })"> Зареєструватися</span>
 
@@ -17,7 +17,7 @@
 import CustomForm from "../../shared/form/CustomForm.vue";
 import AuthContainer from "../AuthContainer.vue"
 import CustomInput from "../../shared/form/CustomInput/CustomInput.vue";
-import SubmitButton from "../../shared/form/SubmitButton/SubmitButton.vue";
+import Button from "../../shared/form/Button/Button.vue";
 import {
     emailValidation, passwordValidation, isRequired,
 } from "../../../utils/validationRules";

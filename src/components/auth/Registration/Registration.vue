@@ -20,7 +20,7 @@
             <CustomCheckBox v-model="agreeToRules" type="checkbox" name="rules" :rules="checkBoxRules"
                 class="registration__input check-box__input" :label="'Agreement with the rules of the site'"
                 :labelClass="'line__label'" />
-            <SubmitButton class="registration__btn" type="submit">Sign up</SubmitButton>
+            <Button class="registration__btn" type="submit">Sign up</Button>
         </CustomForm>
         <span class="link" @click="$router.push({ name: 'login' })">Already registered</span>
 
@@ -33,7 +33,7 @@ import AuthContainer from "../AuthContainer.vue"
 import CustomInput from "../../shared/form/CustomInput/CustomInput.vue";
 import CustomRadio from "../../shared/form/CustomInput/CustomRadio.vue";
 import CustomCheckBox from "../../shared/form/CustomInput/CustomCheckBox.vue";
-import SubmitButton from "../../shared/form/SubmitButton/SubmitButton.vue";
+import Button from "../../shared/form/Button/Button.vue";
 import {
     emailValidation, passwordValidation, isRequired, nameValidation,
 } from "../../../utils/validationRules";
