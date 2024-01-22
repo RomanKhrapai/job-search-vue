@@ -3,8 +3,8 @@
 
         <select v-on="listeners" v-bind="$attrs" :value="props.modelValue" class="custom-input"
             :class="!isValid && 'custom-input--error'">
-            <option v-for="option in options" :key="option.id" :value="option.value" :disabled="option.disabled">
-                {{ option.label }}
+            <option v-for="option in options" :key="option.id" :value="option.id" :disabled="option.disabled">
+                {{ option.name }}
             </option>
         </select>
         <span v-if="!isValid" class="custom-input__error">{{ error }}</span>
@@ -28,7 +28,7 @@ const props = defineProps({
     options: {
         type: Array,
         default: () => [
-            { id: 1, label: 'select option', value: '', disabled: true }
+            { id: 1, name: 'select option', disabled: true }
         ]
     },
     labelClass: {

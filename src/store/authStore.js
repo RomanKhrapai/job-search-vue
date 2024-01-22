@@ -17,10 +17,12 @@ export const useAuthStore = defineStore("auth", () => {
             email: null,
             image: null,
         },
+        companies: [],
     });
 
     const role = computed(() => auth.value.user.role);
     const name = computed(() => auth.value.user.name);
+    const companies = computed(() => auth.value.companies);
     const image = computed(
         () => "http://127.0.0.1:8080/" + auth.value.user.image
     );
@@ -46,10 +48,11 @@ export const useAuthStore = defineStore("auth", () => {
         axiosInstance
             .get(`user`)
             .then((response) => {
-                auth.value.user.name = response.data.name;
-                auth.value.user.email = response.data.email;
-                auth.value.user.image = response.data.image;
-                auth.value.user.role = response.data.role_id;
+                             auth.value.user.name = response.data.user.name;
+                auth.value.user.email = response.data.user.email;
+                auth.value.user.image = response.data.user.image;
+                auth.value.user.role = response.data.user.role_id;
+                auth.value.companies = response.data.companies;
                 auth.value.isAuthorized = true;
                 auth.value.isLoading = false;
             })
@@ -129,5 +132,6 @@ export const useAuthStore = defineStore("auth", () => {
         loginUser,
         logOut,
         registerUser,
+        companies,
     };
 });

@@ -1,6 +1,5 @@
 <template>
     <div>
-        addvacancy
         <VacancyForm titleText="Add vacancy" />
     </div>
 </template>
