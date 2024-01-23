@@ -12,8 +12,8 @@
 
         <datalist id="browsers" class="skill-list" :class="{ 'block': isFocus }">
             <template v-for=" option in optionsArray " :key="option.id">
-                <option v-if="!option.hidden" :value="option.value" @click="optionSelect" :disabled="option.disabled">
-                    {{ option.label }}
+                <option v-if="!option.hidden" :value="option.id" @click="optionSelect" :disabled="option.disabled">
+                    {{ option.name }}
                 </option>
             </template>
         </datalist>
@@ -21,9 +21,8 @@
         <div class="chips-block">
             <button @click="clearChips" class="chips" type="button" v-for="  (item, index )  in   props.modelValue  "
                 :key="index">
-                {{ item.label }} <v-icon size="large" :icon="'mdi-close'"></v-icon> </button>
+                {{ item.name }} <v-icon size="large" :icon="'mdi-close'"></v-icon> </button>
         </div>
-
 
     </div>
 </template>
@@ -47,7 +46,6 @@ const props = defineProps({
     options: {
         type: Array,
         default: () => [
-            { id: 1, label: 'select option', value: '', disabled: true }
         ]
     },
     labelClass: {
@@ -81,7 +79,7 @@ const optionsArray = computed(() => {
     const text = textInput.value.toUpperCase().trim();
     return props.options.map(option => ({
         ...option,
-        hidden: !option.label.toUpperCase().includes(text)
+        hidden: !option.name.toUpperCase().includes(text)
     }))
 })
 
@@ -107,13 +105,13 @@ function optionAdd(event) {
     }
 
     const newOption = {
-        label: textInput.value,
-        value: ''
+        name: textInput.value,
+        id: ''
     }
 
     textInput.value = '';
 
-    if (!props.modelValue.find(option => option.label === newOption.label)) {
+    if (!props.modelValue.find(option => option.name === newOption.name)) {
         emit("update:modelValue", [...props.modelValue,
             newOption])
     }
@@ -123,16 +121,16 @@ function optionAdd(event) {
 function optionSelect(event) {
 
     const newOption = event.target.value ? {
-        label: event.target.text,
-        value: event.target.value
+        name: event.target.text,
+        id: event.target.value
     } : {
-        label: textInput.value,
-        value: ''
+        name: textInput.value,
+        id: ''
     }
 
     textInput.value = '';
 
-    if (!props.modelValue.find(option => option.label === newOption.label)) {
+    if (!props.modelValue.find(option => option.name === newOption.name)) {
         emit("update:modelValue", [...props.modelValue,
             newOption])
     }
@@ -142,7 +140,7 @@ function optionSelect(event) {
 function clearChips(event) {
     emit(
         'update:modelValue',
-        props.modelValue.filter(({ label }) => event.currentTarget.innerText.trim() !== label)
+        props.modelValue.filter(({ name }) => event.currentTarget.innerText.trim() !== name)
     );
 }
 
