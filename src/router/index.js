@@ -45,6 +45,32 @@ const routes = [
         meta: { role: "2", id: 4 },
     },
     {
+        path: "/companies",
+        component: () => import("../components/pages/Companies.vue"),
+        meta: { role: "2", id: 5 },
+        children: [
+            {
+                path: "",
+                component: () => import("../components/Companies/All.vue"),
+                alias: "sadd",
+            },
+            {
+                path: "store",
+                component: () => import("../components/Companies/Store.vue"),
+            },
+            {
+                path: ":id/edit",
+                component: () => import("../components/Companies/Edit.vue"),
+                alias: "dsd",
+            },
+            {
+                path: ":id",
+                component: () => import("../components/Companies/Show.vue"),
+            },
+        ],
+    },
+
+    {
         path: "/auth/registration",
         name: "registration",
         component: () => import("../components/pages/RegistrationPage.vue"),

@@ -69,6 +69,9 @@ auth.onAuth();
           <router-link v-if="role === 2" to="/addvacancy">
             <v-tab :value="4">addvacancy</v-tab>
           </router-link>
+          <router-link v-if="role === 2" to="/companies">
+            <v-tab :value="5">companies</v-tab>
+          </router-link>
           <div class="auth">
             <router-link v-if="!isAuthorized" to="/auth/login">
               <v-tab :value="6">log in</v-tab>

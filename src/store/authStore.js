@@ -48,7 +48,7 @@ export const useAuthStore = defineStore("auth", () => {
         axiosInstance
             .get(`user`)
             .then((response) => {
-                             auth.value.user.name = response.data.user.name;
+                auth.value.user.name = response.data.user.name;
                 auth.value.user.email = response.data.user.email;
                 auth.value.user.image = response.data.user.image;
                 auth.value.user.role = response.data.user.role_id;
