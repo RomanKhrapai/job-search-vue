@@ -15,14 +15,24 @@ export const useFormParametersStore = defineStore("formParameters", () => {
         natures: [],
         skills: [],
         professions: [],
+        profession: null,
     });
-
+    const isLoading = computed(() => formParameters.value.isLoading);
     const companies = computed(() => formParameters.value.companies);
     const areas = computed(() => formParameters.value.areas);
     const types = computed(() => formParameters.value.types);
     const natures = computed(() => formParameters.value.natures);
     const skills = computed(() => formParameters.value.skills);
     const professions = computed(() => formParameters.value.professions);
+    const profession = computed(() => formParameters.value.profession);
+
+    function setProfesion(data) {
+        formParameters.value.profession = data;
+        console.log(data.id);
+        if (data.id) {
+            getSkills(data.id);
+        }
+    }
 
     async function getProfessions(name, limit) {
         formParameters.value.isLoading = true;
@@ -81,6 +91,11 @@ export const useFormParametersStore = defineStore("formParameters", () => {
         skills,
         natures,
         professions,
+        profession,
+        isLoading,
+
+        setProfesion,
+
         getProfessions,
         getFormParameters,
         getAreas,

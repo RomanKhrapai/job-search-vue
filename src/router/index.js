@@ -39,10 +39,36 @@ const routes = [
         component: () => import("../components/pages/AddResume.vue"),
         meta: { role: "3", id: 3 },
     },
+    // {
+    //     path: "/addvacancy",
+    //     component: () => import("../components/pages/AddVacancy.vue"),
+    //     meta: { role: "2", id: 4 },
+    // },
     {
-        path: "/addvacancy",
-        component: () => import("../components/pages/AddVacancy.vue"),
+        path: "/vacancies",
+        component: () => import("../components/pages/Vacancies.vue"),
         meta: { role: "2", id: 4 },
+        children: [
+            {
+                path: "",
+                component: () => import("../components/Vacancies/All.vue"),
+                alias: "sadd",
+            },
+            {
+                path: "create",
+                component: () => import("../components/Vacancies/Store.vue"),
+            },
+            {
+                path: ":id/edit",
+                component: () => import("../components/Vacancies/Edit.vue"),
+                props: (route) => ({ id: route.params.id }),
+            },
+            {
+                path: ":id",
+                component: () => import("../components/Vacancies/Show.vue"),
+                props: (route) => ({ id: route.params.id }),
+            },
+        ],
     },
     {
         path: "/companies",
@@ -55,17 +81,18 @@ const routes = [
                 alias: "sadd",
             },
             {
-                path: "store",
+                path: "create",
                 component: () => import("../components/Companies/Store.vue"),
             },
             {
                 path: ":id/edit",
                 component: () => import("../components/Companies/Edit.vue"),
-                alias: "dsd",
+                props: (route) => ({ id: route.params.id }),
             },
             {
                 path: ":id",
                 component: () => import("../components/Companies/Show.vue"),
+                props: (route) => ({ id: route.params.id }),
             },
         ],
     },

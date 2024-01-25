@@ -12,8 +12,9 @@
                 <v-sheet class="ma-2 pa-2">
                     <v-card class="mx-auto" @click="redirectTo(`/companies/${company.id}`)" max-width="344">
 
-                        <v-img v-if="company.image" :src="company.image" height="200" width="200" cover></v-img>
-                        <img v-if="!company.image" height="200" width="200" src="/src/assets/images/fix-poster.jpg"
+                        <v-img v-if="company.image" :src="company.image" height="390" width="262" cover></v-img>
+                        <!-- <v-img v-if="!dataFilm.posterUrl" cover :src="'@/assets/images/fix-poster.jpg  '"></v-img> -->
+                        <img v-if="!company.image" height="390" width="262" src="/src/assets/images/fix-poster.jpg"
                             alt="Постер фільму відсутній">
                         <v-card-title>
                             {{ company.name }}
