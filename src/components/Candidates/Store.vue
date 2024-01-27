@@ -3,7 +3,7 @@
 
     <v-row>
         <v-col>
-            <strong>Company:</strong> {{ company.name }}
+            <strong>Candidate:</strong> {{ name }}
         </v-col>
     </v-row>
     <v-row>
@@ -80,7 +80,7 @@ const description = ref("")
 const selectedSkills = ref([]);
 
 const form = ref(null)
-const { isAuthorized } = storeToRefs(useAuthStore());
+const { isAuthorized, name } = storeToRefs(useAuthStore());
 const { getAreas, getFormParameters, getSkills } = useFormParametersStore();
 const { storeVacancy } = useEmploymentStore();
 const { company, vacancy } = storeToRefs(useEmploymentStore());

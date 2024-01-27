@@ -58,9 +58,9 @@ auth.onAuth();
               </span>
             </v-tab>
           </router-link>
-          <!-- <router-link to="/films">
-            <v-tab :value="2"> blok 1 </v-tab>
-          </router-link> -->
+          <router-link to="/my-office">
+            <v-tab :value="2"> my-office </v-tab>
+          </router-link>
 
           <router-link to="/candidates">
             <v-tab :value="3">resumes</v-tab>

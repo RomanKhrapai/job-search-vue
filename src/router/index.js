@@ -11,7 +11,7 @@ const routes = [
     },
 
     {
-        path: "my-office",
+        path: "/my-office",
         name: "office",
         component: () => import("../components/pages/Office.vue"),
         props: (route) => ({}),
