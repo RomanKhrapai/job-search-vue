@@ -156,8 +156,6 @@ option:hover,
 }
 
 .list {
-    position: absolute;
-    z-index: 100;
     background-color: white;
     border: 1px solid blue;
     border-radius: 0 0 5px 5px;
@@ -165,6 +163,8 @@ option:hover,
     font-family: sans-serif;
     width: 350px;
     padding: 5px;
+    overflow-y: scroll;
+    height: 200px;
 
 }
 
@@ -187,5 +187,9 @@ label>.add-btn {
     height: 40px;
     min-width: 50px;
     text-align: center;
+}
+
+.relative {
+    position: relative;
 }
 </style>

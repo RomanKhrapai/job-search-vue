@@ -4,26 +4,24 @@ import NoFound from '.././NoFound.vue';
 // import Reviews from './Reviews.vue'
 // import ActivPanel from './ActivPanel.vue';
 import { useEmploymentStore } from "../../store/employmentStore";
-import { useAuthStore } from '../../store/authStore.js';
+import { storeCandidate } from '../../store/actions/candidate';
 // import { useReviewsStore } from '../store/reviewsStore';
 import useComputed from '../../utils/useComputed';
 import { ref, defineProps } from 'vue'
 import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router'
-import { getVacancy, deleteVacancy } from "../../store/actions/vacancy"
-
 const router = useRouter();
 
 const { id } = defineProps({
     id: String,
 });
 
-const { vacancy, isLoading } = storeToRefs(useEmploymentStore())
+const { candidate, isLoading } = storeToRefs(useEmploymentStore())
 
 const dialogDelete = ref(false);
 
 function handDestroy() {
-    deleteVacancy(id)
+    deleteCandidate(id)
     dialogDelete.value = false;
     router.push({
         path: '/companies',
@@ -37,7 +35,7 @@ function redirectTo(path) {
     })
 }
 
-getVacancy(id);
+getCandidate(id);
 
 </script>
 
@@ -48,14 +46,14 @@ getVacancy(id);
                 <v-col>
                     <v-card>
                         <div class="box">
-                            <v-card-title>{{ vacancy.title }}</v-card-title>
-                            <v-dialog v-if="vacancy.isOwner" v-model="dialogDelete" width="auto">
+                            <v-card-title>{{ candidate.title }}</v-card-title>
+                            <v-dialog v-if="candidate.isOwner" v-model="dialogDelete" width="auto">
                                 <template v-slot:activator="{ props }">
                                     <v-btn color="primary" v-bind="props"> destroy </v-btn>
                                 </template>
                                 <v-card>
                                     <v-card-title class="text-h5"> delete confirmation </v-card-title>
-                                    <v-card-text>Are you sure you want to delete the vacancy?</v-card-text>
+                                    <v-card-text>Are you sure you want to delete the candidate?</v-card-text>
                                     <v-card-actions>
                                         <v-spacer></v-spacer>
                                         <v-btn color="green-darken-1" variant="text" @click="dialogDelete = false">
@@ -69,52 +67,57 @@ getVacancy(id);
                             </v-dialog>
                         </div>
 
-                        <v-img v-if="vacancy?.company?.image" :src="vacancy.company.image" height="200" width="200"
+                        <v-img v-if="candidate?.user?.image" :src="candidate.user.image" height="200" width="200"
                             cover></v-img>
-                        <img v-if="!vacancy?.company?.image" height="200" width="200"
-                            src="/src/assets/images/fix-poster.jpg" alt="Постер фільму відсутній">
+                        <img v-if="!candidate?.user?.image" height="200" width="200" src="/src/assets/images/fix-poster.jpg"
+                            alt="Постер фільму відсутній">
                         <v-card-text>
 
                             <v-row>
-                                <router-link :to="`/companies/${vacancy.company?.id}`">
+                                <router-link :to="`/companies/${candidate.user?.id}`">
                                     <v-col>
-                                        <strong>Company:</strong> {{ vacancy.company?.name }}
+                                        <strong>Candidate name:</strong> {{ candidate.user?.name }}
                                     </v-col>
                                 </router-link>
                             </v-row>
                             <v-row>
                                 <v-col>
-                                    <strong>Profession:</strong> {{ vacancy.profession }}
+                                    <strong>Profession:</strong> {{ candidate.profession }}
                                 </v-col>
 
                             </v-row>
                             <v-row>
                                 <v-col>
-                                    <strong>Salary:</strong> {{ vacancy.salary }} - {{ vacancy.max_salary }}
+                                    <strong>Salary:</strong> {{ candidate.salary }} - {{ candidate.max_salary }}
                                 </v-col>
                             </v-row>
                             <v-row>
                                 <v-col>
-                                    <strong>Area:</strong> {{ vacancy.area }}
+                                    <strong>Area:</strong> {{ candidate.area }}
                                 </v-col>
                             </v-row>
                             <v-row>
                                 <v-col>
-                                    <strong>Nature:</strong> {{ vacancy.nature }}
-                                </v-col>
-                                <v-col>
-                                    <strong>Type:</strong> {{ vacancy.type }}
+                                    <strong>Nature:</strong> {{ candidate.nature }}
                                 </v-col>
                             </v-row>
                             <v-row>
                                 <v-col>
-                                    <strong>Description:</strong> {{ vacancy.description }}
+                                    <strong>Type:</strong>
+                                    <v-chip v-for="type, i in candidate.types" :key="i" variant="flat" color="secondary">
+                                        {{ type }}
+                                    </v-chip>
+                                </v-col>
+                            </v-row>
+                            <v-row>
+                                <v-col>
+                                    <strong>Description:</strong> {{ candidate.description }}
                                 </v-col>
                             </v-row>
                             <v-row>
                                 <v-col>
                                     <strong>Skills:</strong>
-                                    <v-chip v-for="skill, i in vacancy.skills" :key="i" variant="flat" color="secondary">
+                                    <v-chip v-for="skill, i in candidate.skills" :key="i" variant="flat" color="secondary">
                                         {{ skill }}
                                     </v-chip>
                                 </v-col>
@@ -125,7 +128,7 @@ getVacancy(id);
             </v-row>
         </v-container>
 
-        <NoFound v-if="!vacancy && !isLoading" />
+        <NoFound v-if="!candidate && !isLoading" />
     </div>
 </template>
 

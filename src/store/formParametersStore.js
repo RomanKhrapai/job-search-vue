@@ -36,52 +36,56 @@ export const useFormParametersStore = defineStore("formParameters", () => {
 
     async function getProfessions(name, limit) {
         formParameters.value.isLoading = true;
-        axiosInstance
-            .get(`profession/search`, { params: { name: name, limit: limit } })
-            .then((response) => {
-                formParameters.value.professions = response.data;
-                formParameters.value.isLoading = false;
-            })
-            .catch();
-        formParameters.value.isLoading = false;
+        try {
+            const response = await axiosInstance.get(`profession/search`, {
+                params: { name: name, limit: limit },
+            });
+            formParameters.value.professions = response.data;
+        } catch (error) {
+        } finally {
+            formParameters.value.isLoading = false;
+        }
     }
 
     async function getAreas(name, limit) {
         formParameters.value.isLoading = true;
-        axiosInstance
-            .get(`area/search`, { params: { name: name, limit: limit } })
-            .then((response) => {
-                formParameters.value.areas = response.data;
-                formParameters.value.isLoading = false;
-            })
-            .catch();
-        formParameters.value.isLoading = false;
+        try {
+            const response = await axiosInstance.get(`area/search`, {
+                params: { name: name, limit: limit },
+            });
+
+            formParameters.value.areas = response.data;
+        } catch (error) {
+        } finally {
+            formParameters.value.isLoading = false;
+        }
     }
 
     async function getSkills(id) {
         formParameters.value.isLoading = true;
-        axiosInstance
-            .get(`skillByProfesion`, { params: { id: id } })
-            .then((response) => {
-                formParameters.value.skills = response.data;
-                formParameters.value.isLoading = false;
-            })
-            .catch();
-        formParameters.value.isLoading = false;
+        try {
+            const response = await axiosInstance.get(`skillByProfesion`, {
+                params: { id: id },
+            });
+
+            formParameters.value.skills = response.data;
+        } catch (error) {
+        } finally {
+            formParameters.value.isLoading = false;
+        }
     }
 
     async function getFormParameters() {
         formParameters.value.isLoading = true;
+        try {
+            const response = await axiosInstance.get(`parameters`);
 
-        axiosInstance
-            .get(`parameters`)
-            .then((response) => {
-                formParameters.value.types = response.data.types;
-                formParameters.value.natures = response.data.natures;
-                formParameters.value.isLoading = false;
-            })
-            .catch();
-        formParameters.value.isLoading = false;
+            formParameters.value.types = response.data.types;
+            formParameters.value.natures = response.data.natures;
+        } catch (error) {
+        } finally {
+            formParameters.value.isLoading = false;
+        }
     }
 
     return {

@@ -51,12 +51,12 @@ import { debounce } from "../../utils/debounce"
 import { useEmploymentStore } from '../../store/employmentStore';
 import { ref, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { getCompanies } from "../../store/actions/company"
 
 const employmentStore = useEmploymentStore();
 
 const { role } = storeToRefs(useAuthStore());
 const { companies } = storeToRefs(employmentStore);
-const { getCompanies } = employmentStore;
 
 const name = ref("")
 const area = ref('')

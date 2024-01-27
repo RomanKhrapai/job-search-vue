@@ -55,19 +55,24 @@ auth.onAuth();
             <v-tab :value="1" size="x-large" hide-slider variant="text">
               <span class="logo">
                 <v-icon size="x-large" :icon="'mdi-earth'"></v-icon>
-                Employment
               </span>
             </v-tab>
           </router-link>
-          <router-link to="/films">
+          <!-- <router-link to="/films">
             <v-tab :value="2"> blok 1 </v-tab>
-          </router-link>
+          </router-link> -->
 
-          <router-link v-if="role === 3" to="/addresume">
-            <v-tab :value="3">addresume</v-tab>
+          <router-link to="/candidates">
+            <v-tab :value="3">resumes</v-tab>
           </router-link>
-          <router-link v-if="role === 2" to="/addvacancy">
-            <v-tab :value="4">addvacancy</v-tab>
+          <router-link v-if="role === 3" to="/resumes">
+            <v-tab :value="3">resumes</v-tab>
+          </router-link>
+          <router-link to="/candidates/create">
+            <v-tab :value="3">addresumes</v-tab>
+          </router-link>
+          <router-link v-if="role === 2" to="/vacancies">
+            <v-tab :value="4">vacancies</v-tab>
           </router-link>
           <router-link v-if="role === 2" to="/companies">
             <v-tab :value="5">companies</v-tab>

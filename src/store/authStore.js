@@ -35,89 +35,98 @@ export const useAuthStore = defineStore("auth", () => {
     function clearPath() {
         auth.value.oldPath = null;
     }
+
     async function onAuth() {
         auth.value.isLoading = true;
-        const token = localStorage.getItem("access_token");
-        if (!token) {
-            auth.value.isLoading = false;
-            return;
-        }
-        axiosInstance.defaults.headers.common[
-            "Authorization"
-        ] = `Bearer ${token}`;
-        axiosInstance
-            .get(`user`)
-            .then((response) => {
-                auth.value.user.name = response.data.user.name;
-                auth.value.user.email = response.data.user.email;
-                auth.value.user.image = response.data.user.image;
-                auth.value.user.role = response.data.user.role_id;
-                auth.value.companies = response.data.companies;
-                auth.value.isAuthorized = true;
+        try {
+            const token = localStorage.getItem("access_token");
+            if (!token) {
                 auth.value.isLoading = false;
-            })
-            .catch();
-        auth.value.isLoading = false;
+                return;
+            }
+            axiosInstance.defaults.headers.common[
+                "Authorization"
+            ] = `Bearer ${token}`;
+            const response = await axiosInstance.get(`user`);
+
+            auth.value.user.name = response.data.user.name;
+            auth.value.user.email = response.data.user.email;
+            auth.value.user.image = response.data.user.image;
+            auth.value.user.role = response.data.user.role_id;
+            auth.value.companies = response.data.companies;
+            auth.value.isAuthorized = true;
+        } catch (error) {
+        } finally {
+            auth.value.isLoading = false;
+        }
     }
 
     async function loginUser({ email, password }) {
         auth.value.isLoading = true;
+        try {
+            const response = await axiosInstance.post(`login`, {
+                email,
+                password,
+            });
 
-        axiosInstance
-            .post(`login`, { email, password })
-            .then((response) => {
-                auth.value.user.name = response.data.user.name;
-                auth.value.user.email = response.data.user.email;
-                auth.value.user.image = response.data.user.image;
-                auth.value.user.role = response.data.role_id;
+            auth.value.user.name = response.data.user.name;
+            auth.value.user.email = response.data.user.email;
+            auth.value.user.image = response.data.user.image;
+            auth.value.user.role = response.data.role_id;
 
-                localStorage.access_token = response.data.access_token;
-                axiosInstance.defaults.headers.common[
-                    "Authorization"
-                ] = `Bearer ${response.data.access_token}`;
+            localStorage.access_token = response.data.access_token;
+            axiosInstance.defaults.headers.common[
+                "Authorization"
+            ] = `Bearer ${response.data.access_token}`;
 
-                auth.value.isAuthorized = true;
-                auth.value.isLoading = false;
-            })
-            .catch();
+            auth.value.isAuthorized = true;
+        } catch (error) {
+        } finally {
+            auth.value.isLoading = false;
+        }
     }
     async function logOut() {
         auth.value.isLoading = true;
-        axiosInstance
-            .post(`logout`)
-            .then((response) => {
-                auth.value.user.name = "";
-                auth.value.user.email = "";
-                auth.value.user.image = "";
-                auth.value.user.role = "";
-                localStorage.removeItem("access_token");
-                auth.value.isAuthorized = false;
-                auth.value.isLoading = false;
-            })
-            .catch();
+        try {
+            const response = await axiosInstance.post(`logout`);
+            auth.value.user.name = "";
+            auth.value.user.email = "";
+            auth.value.user.image = "";
+            auth.value.user.role = "";
+            localStorage.removeItem("access_token");
+            auth.value.isAuthorized = false;
+        } catch (error) {
+        } finally {
+            auth.value.isLoading = false;
+        }
     }
     async function registerUser(payload) {
         auth.value.isLoading = true;
-        const { email, password, name, role } = payload;
-        console.log(payload);
-        axiosInstance
-            .post(`register`, { email, password, name, role_id: role })
-            .then((response) => {
-                auth.value.user.name = response.data.user.name;
-                auth.value.user.email = response.data.user.email;
-                auth.value.user.image = response.data.user.image;
-                auth.value.user.role = response.data.role_id;
+        try {
+            const { email, password, name, role } = payload;
 
-                localStorage.access_token = response.data.access_token;
-                axiosInstance.defaults.headers.common[
-                    "Authorization"
-                ] = `Bearer ${response.data.access_token}`;
+            const response = await axiosInstance.post(`register`, {
+                email,
+                password,
+                name,
+                role_id: role,
+            });
 
-                auth.value.isAuthorized = true;
-                auth.value.isLoading = false;
-            })
-            .catch();
-        auth.value.isLoading = false;
+            auth.value.user.name = response.data.user.name;
+            auth.value.user.email = response.data.user.email;
+            auth.value.user.image = response.data.user.image;
+            auth.value.user.role = response.data.role_id;
+
+            localStorage.access_token = response.data.access_token;
+            axiosInstance.defaults.headers.common[
+                "Authorization"
+            ] = `Bearer ${response.data.access_token}`;
+
+            auth.value.isAuthorized = true;
+        } catch (error) {
+        } finally {
+            auth.value.isLoading = false;
+        }
     }
     return {
         auth,

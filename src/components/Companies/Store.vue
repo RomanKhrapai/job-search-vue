@@ -46,18 +46,18 @@ import { storeToRefs } from "pinia"
 import { ref, computed, watch } from "vue"
 import { useRouter } from "vue-router";
 import { debounce } from "../../utils/debounce";
+import { storeCompany } from "../../store/actions/company"
 
 const router = useRouter()
 
 const title = ref("")
 const address = ref("")
-const maxSalary = ref("")
 const description = ref("")
 
 const form = ref(null)
 const { isAuthorized } = storeToRefs(useAuthStore());
 
-const { uploadAvatar, storeCompany } = useEmploymentStore();
+const { uploadAvatar, } = useEmploymentStore();
 const { fullImageURL, errorImage, errors } = storeToRefs(useEmploymentStore());
 
 const titleRules = computed(() => [isRequired, maxString(200), minString(3)]);

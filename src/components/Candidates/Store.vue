@@ -60,8 +60,6 @@ import { storeToRefs } from "pinia"
 import { ref, computed, watch } from "vue"
 import { useRouter } from "vue-router";
 import { debounce } from "../../utils/debounce";
-import { storeVacancy } from "../../store/actions/vacancy"
-
 
 defineProps({
     titleText: {
@@ -83,7 +81,8 @@ const selectedSkills = ref([]);
 
 const form = ref(null)
 const { isAuthorized } = storeToRefs(useAuthStore());
-const { getAreas, getFormParameters } = useFormParametersStore();
+const { getAreas, getFormParameters, getSkills } = useFormParametersStore();
+const { storeVacancy } = useEmploymentStore();
 const { company, vacancy } = storeToRefs(useEmploymentStore());
 const { profession, types, natures, areas, skills } = storeToRefs(useFormParametersStore());
 

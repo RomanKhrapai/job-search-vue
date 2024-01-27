@@ -15,6 +15,7 @@ import { useFormParametersStore } from '../../store/formParametersStore';
 import { ref, defineProps, computed, watch } from 'vue'
 import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router'
+import { getCompany, deleteCompany } from "../../store/actions/company"
 const router = useRouter();
 
 
@@ -22,8 +23,6 @@ const { id } = defineProps({
     id: String,
 });
 
-// const { isAuthorized } = storeToRefs(useAuthStore());
-const { getCompany, deleteCompany } = useEmploymentStore();
 const { company, isLoading } = storeToRefs(useEmploymentStore())
 const { professions } = storeToRefs(useFormParametersStore());
 const { getProfessions, setProfesion } = useFormParametersStore();
@@ -127,15 +126,16 @@ getProfessions('', 10);
                                     <template v-slot:activator="{ props }">
                                         <v-btn color="primary" v-bind="props"> add vacancy </v-btn>
                                     </template>
-                                    <v-card>
+                                    <v-card class="card-form">
                                         <CustomForm ref="form" class="login__form" @submit.prevent="handleSubmit">
 
-                                            <v-card-title class="text-h5"> delete confirmation </v-card-title>
+                                            <v-card-title class="text-h5"> to create a vacancy, select a profession
+                                            </v-card-title>
                                             <v-card-text>
 
                                                 <CustomOneSearchSelect v-model="profession" class="login__input"
                                                     :label="'profession'" :rules="professionRules" name="profession"
-                                                    :options="professions" />
+                                                    :list-class="'relative'" :options="professions" />
 
                                             </v-card-text>
                                             <v-card-actions>
@@ -239,5 +239,10 @@ getProfessions('', 10);
     border-radius: 30px 30px 0 0;
     background-image: linear-gradient(to right, rgba(220.5, 220.5, 220.5, 1) 0, rgba(220.5, 220.5, 220.5, 0.44) 50%, rgba(220.5, 220.5, 220.5, 0.84) 100%);
     box-shadow: 0px -14px 32px 3px rgba(220.5, 220.5, 220.5, 1), 0px 0px 0px -4px rgba(220.5, 220.5, 220.5, 1)
+}
+
+.card-form {
+    overflow: hidden;
+
 }
 </style>

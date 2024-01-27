@@ -1,6 +1,12 @@
 import { defineStore } from "pinia";
 import { useToast } from "vue-toastification";
 import axiosInstance from "../services/axios";
+import {
+    storeVacancy,
+    getVacancies,
+    getVacancy,
+    deleteVacancy,
+} from "./actions/vacancy.js";
 
 import { ref, computed } from "vue";
 
@@ -17,8 +23,12 @@ export const useEmploymentStore = defineStore("employment", () => {
         company: {},
         vacancies: [],
         vacancy: {},
+        candidate: {},
+        candidates: [],
     });
 
+    const candidates = computed(() => employment.value.candidates);
+    const candidate = computed(() => employment.value.candidate);
     const companies = computed(() => employment.value.companies);
     const company = computed(() => employment.value.company);
     const vacancies = computed(() => employment.value.vacancies);
@@ -29,196 +39,99 @@ export const useEmploymentStore = defineStore("employment", () => {
     const fullImageURL = computed(() => employment.value.fullImageURL);
     const errorImage = computed(() => employment.value.errorImage);
 
-    async function getCompanies(name, area) {
-        employment.value.isLoading = true;
-
-        axiosInstance
-            .get(`/companies`, { params: { name, area } })
-            .then((response) => {
-                console.log(response.data.data);
-                employment.value.companies = response.data.data;
-                employment.value.isLoading = false;
-            })
-            .catch();
-        employment.value.isLoading = false;
+    function setIsError(data) {
+        employment.value.isError = data;
     }
 
-    async function getCompany(id) {
-        employment.value.isLoading = true;
-        const company = employment.value.companies.find(
-            (item) => item.id === +id
-        );
-
-        if (company) {
-            employment.value.company = company;
-            employment.value.isLoading = false;
-            return;
-        }
-        axiosInstance
-            .get(`/companies/${id}`)
-            .then((response) => {
-                console.log(response.data);
-                employment.value.company = response.data.data;
-                employment.value.isLoading = false;
-            })
-            .catch();
-        employment.value.isLoading = false;
+    function setVacancies(data) {
+        employment.value.vacancies = data;
     }
 
-    async function storeCompany({ name, address, description }) {
-        employment.value.isLoading = true;
-        axiosInstance
-            .post(`/companies`, {
-                name: name,
-                address: address,
-                image: employment.value.imageURL,
-                description: description,
-            })
-            .then((response) => {
-                console.log(response);
-                // employment.value.profesions = response.data;
-                employment.value.isLoading = false;
-            })
-            .catch();
-        employment.value.isLoading = false;
+    function setVacancy(data) {
+        employment.value.vacancy = data;
     }
 
-    async function deleteCompany(id) {
-        employment.value.isLoading = true;
-        console.log(id);
-        axiosInstance
-            .delete(`/companies/${id}`)
-            .then((response) => {
-                console.log(response);
-                getCompanies();
-                employment.value.isLoading = false;
-            })
-            .catch();
-        employment.value.isLoading = false;
+    function setIsLoading(data) {
+        employment.value.isLoading = data;
+    }
+
+    function setCompamies(data) {
+        employment.value.companies = data;
+    }
+
+    function setCompany(data) {
+        employment.value.company = data;
+    }
+
+    function setCandidate(data) {
+        employment.value.candidate = data;
+    }
+
+    function setCandidates(data) {
+        employment.value.candidates = data;
     }
 
     async function uploadAvatar(formData) {
         employment.value.fullImageURL = "";
+        employment.value.isLoading = true;
+        employment.value.errorImage = null;
+        
         if (!formData) {
             employment.value.errorImage = true;
             return;
         }
-        employment.value.isLoading = true;
-        employment.value.errorImage = null;
-        axiosInstance
-            .post(`/uploadavatar`, formData)
-            .then((response) => {
-                employment.value.fullImageURL =
-                    response.data.fullUrl +
-                    "?" +
-                    Math.random().toString(36).substring(7);
-                employment.value.imageURL = response.data.url;
 
-                employment.value.isLoading = false;
-            })
-            .catch((error) => {
-                if (error?.response?.data?.errors?.file) {
-                    employment.value.errorImage =
-                        error.response.data.errors.file[0];
-                    return;
-                }
-                employment.value.errorImage = "Error: select another file";
-            });
-
-        employment.value.isLoading = false;
-    }
-
-    async function getVacancies(name, area) {
-        employment.value.isLoading = true;
-
-        axiosInstance
-            .get(`/vacancies`, { params: { name, area } })
-            .then((response) => {
-                console.log(response.data.data);
-                employment.value.vacancies = response.data.data;
-                employment.value.isLoading = false;
-            })
-            .catch();
-        employment.value.isLoading = false;
-    }
-
-    async function getVacancy(id) {
-        employment.value.isLoading = true;
-        const vacancy = employment.value.vacancies.find(
-            (item) => item.id === +id
-        );
-
-        if (vacancy) {
-            employment.value.vacancy = vacancy;
-            employment.value.isLoading = false;
-            return;
-        }
-        axiosInstance
-            .get(`/vacancies/${id}`)
-            .then((response) => {
-                console.log(response.data);
-                employment.value.vacancy = response.data.data;
-                employment.value.isLoading = false;
-            })
-            .catch();
-        employment.value.isLoading = false;
-    }
-
-    async function storeVacancy({
-        title,
-        profession,
-        area,
-        salary,
-        maxSalary,
-        nature,
-        type,
-        skills,
-        description,
-    }) {
         try {
-            employment.value.isLoading = true;
+            const response = await axiosInstance.post(
+                `/uploadavatar`,
+                formData
+            );
 
-            const response = await axiosInstance.post(`/vacancies`, {
-                title: title,
-                company_id: employment.value.company.id,
-                profession: profession,
-                area: area,
-                salary: salary,
-                max_salary: maxSalary,
-                nature_id: nature,
-                type_id: type,
-                skills: skills,
-                description: description,
-            });
-
-            console.log(response);
-            employment.value.vacancy = response.data.data;
-            employment.value.isLoading = false;
-            return response.data.data.id;
+            employment.value.fullImageURL =
+                response.data.fullUrl +
+                "?" +
+                Math.random().toString(36).substring(7);
+            employment.value.imageURL = response.data.url;
         } catch (error) {
-            console.log(error);
+            if (error?.response?.data?.errors?.file) {
+                employment.value.errorImage =
+                    error.response.data.errors.file[0];
+                return;
+            }
+            employment.value.errorImage = "Error: select another file";
+        } finally {
             employment.value.isLoading = false;
         }
     }
 
     return {
-        companies,
+        employment,
+
+        isLoading,
         isError,
         errorImage,
+
+        companies,
         company,
-        isLoading,
         vacancy,
         vacancies,
+        candidates,
+        candidate,
 
-        storeVacancy,
-        getCompanies,
-        uploadAvatar,
         imageURL,
         fullImageURL,
-        storeCompany,
-        deleteCompany,
-        getCompany,
-        getVacancy,
-        getVacancies,
+
+        uploadAvatar,
+
+        setIsLoading,
+        setIsError,
+        setVacancies,
+        setVacancy,
+
+        setCandidates,
+        setCandidate,
+
+        setCompamies,
+        setCompany,
     };
 });

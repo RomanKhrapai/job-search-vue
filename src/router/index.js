@@ -11,10 +11,10 @@ const routes = [
     },
 
     {
-        path: "/film/:id",
-        name: "filmById",
-        component: () => import("../components/OneFilm.vue"),
-        props: (route) => ({ id: route.params.id }),
+        path: "my-office",
+        name: "office",
+        component: () => import("../components/pages/Office.vue"),
+        props: (route) => ({}),
         meta: { id: 1 },
     },
 
@@ -35,15 +35,31 @@ const routes = [
         ],
     },
     {
-        path: "/addresume",
-        component: () => import("../components/pages/AddResume.vue"),
+        path: "/candidates",
+        component: () => import("../components/pages/Candidates.vue"),
         meta: { role: "3", id: 3 },
+        children: [
+            {
+                path: "",
+                component: () => import("../components/Candidates/All.vue"),
+                alias: "sadd",
+            },
+            {
+                path: "create",
+                component: () => import("../components/Candidates/Store.vue"),
+            },
+            {
+                path: ":id/edit",
+                component: () => import("../components/Candidates/Edit.vue"),
+                props: (route) => ({ id: route.params.id }),
+            },
+            {
+                path: ":id",
+                component: () => import("../components/Candidates/Show.vue"),
+                props: (route) => ({ id: route.params.id }),
+            },
+        ],
     },
-    // {
-    //     path: "/addvacancy",
-    //     component: () => import("../components/pages/AddVacancy.vue"),
-    //     meta: { role: "2", id: 4 },
-    // },
     {
         path: "/vacancies",
         component: () => import("../components/pages/Vacancies.vue"),
