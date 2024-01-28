@@ -43,9 +43,9 @@ export async function getCandidate(id) {
 export async function storeCandidate({
     title,
     profession,
+    experience,
     area,
     salary,
-    maxSalary,
     nature,
     type,
     skills,
@@ -57,11 +57,10 @@ export async function storeCandidate({
     try {
         const response = await axiosInstance.post(`/candidates`, {
             title: title,
-            company_id: company.id,
             profession: profession,
+            experience_months: experience,
             area: area,
             salary: salary,
-            max_salary: maxSalary,
             nature_id: nature,
             type_id: type,
             skills: skills,

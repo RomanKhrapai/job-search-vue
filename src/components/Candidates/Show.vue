@@ -4,7 +4,7 @@ import NoFound from '.././NoFound.vue';
 // import Reviews from './Reviews.vue'
 // import ActivPanel from './ActivPanel.vue';
 import { useEmploymentStore } from "../../store/employmentStore";
-import { storeCandidate } from '../../store/actions/candidate';
+import { getCandidate } from '../../store/actions/candidate';
 // import { useReviewsStore } from '../store/reviewsStore';
 import useComputed from '../../utils/useComputed';
 import { ref, defineProps } from 'vue'
@@ -84,11 +84,13 @@ getCandidate(id);
                                 <v-col>
                                     <strong>Profession:</strong> {{ candidate.profession }}
                                 </v-col>
-
+                                <v-col>
+                                    <strong>Experiance:</strong> {{ candidate.experience_months }} month
+                                </v-col>
                             </v-row>
                             <v-row>
                                 <v-col>
-                                    <strong>Salary:</strong> {{ candidate.salary }} - {{ candidate.max_salary }}
+                                    <strong>Salary:</strong> {{ candidate.salary }}
                                 </v-col>
                             </v-row>
                             <v-row>

@@ -68,9 +68,6 @@ auth.onAuth();
           <router-link v-if="role === 3" to="/resumes">
             <v-tab :value="3">resumes</v-tab>
           </router-link>
-          <router-link to="/candidates/create">
-            <v-tab :value="3">addresumes</v-tab>
-          </router-link>
           <router-link v-if="role === 2" to="/vacancies">
             <v-tab :value="4">vacancies</v-tab>
           </router-link>

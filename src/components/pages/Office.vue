@@ -22,6 +22,10 @@
                                 :rules="professionRules" name="profession" :list-class="'relative'"
                                 :options="professions" />
 
+                            <CustomInput v-model="experience" type="number" autocomplete="experience"
+                                placeholder="enter experience" name="experience" :rules="experienceRules"
+                                class="login__input" :label="'experience (months)'" />
+
                         </v-card-text>
                         <v-card-actions>
                             <v-spacer></v-spacer>
@@ -43,10 +47,11 @@
 <script setup>
 import NotFoundPageVue from './NotFoundPage.vue';
 import CustomOneSearchSelect from '../shared/form/CustomInput/CustomOneSearchSelect.vue';
+import CustomInput from '../shared/form/CustomInput/CustomInput.vue';
 import CustomForm from '../shared/form/CustomForm.vue';
 import { useEmploymentStore } from '../../store/employmentStore';
 import { useFormParametersStore } from '../../store/formParametersStore';
-import { isRequired, maxString, minString } from '../../utils/validationRules';
+import { isRequired, maxString, minString, isNumber, isPositiveNumber } from '../../utils/validationRules';
 import { debounce } from '../../utils/debounce';
 import { storeToRefs } from 'pinia';
 import { ref, computed, watch } from 'vue';
@@ -55,28 +60,35 @@ import { useRouter } from 'vue-router'
 const router = useRouter();
 const { isLoading, isError } = storeToRefs(useEmploymentStore())
 const { professions } = storeToRefs(useFormParametersStore());
-const { getProfessions, setProfesion } = useFormParametersStore();
+const { getProfessions, setProfesion, setExperience } = useFormParametersStore();
 
 const dialogAddResume = ref(false);
 const profession = ref({ id: '', name: '' });
+const experience = ref('0');
 const form = ref(null)
 
 
 const professionRules = computed(() => [isRequired, maxString(200), minString(3)]);
+const experienceRules = computed(() => [isNumber, isPositiveNumber]);
 
 
 function addResume() {
 
     const isFormValid = form.value.validate()
     if (isFormValid) {
-        setProfesion(profession.value,
-        );
+        setProfesion(profession.value);
+        setExperience(experience.value);
+
         dialogAddResume.value = false;
         router.push({
             path: '/candidates/create',
         })
     }
 }
+
+watch(experience, (newVal) => {
+    experience.value = String(Number(newVal) * 1);
+})
 
 watch(profession, () => {
     debounce(() => {

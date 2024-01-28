@@ -12,7 +12,6 @@ export async function getCompanies(name, area) {
         });
 
         setCompamies(response.data.data);
-        setIsLoading(false);
     } catch (error) {
     } finally {
         setIsLoading(false);
@@ -35,7 +34,6 @@ export async function getCompany(id) {
         const response = await axiosInstance.get(`/companies/${id}`);
 
         setCompany(response.data.data);
-        setIsLoading(false);
     } catch (error) {
     } finally {
         setIsLoading(false);
@@ -43,7 +41,7 @@ export async function getCompany(id) {
 }
 
 export async function storeCompany({ name, address, description }) {
-    const { setIsLoading } = useEmploymentStore();
+    const { setIsLoading, setCompamies } = useEmploymentStore();
     const { imageURL } = storeToRefs(useEmploymentStore());
     setIsLoading(true);
 
@@ -54,9 +52,11 @@ export async function storeCompany({ name, address, description }) {
             image: imageURL.value,
             description: description,
         });
-        // employment.value.profesions = response.data;
-        setIsLoading(false);
+        setCompamies([response.data.data]);
+
+        return response.data.data.id;
     } catch (error) {
+        console.log(error);
     } finally {
         setIsLoading(false);
     }
@@ -69,7 +69,6 @@ export async function deleteCompany(id) {
     try {
         const response = await axiosInstance.delete(`/companies/${id}`);
         getCompanies();
-        setIsLoading(false);
     } catch (error) {
     } finally {
         setIsLoading(false);

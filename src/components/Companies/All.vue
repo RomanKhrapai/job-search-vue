@@ -3,9 +3,6 @@
         <FilterBox class="filter">
             <CustomInput v-model="name" :label="'Name:'" />
             <CustomInput v-model="area" :label="'Address:'" />
-            <v-btn v-if="role === 2" @click="redirectTo('/companies/create')">
-                Add company
-            </v-btn>
         </FilterBox>
         <v-row no-gutters>
             <v-col v-for="company in companies" :key="company.id" cols="12" sm="4">

@@ -34,6 +34,16 @@ export const isRequired = (val) => {
     return !val?.trim() ? "field cannot be empty" : null;
 };
 
+export const isNumber = (val) => {
+    return isNaN(Number(val)) ? "Must be a valid number" : null;
+};
+
+export const isPositiveNumber = (val) => {
+    const number = Number(val);
+    return isNaN(number) || number <= 0 ? "Must be a positive number" : null;
+};
+
+
 export const minString = (limit) => (val) => {
     return val.length <= limit ? `must be less than ${limit} characters` : null;
 };
@@ -50,4 +60,5 @@ export default {
     phoneValidation,
     maxString,
     minString,
+    isNumber,isPositiveNumber
 };

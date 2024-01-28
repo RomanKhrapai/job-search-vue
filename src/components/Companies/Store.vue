@@ -80,18 +80,23 @@ function handleFile(e) {
     }
 }
 
-function handleSubmit() {
+async function handleSubmit() {
 
     const isFormValid = form.value.validate()
-    console.log(isFormValid);
+
     if (isFormValid) {
-        storeCompany({
+        const id = await storeCompany({
             name: title.value,
             address: address.value,
             description: description.value
         });
-        if (!errors) {
-            form.value.reset()
+        console.log(111, id);
+        if (id) {
+            console.log(111333);
+            form.value.reset();
+            router.push({
+                path: `/companies/${id}`,
+            })
         }
     }
 }

@@ -17,23 +17,6 @@ const routes = [
         props: (route) => ({}),
         meta: { id: 1 },
     },
-
-    {
-        path: "/films",
-        component: () => import("../components/pages/FilmsPage.vue"),
-        meta: { id: 2 },
-        children: [
-            {
-                path: "",
-                component: () => import("../components/PopularFilms.vue"),
-                alias: "",
-            },
-            {
-                path: "serials",
-                component: () => import("../components/PopularSerials.vue"),
-            },
-        ],
-    },
     {
         path: "/candidates",
         component: () => import("../components/pages/Candidates.vue"),
