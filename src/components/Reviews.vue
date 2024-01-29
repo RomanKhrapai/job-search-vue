@@ -1,28 +1,29 @@
 <script setup>
 import Modal from './shared/Modal.vue';
 import { QuillEditor } from '@vueup/vue-quill'
-import { useReviewsStore } from '../store/reviewsStore';
+import { storeReview } from '../store/actions/review';
 import { useAuthStore } from '../store/authStore';
 import { storeToRefs } from "pinia"
 import { useToast } from "vue-toastification";
 import { ref, computed } from 'vue';
+import { useEmploymentStore } from "../store/employmentStore";
 
 
-const { saveReview } = useReviewsStore();
-const { reviewsItems } = storeToRefs(useReviewsStore())
-const auth = useAuthStore();
+const { isLoading, reviews } = storeToRefs(useEmploymentStore())
 const toast = useToast();
-const { id } = defineProps({
+const { id, isUser } = defineProps({
     id: Number,
+    isUser: Boolean,
 });
-const { isAuthorized, uid } = storeToRefs(auth)
+const { isAuthorized } = storeToRefs(useAuthStore())
 
 const isShowDialog = ref(false)
 const index = ref(null);
 const isShowMore = ref(false)
 const isShowModal = ref(false)
 const curentReview = ref(null)
-const content = ref("")
+const content = ref("");
+const vote = ref(0);
 const toolbar = [
     ['bold', 'italic', 'underline', 'strike'],
     [{ list: 'ordered' }, { list: 'bullet' }],
@@ -31,7 +32,7 @@ const toolbar = [
 ]
 
 function openDialog(id, max) {
-    if (reviewsItems.value[id].content.length > max) {
+    if (reviews.value[id].review.length > max) {
         isShowDialog.value = true;
         index.value = id;
     }
@@ -39,25 +40,30 @@ function openDialog(id, max) {
 function changeReview(i) {
     isShowModal.value = true;
     if (Number.isInteger(i)) {
-        curentReview.value = reviewsItems.value[i];
-        content.value = reviewsItems.value[i].content;
+        curentReview.value = reviews.value[i];
+        content.value = reviews.value[i].review;
     } else {
         curentReview.value = null;
         content.value = '';
+        vote.value = 0;
     }
 }
-function checkReview() {
+function saveReview(e) {
 
-    if (content.value?.trim() === '') {
-        toast.warning("Поле вводу коментарів не може бути пустим!");
+    if (content.value?.trim() === '' && vote.value === 0) {
+        toast.warning("The comment cannot be empty!");
         return
     }
-    saveReview(content.value, id, curentReview.value?.id)
+    if (curentReview.value?.id) {
+        console.log(id, type, curentReview.value?.id, content.value, vote.value, e.target.dataset?.reviewId);
+    } else {
+        console.log(e.target.dataset);
+        storeReview(id, isUser, content.value, vote.value, e.target.dataset?.reviewId)
+    }
+
     isShowModal.value = false
 }
-function isOwner(id) {
-    return isAuthorized.value && id === uid.value
-}
+
 function shotContent(text, max = 50) {
     if (text.length > max) {
         return text.substring(0, max) + "..."
@@ -66,8 +72,8 @@ function shotContent(text, max = 50) {
 }
 
 const isLengthReviewsEnough = computed(() => {
-    if (reviewsItems.value?.length) {
-        return reviewsItems.value.length > 3
+    if (reviews.value?.length) {
+        return reviews.value.length > 3
     }
     return false
 })
@@ -75,44 +81,50 @@ const partOrFullReviews = computed(() => {
     if (!isLengthReviewsEnough.value) {
         isShowMore.value = false;
     }
-    const arr = [...reviewsItems.value]
+    const arr = [...reviews.value]
     return isShowMore.value ? arr : arr.splice(0, 3);
 })
 
 </script>
 
 <template>
-    <div v-if="reviewsItems || isAuthorized">
+    <div v-if="reviews || isAuthorized">
         <div class="reviews_header">
-            <v-card-title>Коментарі</v-card-title>
-            <v-btn v-if="isAuthorized" size="small" icon @click="changeReview()" v-tooltip="'Додати коментар'">
+            <v-card-title>Reviews</v-card-title>
+            <v-btn v-if="isAuthorized" size="small" icon @click="changeReview()" v-tooltip="'add review'">
                 <span class="mdi mdi-plus reviews_btn-text"></span>
             </v-btn>
         </div>
 
-        <ul class="reviews_list" v-if="reviewsItems">
-            <li v-for="item, i in partOrFullReviews" class=" reviews_item" @click="openDialog(i, 200)">
+        <ul class="reviews_list" v-if="reviews">
+            <li v-for="review, i in partOrFullReviews" class=" reviews_item" @click="openDialog(i, 200)">
                 <div class=" reviews_foto-box">
-                    <img v-if="item.avatar" class="reviews_foto" width="60" height="60" :src="item.avatar" alt="foto">
-                    <img v-if="!item.avatar" class="reviews_foto" width="60" height="60"
+                    <img v-if="review.owner.image" class="reviews_foto" width="60" height="60" :src="item.owner.image"
+                        alt="foto">
+                    <img v-if="!review.owner.image" class="reviews_foto" width="60" height="60"
                         src="/src/assets/images/avatar_img.jpg" alt="foto">
                 </div>
                 <div class=" reviews_body">
                     <div class="reviews_item-header">
-                        <span class=" reviews_name">{{ item.author }}
-                            <v-btn v-if="isOwner(item?.uid)" variant="text" @click.stop="changeReview(i)"
-                                v-tooltip="'Змінити'">
+                        <span class=" reviews_name">{{ review.owner.name }}
+                            <v-rating half-increments :length="5" readonly :size="28" :model-value="review.vote / 2"
+                                color="warning" active-color="warning" />
+
+                        </span>
+                        <span class=" reviews_time"> <v-btn v-if="isAuthorized" variant="text" :data-review-id="review.id"
+                                @click="changeReview" v-tooltip="'add'">
+                                <span class="mdi mdi-plus reviews_btn-text"></span>
+                            </v-btn>
+                            <v-btn v-if="review.isOwner" variant="text" @click.stop="changeReview(i)" v-tooltip="'edit'">
                                 <span class="mdi mdi-fountain-pen-tip reviews_btn-text"></span>
                             </v-btn>
-                            <v-btn v-if="isOwner(item?.uid)" variant="text" @click.stop="reviews.removeReview(item.id, id)"
-                                v-tooltip="'Видалити'">
+                            <v-btn v-if="review.isOwner" variant="text" @click.stop="reviews.removeReview(item.id, id)"
+                                v-tooltip="'remove'">
                                 <span class="mdi mdi-trash-can-outline reviews_btn-text"></span>
-                            </v-btn>
-                        </span>
-                        <span class=" reviews_time">{{ item.date
-                        }}</span>
+                            </v-btn>{{ review.updated_at
+                            }}</span>
                     </div>
-                    <div :innerHTML="shotContent(item.content, 200)"> </div>
+                    <div v-if="review.review" :innerHTML="shotContent(review.review, 200)"> </div>
                 </div>
 
             </li>
@@ -120,11 +132,10 @@ const partOrFullReviews = computed(() => {
 
         <div class="reviews_control">
             <div>
-                <v-btn v-if="!isShowMore && isLengthReviewsEnough" color="primary" block @click="isShowMore = true">Показати
-                    всі коментарі</v-btn>
-                <v-btn v-if="isShowMore && isLengthReviewsEnough" color="primary" block
-                    @click="isShowMore = false">Приховати
-                    коментарі</v-btn>
+                <v-btn v-if="!isShowMore && isLengthReviewsEnough" color="primary" block @click="isShowMore = true">Show all
+                    comments</v-btn>
+                <v-btn v-if="isShowMore && isLengthReviewsEnough" color="primary" block @click="isShowMore = false">Hide
+                    comments</v-btn>
             </div>
         </div>
 
@@ -134,13 +145,19 @@ const partOrFullReviews = computed(() => {
 
                 </v-card-text>
                 <v-card-actions>
-                    <v-btn color="primary" block @click="isShowDialog = false">Закрити</v-btn>
+                    <v-btn color="primary" block @click="isShowDialog = false">Close</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
         <Modal v-if="isShowModal" @close="isShowModal = false">
+
             <template v-slot:header>
-                <h3>Редактор коментарів</h3>
+                <div class="modal_header">
+                    <h3>Comment editor </h3>
+                    <v-rating half-increments hover :length="5" :size="28" color="warning" active-color="warning"
+                        v-model="vote" />
+                </div>
+
             </template>
             <template v-slot:body>
                 <div class="modal_body">
@@ -148,8 +165,8 @@ const partOrFullReviews = computed(() => {
                 </div>
             </template>
             <template v-slot:footer="slotProps">
-                <v-btn @click="checkReview">
-                    Зберегти
+                <v-btn @click="saveReview">
+                    save
                 </v-btn>
                 <v-btn @click="() => isShowModal = false">
                     {{ slotProps.btnCloseText }}
@@ -162,7 +179,9 @@ const partOrFullReviews = computed(() => {
 
 
 
-<style>
+<style lang="scss" scoped>
+@import "../assets/scss/variables.scss";
+
 .reviews_btn-text {
     font-size: 25px;
 }
@@ -215,6 +234,8 @@ const partOrFullReviews = computed(() => {
 
 .reviews_name {
     font-weight: 600;
+    display: flex;
+    align-items: center;
 }
 
 .reviews_foto {
@@ -226,6 +247,11 @@ const partOrFullReviews = computed(() => {
     align-items: center;
     justify-content: center;
     margin-right: 20px;
+}
+
+.modal_header {
+    display: flex;
+    justify-content: space-between;
 }
 
 .modal_body {

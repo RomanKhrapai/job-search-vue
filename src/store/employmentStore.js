@@ -25,8 +25,10 @@ export const useEmploymentStore = defineStore("employment", () => {
         vacancy: {},
         candidate: {},
         candidates: [],
+        reviews: [],
     });
 
+    const reviews = computed(() => employment.value.reviews);
     const candidates = computed(() => employment.value.candidates);
     const candidate = computed(() => employment.value.candidate);
     const companies = computed(() => employment.value.companies);
@@ -38,6 +40,10 @@ export const useEmploymentStore = defineStore("employment", () => {
     const imageURL = computed(() => employment.value.imageURL);
     const fullImageURL = computed(() => employment.value.fullImageURL);
     const errorImage = computed(() => employment.value.errorImage);
+
+    function setReviews(data) {
+        employment.value.reviews = data;
+    }
 
     function setIsError(data) {
         employment.value.isError = data;
@@ -75,7 +81,7 @@ export const useEmploymentStore = defineStore("employment", () => {
         employment.value.fullImageURL = "";
         employment.value.isLoading = true;
         employment.value.errorImage = null;
-        
+
         if (!formData) {
             employment.value.errorImage = true;
             return;
@@ -117,6 +123,7 @@ export const useEmploymentStore = defineStore("employment", () => {
         vacancies,
         candidates,
         candidate,
+        reviews,
 
         imageURL,
         fullImageURL,
@@ -133,5 +140,7 @@ export const useEmploymentStore = defineStore("employment", () => {
 
         setCompamies,
         setCompany,
+
+        setReviews,
     };
 });

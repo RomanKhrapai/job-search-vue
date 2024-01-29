@@ -1,12 +1,11 @@
 <script setup>
 // import Modal from './shared/Modal.vue';
 import NoFound from '.././NoFound.vue';
-// import Reviews from './Reviews.vue'
+import Reviews from '../Reviews.vue';
 // import ActivPanel from './ActivPanel.vue';
 import { useEmploymentStore } from "../../store/employmentStore";
-import { getCandidate } from '../../store/actions/candidate';
+import { getCandidate, deleteCandidate } from '../../store/actions/candidate';
 // import { useReviewsStore } from '../store/reviewsStore';
-import useComputed from '../../utils/useComputed';
 import { ref, defineProps } from 'vue'
 import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router'
@@ -36,6 +35,7 @@ function redirectTo(path) {
 }
 
 getCandidate(id);
+
 
 </script>
 
@@ -126,6 +126,7 @@ getCandidate(id);
                             </v-row>
                         </v-card-text>
                     </v-card>
+                    <Reviews v-if="candidate?.user" :id="Number(candidate.user.id)" :isUser='true' />
                 </v-col>
             </v-row>
         </v-container>

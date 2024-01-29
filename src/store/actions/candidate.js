@@ -1,5 +1,6 @@
 import axiosInstance from "../../services/axios.js";
 import { useEmploymentStore } from "../employmentStore.js";
+import { getCandidateReviews } from "./review";
 import { storeToRefs } from "pinia";
 
 export async function getCandidates(name, area) {
@@ -32,7 +33,7 @@ export async function getCandidate(id) {
             return;
         }
         const response = await axiosInstance.get(`/candidates/${id}`);
-
+        getCandidateReviews(response.data.data.user.id);
         setCandidate(response.data.data);
     } catch (error) {
     } finally {

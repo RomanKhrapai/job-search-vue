@@ -16,6 +16,7 @@ import { ref, defineProps, computed, watch } from 'vue'
 import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router'
 import { getCompany, deleteCompany } from "../../store/actions/company"
+import { getCompamyReviews } from "../../store/actions/review";
 const router = useRouter();
 
 
@@ -23,7 +24,7 @@ const { id } = defineProps({
     id: String,
 });
 
-const { company, isLoading } = storeToRefs(useEmploymentStore())
+const { company, isLoading, reviews } = storeToRefs(useEmploymentStore())
 const { professions } = storeToRefs(useFormParametersStore());
 const { getProfessions, setProfesion } = useFormParametersStore();
 
@@ -71,6 +72,7 @@ watch(profession, () => {
 
 getCompany(id);
 getProfessions('', 10);
+getCompamyReviews(id);
 </script>
 
 <template>
