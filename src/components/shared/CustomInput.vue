@@ -29,13 +29,15 @@ function inputText(e) {
 
 .custom-label {
     display: flex;
-    font-size: 18px;
+    font-size: 12px;
     align-items: center;
 }
 
 .custom-input {
     height: 40px;
-    border: 2px solid $border-color;
+    font-size: 16px;
+    font-weight: 400;
+    color: #000000;
     outline: none;
     padding: 5px 15px;
     margin-left: 10px;

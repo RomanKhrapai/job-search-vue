@@ -78,9 +78,8 @@ export async function storeCandidate({
 }
 
 export async function deleteCandidate(id) {
-    setIsLoading(true);
     const { setIsLoading } = useEmploymentStore();
-
+    setIsLoading(true);
     try {
         const response = await axiosInstance.delete(`/candidates/${id}`);
     } catch (error) {

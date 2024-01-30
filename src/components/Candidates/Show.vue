@@ -23,7 +23,7 @@ function handDestroy() {
     deleteCandidate(id)
     dialogDelete.value = false;
     router.push({
-        path: '/companies',
+        path: '/candidates',
     })
 }
 

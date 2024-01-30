@@ -18,8 +18,10 @@ const tagName = computed(() => `h${props.level}`)
   
 <style lang="scss" scoped>
 .main-title {
-    font-size: 20px;
+    font-size: 25px;
     font-weight: 700;
-    margin-bottom: 0.5em;
+    line-height: 30px;
+    margin-bottom: 30px;
+    text-align: center;
 }
 </style>

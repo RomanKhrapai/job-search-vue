@@ -1,7 +1,7 @@
 <template>
     <label class="custom-label " :class="[labelClass]"> {{ label }}
-        <input v-on="listeners" v-bind="attrs" @blur="blurHandler" :checked="form.modelValue" class="custom-input"
-            :class="!isValid && 'custom-input--error'" />
+        <input v-on="listeners" v-bind="attrs" @blur="blurHandler" :checked="form.modelValue"
+            class="custom-input input_checkbox" :class="!isValid && 'custom-input--error'" />
         <span v-if="!isValid" class="custom-input__error">{{ error }}</span>
     </label>
 </template>
@@ -81,4 +81,8 @@ function reset() {
   
 <style lang="scss" scoped>
 @import "./style.module.scss";
+
+.input_checkbox {
+    box-shadow: none;
+}
 </style>

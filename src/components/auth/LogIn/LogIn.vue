@@ -1,6 +1,6 @@
 <template>
     <AuthContainer class="registration">
-        <MainTitle class="registration__title">Авторизація</MainTitle>
+        <MainTitle class="registration__title">Login</MainTitle>
         <CustomForm ref="form" class="login__form" @submit.prevent="handleSubmit">
             <CustomInput v-model="email" autocomplete="email" placeholder="Електронна пошта" name="email"
                 :rules="emailRules" class="login__input" :label="'Електронна пошта'" />
@@ -8,7 +8,7 @@
                 name="password" :rules="passwordRules" class="login__input" :label="'Пароль'" />
             <Button class="login__btn" type="submit">Увійти</Button>
         </CustomForm>
-        <span class="link" @click="$router.push({ name: 'registration' })"> Зареєструватися</span>
+        <span class="link" @click="$router.push({ name: 'registration' })"> Login</span>
 
     </AuthContainer>
 </template>

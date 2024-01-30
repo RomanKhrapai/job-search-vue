@@ -1,7 +1,7 @@
 <script setup>
 import Modal from './shared/Modal.vue';
 import { QuillEditor } from '@vueup/vue-quill'
-import { storeReview } from '../store/actions/review';
+import { storeReview, removeReview, updateReview } from '../store/actions/review';
 import { useAuthStore } from '../store/authStore';
 import { storeToRefs } from "pinia"
 import { useToast } from "vue-toastification";
@@ -18,12 +18,13 @@ const { id, isUser } = defineProps({
 const { isAuthorized } = storeToRefs(useAuthStore())
 
 const isShowDialog = ref(false)
-const index = ref(null);
 const isShowMore = ref(false)
 const isShowModal = ref(false)
-const curentReview = ref(null)
+const reviewId = ref(null)
 const content = ref("");
+const parentId = ref(null)
 const vote = ref(0);
+const isVote = ref(false);
 const toolbar = [
     ['bold', 'italic', 'underline', 'strike'],
     [{ list: 'ordered' }, { list: 'bullet' }],
@@ -31,34 +32,50 @@ const toolbar = [
     ['clean'],
 ]
 
-function openDialog(id, max) {
-    if (reviews.value[id].review.length > max) {
+function openDialog(text, max) {
+    if (text?.length > max) {
         isShowDialog.value = true;
-        index.value = id;
+        content.value = text;
     }
 };
-function changeReview(i) {
-    isShowModal.value = true;
-    if (Number.isInteger(i)) {
-        curentReview.value = reviews.value[i];
-        content.value = reviews.value[i].review;
+function changeReview(item) {
+
+    reviewId.value = item.id;
+    vote.value = item.vote / 2;
+    content.value = item.review;
+    if (item.children) {
+        isVote.value = true;
     } else {
-        curentReview.value = null;
-        content.value = '';
-        vote.value = 0;
+        isVote.value = false;
     }
+    isShowModal.value = true;
 }
-function saveReview(e) {
+
+function createReview(id) {
+    content.value = '';
+    vote.value = 0;
+    reviewId.value = null;
+    if (id) {
+        parentId.value = id;
+        isVote.value = false;
+    } else {
+        isVote.value = true;
+        parentId.value = null;
+    }
+    isShowModal.value = true;
+}
+
+function saveReview() {
 
     if (content.value?.trim() === '' && vote.value === 0) {
         toast.warning("The comment cannot be empty!");
         return
     }
-    if (curentReview.value?.id) {
-        console.log(id, type, curentReview.value?.id, content.value, vote.value, e.target.dataset?.reviewId);
+    if (reviewId.value) {
+        updateReview(id, isUser, reviewId.value, content.value, vote.value);
     } else {
-        console.log(e.target.dataset);
-        storeReview(id, isUser, content.value, vote.value, e.target.dataset?.reviewId)
+
+        storeReview(id, isUser, content.value, vote.value, parentId.value)
     }
 
     isShowModal.value = false
@@ -91,43 +108,80 @@ const partOrFullReviews = computed(() => {
     <div v-if="reviews || isAuthorized">
         <div class="reviews_header">
             <v-card-title>Reviews</v-card-title>
-            <v-btn v-if="isAuthorized" size="small" icon @click="changeReview()" v-tooltip="'add review'">
+            <v-btn v-if="isAuthorized" size="small" icon @click="createReview()" v-tooltip="'add review'">
                 <span class="mdi mdi-plus reviews_btn-text"></span>
             </v-btn>
         </div>
 
         <ul class="reviews_list" v-if="reviews">
-            <li v-for="review, i in partOrFullReviews" class=" reviews_item" @click="openDialog(i, 200)">
-                <div class=" reviews_foto-box">
-                    <img v-if="review.owner.image" class="reviews_foto" width="60" height="60" :src="item.owner.image"
-                        alt="foto">
-                    <img v-if="!review.owner.image" class="reviews_foto" width="60" height="60"
-                        src="/src/assets/images/avatar_img.jpg" alt="foto">
-                </div>
-                <div class=" reviews_body">
-                    <div class="reviews_item-header">
-                        <span class=" reviews_name">{{ review.owner.name }}
-                            <v-rating half-increments :length="5" readonly :size="28" :model-value="review.vote / 2"
-                                color="warning" active-color="warning" />
+            <template v-for="review, i in partOrFullReviews">
+                <li class=" reviews_item" @click="openDialog(review.review, 200)">
+                    <div class="review_container">
+                        <div class=" reviews_foto-box">
+                            <img v-if="review.owner.image" class="reviews_foto" width="60" height="60"
+                                :src="item.owner.image" alt="foto">
+                            <img v-if="!review.owner.image" class="reviews_foto" width="60" height="60"
+                                src="/src/assets/images/avatar_img.jpg" alt="foto">
+                        </div>
+                        <div class=" reviews_body">
+                            <div class="reviews_item-header">
+                                <span class=" reviews_name">{{ review.owner.name }}
+                                    <v-rating half-increments :length="5" readonly :size="28" :model-value="review.vote / 2"
+                                        color="warning" active-color="warning" />
 
-                        </span>
-                        <span class=" reviews_time"> <v-btn v-if="isAuthorized" variant="text" :data-review-id="review.id"
-                                @click="changeReview" v-tooltip="'add'">
-                                <span class="mdi mdi-plus reviews_btn-text"></span>
-                            </v-btn>
-                            <v-btn v-if="review.isOwner" variant="text" @click.stop="changeReview(i)" v-tooltip="'edit'">
-                                <span class="mdi mdi-fountain-pen-tip reviews_btn-text"></span>
-                            </v-btn>
-                            <v-btn v-if="review.isOwner" variant="text" @click.stop="reviews.removeReview(item.id, id)"
-                                v-tooltip="'remove'">
-                                <span class="mdi mdi-trash-can-outline reviews_btn-text"></span>
-                            </v-btn>{{ review.updated_at
-                            }}</span>
+                                </span>
+                                <span class=" reviews_time">
+                                    <v-btn v-if="isAuthorized" variant="text" @click="createReview(review.id)"
+                                        v-tooltip="'add'">
+                                        <span class="mdi mdi-plus reviews_btn-text"></span>
+                                    </v-btn>
+                                    <v-btn v-if="review.isOwner" variant="text" @click.stop="changeReview(review)"
+                                        v-tooltip="'edit'">
+                                        <span class="mdi mdi-fountain-pen-tip reviews_btn-text"></span>
+                                    </v-btn>
+                                    <v-btn v-if="review.isOwner" variant="text"
+                                        @click.stop="removeReview(review.id, id, isUser)" v-tooltip="'remove'">
+                                        <span class="mdi mdi-trash-can-outline reviews_btn-text"></span>
+                                    </v-btn>{{ review.updated_at }}
+                                </span>
+                            </div>
+                            <div v-if="review.review" :innerHTML="shotContent(review.review, 200)"> </div>
+                        </div>
                     </div>
-                    <div v-if="review.review" :innerHTML="shotContent(review.review, 200)"> </div>
-                </div>
+                </li>
+                <template v-if="review.children && review.children.length">
+                    <li v-for="review, i in review.children" class=" reviews_item reviews_item_child"
+                        @click="openDialog(review.review, 200)">
+                        <div class="review_container">
+                            <div class=" reviews_foto-box">
+                                <img v-if="review.owner.image" class="reviews_foto" width="60" height="60"
+                                    :src="item.owner.image" alt="foto">
+                                <img v-if="!review.owner.image" class="reviews_foto" width="60" height="60"
+                                    src="/src/assets/images/avatar_img.jpg" alt="foto">
+                            </div>
+                            <div class=" reviews_body">
+                                <div class="reviews_item-header">
+                                    <span class=" reviews_name">
+                                        {{ review.owner.name }}
+                                    </span>
+                                    <span class=" reviews_time">
 
-            </li>
+                                        <v-btn v-if="review.isOwner" variant="text" @click.stop="changeReview(review)"
+                                            v-tooltip="'edit'">
+                                            <span class="mdi mdi-fountain-pen-tip reviews_btn-text"></span>
+                                        </v-btn>
+                                        <v-btn v-if="review.isOwner" variant="text"
+                                            @click.stop="removeReview(review.id, id, isUser)" v-tooltip="'remove'">
+                                            <span class="mdi mdi-trash-can-outline reviews_btn-text"></span>
+                                        </v-btn>{{ review.updated_at }}
+                                    </span>
+                                </div>
+                                <div v-if="review.review" :innerHTML="shotContent(review.review, 200)"> </div>
+                            </div>
+                        </div>
+                    </li>
+                </template>
+            </template>
         </ul>
 
         <div class="reviews_control">
@@ -141,7 +195,7 @@ const partOrFullReviews = computed(() => {
 
         <v-dialog v-model="isShowDialog" width="auto">
             <v-card>
-                <v-card-text :innerHTML="reviewsItems[index].content">
+                <v-card-text :innerHTML="content">
 
                 </v-card-text>
                 <v-card-actions>
@@ -154,8 +208,8 @@ const partOrFullReviews = computed(() => {
             <template v-slot:header>
                 <div class="modal_header">
                     <h3>Comment editor </h3>
-                    <v-rating half-increments hover :length="5" :size="28" color="warning" active-color="warning"
-                        v-model="vote" />
+                    <v-rating v-if="isVote" half-increments hover :length="5" :size="28" color="warning"
+                        active-color="warning" v-model="vote" />
                 </div>
 
             </template>
@@ -182,6 +236,10 @@ const partOrFullReviews = computed(() => {
 <style lang="scss" scoped>
 @import "../assets/scss/variables.scss";
 
+.review_container {
+    display: flex;
+}
+
 .reviews_btn-text {
     font-size: 25px;
 }
@@ -201,13 +259,17 @@ const partOrFullReviews = computed(() => {
 }
 
 .reviews_item {
-    display: flex;
+    display: block;
     padding: 5px 10px;
     margin-bottom: 10px;
     border-color: #00000012;
     border-style: solid;
     border-width: 0;
     box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
+}
+
+.reviews_item_child {
+    margin-left: 50px;
 }
 
 .reviews_control {

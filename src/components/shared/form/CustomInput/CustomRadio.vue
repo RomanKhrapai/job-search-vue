@@ -1,7 +1,7 @@
 <template>
-    <label class="custom-label " :class="[labelClass]"> {{ label }}
-        <input v-on="listeners" v-bind="attrs" @blur="blurHandler" :v-model="form.modelValue" class="custom-input"
-            :class="!isValid && 'custom-input--error'" :value="value" />
+    <label class="custom-label lable_radio" :class="[labelClass]"> {{ label }}
+        <input v-on="listeners" v-bind="attrs" @blur="blurHandler" :v-model="form.modelValue"
+            class="custom-input input_radio" :class="!isValid && 'custom-input--error'" :value="value" />
         <span v-if="!isValid" class="custom-input__error">{{ error }}</span>
     </label>
 </template>
@@ -86,4 +86,13 @@ function reset() {
   
 <style lang="scss" scoped>
 @import "./style.module.scss";
+
+.lable_radio {
+    display: flex;
+    align-items: center;
+}
+
+.input_radio {
+    box-shadow: none;
+}
 </style>

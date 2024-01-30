@@ -11,11 +11,13 @@
             <CustomInput v-model="confirmPassword" type="password" autocomplete="current-password"
                 placeholder="Confirm password" name="password" :rules="confirmPasswordRules" class="registration__input"
                 :label="'Confirm password'" />
+            <div class="wrapper_radio">
+                <CustomRadio v-model="role" type="radio" name="role" value='3' class="registration__input check-box__input"
+                    :label="'Employer'" />
+                <CustomRadio v-model="role" type="radio" name="role" value='2' class="registration__input check-box__input"
+                    :label="'Worker'" />
+            </div>
 
-            <CustomRadio v-model="role" type="radio" name="role" value='3' class="registration__input check-box__input"
-                :label="'Employer'" />
-            <CustomRadio v-model="role" type="radio" name="role" value='2' class="registration__input check-box__input"
-                :label="'Worker'" />
 
             <CustomCheckBox v-model="agreeToRules" type="checkbox" name="rules" :rules="checkBoxRules"
                 class="registration__input check-box__input" :label="'Agreement with the rules of the site'"
@@ -78,4 +80,9 @@ watch(isAuthorized, () => router.push({ name: 'home' }))
   
 <style lang="scss" scoped>
 @import "./style.module.scss";
+
+.wrapper_radio {
+    display: flex;
+    align-items: center;
+}
 </style>

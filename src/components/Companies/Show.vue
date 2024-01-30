@@ -2,7 +2,7 @@
 import CustomOneSearchSelect from "../shared/form/CustomInput/CustomOneSearchSelect.vue";
 import CustomForm from "../shared/form/CustomForm.vue";
 import NoFound from '.././NoFound.vue';
-// import Reviews from './Reviews.vue'
+import Reviews from '../Reviews.vue';
 // import ActivPanel from './ActivPanel.vue';
 import {
     maxString, minString, isRequired,
@@ -99,27 +99,7 @@ getCompamyReviews(id);
                                     <v-card-title>address: </v-card-title>
                                     <span class="me-1">{{ company.address }}</span>
                                 </v-card-subtitle>
-                                <!-- <ActivPanel v-if="isAuthorized && !isLoading" :id="id" :film="company" /> -->
                             </div>
-
-
-                            <!-- <v-card-text>
-                                <v-row align="center" class="mx-0">
-                                    <v-rating :model-value="rating" color="amber" density="compact" half-increments readonly
-                                        size="large"></v-rating>
-
-                                    <div class=" ms-4">
-                                        {{ rating }} ({{ count }})
-                                    </div>
-                                </v-row>
-
-                                <div class="my-4 text-subtitle-1">
-                                    {{ company.genres }}
-                                </div>
-                                <div class="my-4 text-subtitle-1">
-                                    Дата релізу: {{ company.releaseDate }}
-                                </div>
-                            </v-card-text> -->
                             <v-card-actions v-if="company.isOwner">
                                 <v-btn color="deep-purple-lighten-2" variant="text" @click="">
                                     edit
@@ -191,6 +171,8 @@ getCompamyReviews(id);
                 </template>
             </div>
         </v-card>
+        <Reviews v-if="company.id" :id="Number(company.id)" :isUser='false' />
+
         <NoFound v-if="!company && !isLoading" />
     </div>
 </template>

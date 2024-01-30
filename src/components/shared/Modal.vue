@@ -17,7 +17,7 @@
                     </div>
 
                     <div class="modal-footer">
-                        <slot name="footer" :btnCloseText="'Закрити'">
+                        <slot name="footer" :btnCloseText="'close'">
 
                         </slot>
                     </div>

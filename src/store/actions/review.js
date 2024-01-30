@@ -11,7 +11,6 @@ export async function getCompamyReviews(id) {
             params: { company_id: id },
         });
 
-        console.log(response.data.data);
         setReviews(response.data.data);
     } catch (error) {
         console.log(error);
@@ -20,7 +19,6 @@ export async function getCompamyReviews(id) {
     }
 }
 export async function getCandidateReviews(id) {
-    console.log(id);
     const { setReviews, setIsLoading } = useEmploymentStore();
     setIsLoading(true);
 
@@ -29,7 +27,6 @@ export async function getCandidateReviews(id) {
             params: { user_id: id },
         });
 
-        console.log(response.data.data);
         setReviews(response.data.data);
     } catch (error) {
         console.log(error);
@@ -81,7 +78,7 @@ export async function storeReview(
 
     if (company_id) parameters.company_id = company_id;
 
-    const { setReviews, setIsLoading } = useEmploymentStore();
+    const { setIsLoading } = useEmploymentStore();
     setIsLoading(true);
 
     try {
@@ -95,12 +92,36 @@ export async function storeReview(
     }
 }
 
-export async function deleteVacancy(id) {
-    setIsLoading(true);
+export async function updateReview(id, isUser, reviewId, review, vote) {
+    const parameters = { review };
+
+    if (vote !== 0) parameters.vote = vote * 2;
+
     const { setIsLoading } = useEmploymentStore();
+    setIsLoading(true);
 
     try {
-        const response = await axiosInstance.delete(`/vacancies/${id}`);
+        const response = await axiosInstance.patch(
+            `/reviews/${reviewId}`,
+            parameters
+        );
+        if (isUser) getCandidateReviews(id);
+        else getCompamyReviews(id);
+    } catch (error) {
+        console.log(error);
+    } finally {
+        setIsLoading(false);
+    }
+}
+
+export async function removeReview(reviewId, id, isUser) {
+    const { setIsLoading } = useEmploymentStore();
+    setIsLoading(true);
+
+    try {
+        const response = await axiosInstance.delete(`/reviews/${reviewId}`);
+        if (isUser) getCandidateReviews(id);
+        else getCompamyReviews(id);
     } catch (error) {
         console.log(error);
     } finally {

@@ -92,7 +92,6 @@ async function handleSubmit() {
         });
         console.log(111, id);
         if (id) {
-            console.log(111333);
             form.value.reset();
             router.push({
                 path: `/companies/${id}`,
