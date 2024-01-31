@@ -95,7 +95,9 @@ auth.onAuth();
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
+@import "./assets/scss/variables.scss";
+
 .container {
   position: relative;
   margin-left: auto;

@@ -1,0 +1,16 @@
+.link {
+    cursor: pointer;
+    font-size: 16px;
+    text-decoration-line: underline;
+    margin: 0 20px;
+    &:hover {
+        color: $main-color;
+    }
+}
+.wraper_link {
+    display: flex;
+    align-items: center;
+}
+.image {
+    float: left;
+}

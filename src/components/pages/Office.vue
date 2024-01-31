@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div>
+        <!-- <div>
             <router-link to="/companies/create">
                 <v-btn color="green-darken-1" variant="text">
                     add company
@@ -39,6 +39,9 @@
                     </CustomForm>
                 </v-card>
             </v-dialog>
+        </div> -->
+        <div>
+            <router-view></router-view>
         </div>
         <NotFoundPageVue v-if="!isLoading && isError"></NotFoundPageVue>
     </div>
@@ -59,46 +62,13 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter();
 const { isLoading, isError } = storeToRefs(useEmploymentStore())
-const { professions } = storeToRefs(useFormParametersStore());
-const { getProfessions, setProfesion, setExperience } = useFormParametersStore();
-
-const dialogAddResume = ref(false);
-const profession = ref({ id: '', name: '' });
-const experience = ref('0');
-const form = ref(null)
 
 
-const professionRules = computed(() => [isRequired, maxString(200), minString(3)]);
-const experienceRules = computed(() => [isNumber, isPositiveNumber]);
 
 
-function addResume() {
-
-    const isFormValid = form.value.validate()
-    if (isFormValid) {
-        setProfesion(profession.value);
-        setExperience(experience.value);
-
-        dialogAddResume.value = false;
-        router.push({
-            path: '/candidates/create',
-        })
-    }
-}
-
-watch(experience, (newVal) => {
-    experience.value = String(Number(newVal) * 1);
-})
-
-watch(profession, () => {
-    debounce(() => {
-        getProfessions(profession.value.name, 10);
-    },
-        200)
-})
 
 
-getProfessions('', 10);
+
 </script>
   
 <style scoped></style>

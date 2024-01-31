@@ -1,7 +1,8 @@
 <template>
     <label class="custom-label lable_radio" :class="[labelClass]"> {{ label }}
-        <input v-on="listeners" v-bind="attrs" @blur="blurHandler" :v-model="form.modelValue"
-            class="custom-input input_radio" :class="!isValid && 'custom-input--error'" :value="value" />
+        <input v-on="listeners" type="radio" v-bind="attrs" @blur="blurHandler" :v-model="modelValue"
+            class="custom-input input_radio" :class="!isValid && 'custom-input--error'" :value="value"
+            :checked="modelValue === value" />
         <span v-if="!isValid" class="custom-input__error">{{ error }}</span>
     </label>
 </template>

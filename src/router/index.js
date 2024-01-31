@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
-// import { useAuthStore } from "../store/authStore";
+import { useAuthStore } from "../store/authStore";
+import { storeToRefs } from "pinia";
 import NotFound from "../components/pages/NotFoundPage.vue";
+import axiosInstance from "../services/axios";
 
 const routes = [
     {
@@ -12,10 +14,24 @@ const routes = [
 
     {
         path: "/my-office",
-        name: "office",
         component: () => import("../components/pages/Office.vue"),
-        props: (route) => ({}),
-        meta: { id: 1 },
+        meta: { id: 2, role: true },
+        children: [
+            {
+                path: "",
+                name: "office",
+                component: () => import("../components/Office/Index.vue"),
+                meta: {},
+                alias: "sadd",
+            },
+            {
+                path: "user-update",
+                name: "user-update",
+                component: () => import("../components/Office/UserUpdate.vue"),
+                meta: {},
+                alias: "sadd",
+            },
+        ],
     },
     {
         path: "/candidates",
@@ -24,7 +40,7 @@ const routes = [
         children: [
             {
                 path: "",
-                component: () => import("../components/Candidates/All.vue"),
+                component: () => import("../components/Candidates/Index.vue"),
                 alias: "sadd",
             },
             {
@@ -50,7 +66,7 @@ const routes = [
         children: [
             {
                 path: "",
-                component: () => import("../components/Vacancies/All.vue"),
+                component: () => import("../components/Vacancies/Index.vue"),
                 alias: "sadd",
             },
             {
@@ -76,7 +92,7 @@ const routes = [
         children: [
             {
                 path: "",
-                component: () => import("../components/Companies/All.vue"),
+                component: () => import("../components/Companies/Index.vue"),
                 alias: "sadd",
             },
             {
@@ -100,13 +116,13 @@ const routes = [
         path: "/auth/registration",
         name: "registration",
         component: () => import("../components/pages/RegistrationPage.vue"),
-        meta: { auth: "guest", id: 5 },
+        meta: { role: "guest", id: 5 },
     },
     {
         path: "/auth/login",
         name: "login",
         component: () => import("../components/pages/LogInPage.vue"),
-        meta: { auth: "guest", id: 6 },
+        meta: { role: "guest", id: 6 },
     },
     {
         path: "/not-found",
@@ -123,6 +139,15 @@ const router = createRouter({
 });
 
 function query(store, to, from) {
+    if (to.query?.token) {
+        const { onAuth } = useAuthStore();
+        localStorage.access_token = to.query.token;
+        axiosInstance.defaults.headers.common[
+            "Authorization"
+        ] = `Bearer ${response.data.access_token}`;
+        onAuth();
+    }
+
     if (
         to.path === from.path ||
         !from.meta?.id ||
@@ -139,20 +164,50 @@ function query(store, to, from) {
     setTimeout(store.startFetch, 1);
 }
 
+function googleRoute(to, from, next, onAuth) {
+    if (to.query?.token) {
+        localStorage.access_token = to.query.token;
+        axiosInstance.defaults.headers.common[
+            "Authorization"
+        ] = `Bearer ${to.query.token}`;
+        const url = new URL(window.location.href);
+        url.search = "";
+        window.history.replaceState({}, "", url.href);
+        onAuth();
+    }
+
+    if (to.query?.new) {
+        return next({ name: "user-update" });
+    }
+}
+
 router.beforeEach((to, from, next) => {
+    console.log("to= ", to);
+    console.log("from= ", from);
+
+    const { onAuth, setPath } = useAuthStore();
+    const { isAuthorized, role } = storeToRefs(useAuthStore());
+    googleRoute(to, from, next, onAuth);
+
     if (to.path !== from.path) {
     }
 
-    const authStatus = false;
+    const authStatus = to.matched.find((record) => record.meta.role)?.meta
+        ?.role;
+    const isAuthorizedRoute = to.matched.find((record) => record.meta.role);
+
+    console.log(to.matched.find((record) => record.meta.role));
 
     // if (!authStatus) {
     //     next();
-    // } else if (to.path === "/library" || to.path === "/library/favorite") {
-    //     auth.setPath(to.path);
-    //     next({ name: "home" });
+    // } else if (!isAuthorized && isAuthorizedRoute) {
+    //     setPath(to.path);
+    //     next({ name: "login" });
     // } else if (authStatus === "guest") {
     //     next();
-    // } else if (authStatus === "user") {
+    // } else if (authStatus === "2"&&) {
+    //     next();
+    // } else if (authStatus === "3") {
     //     next();
     // } else next({ name: "NotFound" });
     next();

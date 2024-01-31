@@ -30,6 +30,15 @@ export const passwordValidation = (str) => {
     return null;
 };
 
+export const oldPasswordValidation = (str) => {
+    if (str === "") return null;
+    if (!str?.trim()) return "password cannot be empty";
+    if (str.length < 6) return "must be more than 6 characters";
+    if (!str.split("").some((e) => Number.isFinite(+e) && e !== " "))
+        return "must be at least one digit";
+    return null;
+};
+
 export const isRequired = (val) => {
     return !val?.trim() ? "field cannot be empty" : null;
 };
@@ -42,7 +51,6 @@ export const isPositiveNumber = (val) => {
     const number = Number(val);
     return isNaN(number) || number <= 0 ? "Must be a positive number" : null;
 };
-
 
 export const minString = (limit) => (val) => {
     return val.length <= limit ? `must be less than ${limit} characters` : null;
@@ -60,5 +68,6 @@ export default {
     phoneValidation,
     maxString,
     minString,
-    isNumber,isPositiveNumber
+    isNumber,
+    isPositiveNumber,
 };

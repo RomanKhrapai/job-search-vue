@@ -1,39 +1,41 @@
 <template>
-    <MainTitle class="title">add company</MainTitle>
-    <CustomForm ref="form" class="login__form" @submit.prevent="handleSubmit">
+    <div>
+        <MainTitle class="title">add company</MainTitle>
+        <CustomForm ref="form" class="login__form" @submit.prevent="handleSubmit">
 
-        <div :class="errorImage && 'error'">
-            <label class="custom-label form__input">Image:
-                <div id="fileInputshow">
-                    <img loading="lazy" :src="fullImageURL" height="100" width="100">
-                </div>
-                <input @change="handleFile" id="fileInput" type="file" name="img" accept=" image/jpeg"
-                    class=" custom-file-input " />
-            </label>
-        </div>
-        <span v-if="errorImage" class="error_text">{{ errorImage }}</span>
-        <br>
+            <div :class="errorImage && 'error'">
+                <label class="custom-label form__input">Image:
+                    <div id="fileInputshow">
+                        <img loading="lazy" :src="fullImageURL" height="100" width="100">
+                    </div>
+                    <input @change="handleFile" id="fileInput" type="file" name="img" accept=" image/jpeg"
+                        class=" custom-file-input " />
+                </label>
+            </div>
+            <span v-if="errorImage" class="error_text">{{ errorImage }}</span>
+            <br>
 
-        <CustomInput v-model="title" autocomplete="title" placeholder="enter name" name="title" :rules="titleRules"
-            class="login__input" :label="'name'" />
+            <CustomInput v-model="title" autocomplete="title" placeholder="enter name" name="title" :rules="titleRules"
+                class="login__input" :label="'name'" />
 
-        <CustomInput v-model="address" class="login__input" :label="'address'" :rules="addressRules" name="address" />
+            <CustomInput v-model="address" class="login__input" :label="'address'" :rules="addressRules" name="address" />
 
-        <CustomTextArea v-model="description" autocomplete="description" placeholder="enter description" name="description"
-            :rules="descriptionRules" class="login__input" :label="'description'" />
+            <CustomTextArea v-model="description" autocomplete="description" placeholder="enter description"
+                name="description" :rules="descriptionRules" class="login__input" :label="'description'" />
 
-        <Button class="login__btn" type="submit">submit</Button>
-    </CustomForm>
+            <Button class="login__btn" type="submit">submit</Button>
+        </CustomForm>
+    </div>
 </template>
   
 <script setup>
-import CustomManySearchSelect from "../shared/form/CustomInput/CustomManySearchSelect.vue";
-import CustomOneSearchSelect from "../shared/form/CustomInput/CustomOneSearchSelect.vue";
+// import CustomManySearchSelect from "../shared/form/CustomInput/CustomManySearchSelect.vue";
+// import CustomOneSearchSelect from "../shared/form/CustomInput/CustomOneSearchSelect.vue";
 import CustomTextArea from "../shared/form/CustomInput/CustomTextArea.vue";
 import CustomForm from "../shared/form/CustomForm.vue";
 import CustomInput from "../shared/form/CustomInput/CustomInput.vue";
 import Button from "../shared/form/Button/Button.vue";
-import CustomOneSelect from "../shared/form/CustomInput/CustomOneSelect.vue";
+// import CustomOneSelect from "../shared/form/CustomInput/CustomOneSelect.vue";
 import MainTitle from "../shared/MainTitle.vue";
 
 import {

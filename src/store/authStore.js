@@ -16,18 +16,25 @@ export const useAuthStore = defineStore("auth", () => {
             name: null,
             email: null,
             image: null,
+            phone: null,
         },
         companies: [],
     });
 
     const role = computed(() => auth.value.user.role);
     const name = computed(() => auth.value.user.name);
+    const email = computed(() => auth.value.user.email);
+    const phone = computed(() => auth.value.user.phone);
     const companies = computed(() => auth.value.companies);
     const image = computed(
         () => "http://127.0.0.1:8080/" + auth.value.user.image
     );
     const path = computed(() => auth.value.oldPath);
     const isAuthorized = computed(() => auth.value.isAuthorized);
+
+    function setIsAuthorized(bool) {
+        auth.value.isAuthorized = bool;
+    }
 
     function setPath(path) {
         auth.value.oldPath = path;
@@ -85,6 +92,29 @@ export const useAuthStore = defineStore("auth", () => {
             auth.value.isLoading = false;
         }
     }
+
+    async function updatePassword(password, oldPassword, role) {
+        auth.value.isLoading = true;
+        try {
+            const response = await axiosInstance.post(`update/password`, {
+                password,
+                oldPassword,
+                role,
+            });
+
+            localStorage.access_token = response.data.access_token;
+            axiosInstance.defaults.headers.common[
+                "Authorization"
+            ] = `Bearer ${response.data.access_token}`;
+            auth.value.user.role = Number(role);
+            auth.value.isAuthorized = true;
+            return true;
+        } catch (error) {
+        } finally {
+            auth.value.isLoading = false;
+        }
+    }
+
     async function logOut() {
         auth.value.isLoading = true;
         try {
@@ -134,13 +164,18 @@ export const useAuthStore = defineStore("auth", () => {
         role,
         name,
         path,
+        companies,
+        image,
+        email,
+        phone,
+
         setPath,
+        setIsAuthorized,
         clearPath,
         onAuth,
-        image,
         loginUser,
         logOut,
         registerUser,
-        companies,
+        updatePassword,
     };
 });
