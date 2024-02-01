@@ -8,7 +8,7 @@
                 <div :class="errorImage && 'error'">
                     <label class="custom-label form__input">Image:
                         <div id="fileInputshow">
-                            <img loading="lazy" :src="fullImageURL" height="100" width="100">
+                            <img loading="lazy" :src="fullImageURL || image" height="100" width="100">
                         </div>
                         <input @change="handleFile" id="fileInput" type="file" name="img" accept=" image/jpeg"
                             class=" custom-file-input " />
@@ -93,21 +93,21 @@ import { ref, computed, watch } from 'vue';
 
 
 const router = useRouter()
-const { updatePassword } = useAuthStore();
-const { role: roleStore, name: nameStore, phone: phoneStore, email: emailStore } = storeToRefs(useAuthStore());
+const { updatePassword, updateUser } = useAuthStore();
+const { role: roleStore, name: nameStore, phone: phoneStore, email: emailStore, image } = storeToRefs(useAuthStore());
 const { uploadAvatar, } = useEmploymentStore();
-const { fullImageURL, errorImage, errors } = storeToRefs(useEmploymentStore());
+const { fullImageURL, errorImage, errors, imageURL } = storeToRefs(useEmploymentStore());
 
 const dialogPassword = ref(false);
 const name = ref(String(nameStore.value) || "");
-const phone = ref(String(phoneStore.value) || "");
+const phone = ref(phoneStore.value || "");
 const role = ref(String(roleStore.value) || "2");
 const password = ref("");
 const confirmPassword = ref("");
 const oldPassword = ref("");
 
 const nameRules = computed(() => [isRequired, nameValidation]);
-const phoneRules = computed(() => [isRequired, phoneValidation]);
+const phoneRules = computed(() => [phoneValidation]);
 const oldPasswordRules = computed(() => [oldPasswordValidation])
 const passwordRules = computed(() => [isRequired, passwordValidation])
 const confirmPasswordRules = computed(() => [(val) => val !== password.value ?
@@ -129,16 +129,32 @@ async function handleSubmitPassword() {
     }
 }
 
+function handleFile(e) {
+
+    const files = e.target.files;
+    if (files.length > 0) {
+        const formData = new FormData();
+
+        if (files[0].size < 2000000) {
+            formData.append("file", files[0]);
+            uploadAvatar(formData);
+            return
+        }
+        uploadAvatar();
+    }
+}
+
 async function handleSubmit() {
 
     const isFormValid = form.value.validate()
 
     if (isFormValid) {
-        // const id = await storeCompany({
-        //     name: title.value,
-        //     address: address.value,
-        //     description: description.value
-        // });
+        const id = await updateUser(
+            name.value,
+            phone.value,
+            role.value,
+            imageURL.value
+        );
         if (id) {
             form.value.reset();
         }

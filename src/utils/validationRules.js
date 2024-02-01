@@ -1,7 +1,7 @@
 export const nameValidation = (str) => {
     if (str.length <= 2) return "name is too short";
     if (str.length >= 200) return "name is too long";
-    if (/[. _ / \\ |]/g.test(str))
+    if (/[._/\\|]/g.test(str))
         return `must not include the characters . _ / \\ |`;
     return null;
 };
@@ -13,10 +13,9 @@ export const emailValidation = (str) => {
     return null;
 };
 export const phoneValidation = (num) => {
-    if (num.trim() === "") return "number cannot be empty";
-    if (!Number.isFinite(+num)) return "can only be a number";
-    if (str.length <= 6) return "number is too short";
-    if (str.length >= 15) return "number is too long";
+    if (num.trim() === "") return null;
+    if (str.length <= 8) return "number is too short";
+    if (str.length >= 17) return "number is too long";
     if (!/^\+?[0-9\s-]+$/.test(yourString))
         return "must not contain extra characters";
     return null;

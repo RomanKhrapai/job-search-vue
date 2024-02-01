@@ -1,6 +1,6 @@
 <template>
     <div class="box-content">
-        <v-card class="mx-auto my-12">
+        <v-card class="mx-auto my-12 ">
             <div class="box">
                 <img src="/src/assets/images/camera.jpg" alt="Фільми відсутні">
             </div>

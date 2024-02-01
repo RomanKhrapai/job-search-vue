@@ -1,13 +1,14 @@
 <template>
     <div>
         <FilterBox class="filter">
-            <CustomInput v-model="name" :label="'Name:'" />
-            <CustomInput v-model="profession" :label="'profession:'" />
-            <CustomInput v-model="area" :label="'area:'" />
-            <v-btn icon="mdi-magnify">
-                Button
-            </v-btn>
+            <CustomInput v-model="name" label='Search:' class="filter_input" />
+            <CustomOneSearchSelect v-model="profession" class="" :label="'profession'" name="profession"
+                :list-class="'relative'" :options="professions" :noBtn="true" />
+            <CustomOneSearchSelect v-model="area" class="" :label="'area'" name="area" :list-class="'relative'"
+                :options="areas" :noBtn="true" />
         </FilterBox>
+
+        <NoFoundJob v-if="!vacancies[0]" class="full-box" />
 
         <template v-for="vacancy in vacancies">
             <router-link :to="`/vacancies/${vacancy.id}`">
@@ -56,7 +57,9 @@
 
 <script setup>
 import FilterBox from "../shared/FilterBox.vue"
-import CustomInput from "../shared/CustomInput.vue"
+import CustomInput from "../shared/form/CustomInput/CustomInput.vue";
+import CustomOneSearchSelect from "../shared/form/CustomInput/CustomOneSearchSelect.vue";
+import NoFoundJob from "../NoFoundJob.vue";
 // import Button from "../shared/form/Button/Button.vue";
 import { useAuthStore } from "../../store/authStore"
 // import { useGenreStore } from "../store/genresStore"
@@ -64,18 +67,18 @@ import { storeToRefs } from "pinia"
 import { debounce } from "../../utils/debounce"
 // import Pagination from "./Pagination.vue"
 import { useEmploymentStore } from '../../store/employmentStore';
+import { useFormParametersStore } from '../../store/formParametersStore';
 import { getVacancies } from "../../store/actions/vacancy"
 import { ref, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
-
-const employmentStore = useEmploymentStore();
-
-const { vacancies } = storeToRefs(employmentStore);
+const { vacancies } = storeToRefs(useEmploymentStore());
+const { professions, areas } = storeToRefs(useFormParametersStore());
+const { getProfessions, getAreas } = useFormParametersStore();
 
 const name = ref("")
-const area = ref("")
-const profession = ref("")
+const profession = ref({ id: '', name: '' });
+const area = ref({ id: '', name: '' });
 
 const router = useRouter();
 
@@ -88,19 +91,41 @@ function redirectTo(path) {
 
 watch(name, () => {
     debounce(() => {
-        getVacancies(name.value, area.value);
+        getVacancies(name.value, profession.value.id, area.value.id);
     },
         200)
 })
 
 watch(area, () => {
     debounce(() => {
-        getVacancies(name.value, area.value);
+        if (area.value.id) {
+            getVacancies(name.value, profession.value.id, area.value.id);
+        }
+        getAreas(areas.value.name, 10);
+    },
+        200)
+})
+watch(profession, () => {
+    debounce(() => {
+        if (profession.value.id) {
+            getVacancies(name.value, profession.value.id, area.value.id);
+        }
+        getProfessions(profession.value.name, 10);
     },
         200)
 })
 
+
+
+
 onMounted(() => {
+    if (!professions?.length !== 0) {
+        getProfessions('', 10);
+    }
+    if (!areas?.length !== 0) {
+        getAreas('', 10);
+    }
+
     getVacancies();
 })
 
@@ -112,6 +137,7 @@ onMounted(() => {
 .filter {
     display: flex;
     justify-content: space-between;
+    border-radius: 0 0 10px 10px;
 }
 
 .btn {
@@ -121,5 +147,13 @@ onMounted(() => {
 
 .card {
     background-color: $bg-secondary-color;
+}
+
+.filter_input {
+    margin-bottom: -30px;
+}
+
+.full-box {
+    margin-top: -45px;
 }
 </style>

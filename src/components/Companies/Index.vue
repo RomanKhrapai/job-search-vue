@@ -1,8 +1,8 @@
 <template>
     <div>
         <FilterBox class="filter">
-            <CustomInput v-model="name" :label="'Name:'" />
-            <CustomInput v-model="area" :label="'Address:'" />
+            <CustomInput v-model="name" :label="'Search name:'" class="filter_input" />
+            <CustomInput v-model="area" :label="'Search address:'" class="filter_input" />
         </FilterBox>
         <v-row no-gutters>
             <v-col v-for="company in companies" :key="company.id" cols="12" sm="4">
@@ -38,7 +38,7 @@
 
 <script setup>
 import FilterBox from "../shared/FilterBox.vue"
-import CustomInput from "../shared/CustomInput.vue"
+import CustomInput from "../shared/form/custominput/CustomInput.vue";
 // import Button from "../shared/form/Button/Button.vue";
 import { useAuthStore } from "../../store/authStore"
 // import { useGenreStore } from "../store/genresStore"
@@ -91,10 +91,15 @@ onMounted(() => {
 .filter {
     display: flex;
     justify-content: space-between;
+    border-radius: 0 0 15px 15px;
 }
 
 .btn {
     margin: 0;
     min-width: 60px;
+}
+
+.filter_input {
+    margin-bottom: -30px;
 }
 </style>

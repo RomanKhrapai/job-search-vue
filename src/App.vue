@@ -58,22 +58,20 @@ auth.onAuth();
               </span>
             </v-tab>
           </router-link>
-          <router-link to="/my-office">
+
+          <router-link v-if="isAuthorized" to="/candidates">
+            <v-tab :value="3">resumes</v-tab>
+          </router-link>
+          <router-link to="/vacancies">
+            <v-tab :value="4">vacancies</v-tab>
+          </router-link>
+          <router-link to="/companies">
+            <v-tab :value="5">companies</v-tab>
+          </router-link>
+          <router-link v-if="isAuthorized" to="/my-office">
             <v-tab :value="2"> my-office </v-tab>
           </router-link>
 
-          <router-link to="/candidates">
-            <v-tab :value="3">resumes</v-tab>
-          </router-link>
-          <router-link v-if="role === 3" to="/resumes">
-            <v-tab :value="3">resumes</v-tab>
-          </router-link>
-          <router-link v-if="role === 2" to="/vacancies">
-            <v-tab :value="4">vacancies</v-tab>
-          </router-link>
-          <router-link v-if="role === 2" to="/companies">
-            <v-tab :value="5">companies</v-tab>
-          </router-link>
           <div class="auth">
             <router-link v-if="!isAuthorized" to="/auth/login">
               <v-tab :value="6">log in</v-tab>

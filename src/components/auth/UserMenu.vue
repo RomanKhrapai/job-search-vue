@@ -1,7 +1,7 @@
 <template>
     <div class="menu-container">
         <div class="menu-btn" @click="useLogOut()" v-tooltip="'Вийти'">
-            <img v-if="image === null" loading="lazy" :src="image" height="40" width="40" alt="avatar">
+            <img v-if="image" loading="lazy" :src="image" height="40" width="40" alt="avatar">
             <v-icon v-else size="large" :icon="'mdi-account'"></v-icon>
             {{ name }}
 

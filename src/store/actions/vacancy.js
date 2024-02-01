@@ -2,16 +2,14 @@ import axiosInstance from "../../services/axios.js";
 import { useEmploymentStore } from "../employmentStore.js";
 import { storeToRefs } from "pinia";
 
-export async function getVacancies(name, area) {
+export async function getVacancies(title, profession_id, area_id) {
     const { setVacancies, setIsLoading } = useEmploymentStore();
     setIsLoading(true);
 
     try {
         const response = await axiosInstance.get(`/vacancies`, {
-            params: { name, area },
+            params: { title, area_id, profession_id },
         });
-
-        console.log(response.data.data);
         setVacancies(response.data.data);
     } catch (error) {
     } finally {

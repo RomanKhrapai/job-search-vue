@@ -3,13 +3,13 @@ import { useEmploymentStore } from "../employmentStore.js";
 import { getCandidateReviews } from "./review";
 import { storeToRefs } from "pinia";
 
-export async function getCandidates(name, area) {
+export async function getCandidates(title, profession_id, area_id) {
     const { setCandidates, setIsLoading } = useEmploymentStore();
     setIsLoading(true);
 
     try {
         const response = await axiosInstance.get(`/candidates`, {
-            params: { name, area },
+            params: { title, area_id, profession_id },
         });
 
         setCandidates(response.data.data);

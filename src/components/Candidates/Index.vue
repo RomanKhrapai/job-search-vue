@@ -1,12 +1,11 @@
 <template>
     <div>
         <FilterBox class="filter">
-            <CustomInput v-model="name" :label="'Name:'" />
-            <CustomInput v-model="profession" :label="'profession:'" />
-            <CustomInput v-model="area" :label="'area:'" />
-            <v-btn icon="mdi-magnify">
-                Button
-            </v-btn>
+            <CustomInput v-model="name" label='Search:' class="filter_input" />
+            <CustomOneSearchSelect v-model="profession" class="" :label="'profession'" name="profession"
+                :list-class="'relative'" :options="professions" :noBtn="true" />
+            <CustomOneSearchSelect v-model="area" class="" :label="'area'" name="area" :list-class="'relative'"
+                :options="areas" :noBtn="true" />
         </FilterBox>
 
         <template v-for="candidate in candidates">
@@ -58,14 +57,15 @@
 
 <script setup>
 import FilterBox from "../shared/FilterBox.vue"
-import CustomInput from "../shared/CustomInput.vue"
-// import Button from "../shared/form/Button/Button.vue";
+import CustomInput from "../shared/form/CustomInput/CustomInput.vue";
+import CustomOneSearchSelect from "../shared/form/CustomInput/CustomOneSearchSelect.vue";
 import { useAuthStore } from "../../store/authStore"
 // import { useGenreStore } from "../store/genresStore"
 import { storeToRefs } from "pinia"
 import { debounce } from "../../utils/debounce"
 // import Pagination from "./Pagination.vue"
 import { useEmploymentStore } from '../../store/employmentStore';
+import { useFormParametersStore } from '../../store/formParametersStore';
 import { ref, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 
@@ -74,10 +74,12 @@ import { getCandidates } from '../../store/actions/candidate';
 const employmentStore = useEmploymentStore();
 
 const { candidates } = storeToRefs(employmentStore);
+const { professions, areas } = storeToRefs(useFormParametersStore());
+const { getProfessions, getAreas } = useFormParametersStore();
 
 const name = ref("")
-const area = ref("")
-const profession = ref("")
+const profession = ref({ id: '', name: '' });
+const area = ref({ id: '', name: '' });
 
 const router = useRouter();
 
@@ -98,19 +100,41 @@ function truncatedText(text, maxLength = 200) {
 
 watch(name, () => {
     debounce(() => {
-        getCandidates(name.value, area.value);
+        getCandidates(name.value, profession.value.id, area.value.id);
     },
         200)
 })
 
 watch(area, () => {
     debounce(() => {
-        getCandidates(name.value, area.value);
+        if (area.value.id) {
+            getCandidates(name.value, profession.value.id, area.value.id);
+        }
+        getAreas(areas.value.name, 10);
+    },
+        200)
+})
+watch(profession, () => {
+    debounce(() => {
+        if (profession.value.id) {
+            getCandidates(name.value, profession.value.id, area.value.id);
+        }
+        getProfessions(profession.value.name, 10);
     },
         200)
 })
 
+
+
+
 onMounted(() => {
+    if (!professions?.length !== 0) {
+        getProfessions('', 10);
+    }
+    if (!areas?.length !== 0) {
+        getAreas('', 10);
+    }
+
     getCandidates();
 })
 

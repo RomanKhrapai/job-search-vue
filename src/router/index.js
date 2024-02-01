@@ -28,7 +28,7 @@ const routes = [
                 path: "user-update",
                 name: "user-update",
                 component: () => import("../components/Office/UserUpdate.vue"),
-                meta: {},
+                meta: { isAuthorized: true },
                 alias: "sadd",
             },
         ],
@@ -140,12 +140,10 @@ const router = createRouter({
 
 function query(store, to, from) {
     if (to.query?.token) {
-        const { onAuth } = useAuthStore();
         localStorage.access_token = to.query.token;
         axiosInstance.defaults.headers.common[
             "Authorization"
         ] = `Bearer ${response.data.access_token}`;
-        onAuth();
     }
 
     if (
@@ -173,7 +171,8 @@ function googleRoute(to, from, next, onAuth) {
         const url = new URL(window.location.href);
         url.search = "";
         window.history.replaceState({}, "", url.href);
-        onAuth();
+        return next({ name: "home" });
+        // onAuth();
     }
 
     if (to.query?.new) {
@@ -192,18 +191,23 @@ router.beforeEach((to, from, next) => {
     if (to.path !== from.path) {
     }
 
-    const authStatus = to.matched.find((record) => record.meta.role)?.meta
-        ?.role;
+    const isAuth = to.matched.find(
+        (record) => record.meta.isAuthorized === true
+    );
     const isAuthorizedRoute = to.matched.find((record) => record.meta.role);
+    const isEmploer = to.matched.find((record) => record.meta.role == 2);
+    const isWorker = to.matched.find((record) => record.meta.role == 3);
 
     console.log(to.matched.find((record) => record.meta.role));
 
-    // if (!authStatus) {
+    // if (!isAuth) {
     //     next();
-    // } else if (!isAuthorized && isAuthorizedRoute) {
-    //     setPath(to.path);
-    //     next({ name: "login" });
-    // } else if (authStatus === "guest") {
+    // } else
+    if (!isAuthorized && isAuthorizedRoute) {
+        setPath(to.path);
+        next({ name: "login" });
+    }
+    // else if (authStatus === "guest") {
     //     next();
     // } else if (authStatus === "2"&&) {
     //     next();

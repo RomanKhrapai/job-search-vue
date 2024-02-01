@@ -6,7 +6,7 @@
                 :class="[isValid && 'no-margin', !isValid && 'custom-input--error', isFocus && 'border']" autocomplete="off"
                 list="" :value="props.modelValue.name" v-bind="$attrs" class="custom-input">
 
-            <Button class="add-btn" type="button" @click="optionAdd"> add </Button>
+            <Button v-if="!noBtn" class="add-btn" type="button" @click="optionAdd"> add </Button>
             <span v-if="!isValid" class=" custom-input__error">{{ error }}</span>
         </label>
 
@@ -33,6 +33,10 @@ const form = inject('form', null);
 
 
 const props = defineProps({
+    noBtn: {
+        type: Boolean,
+        default: "false",
+    },
     options: {
         type: Array,
         default: () => [
@@ -149,23 +153,24 @@ option:hover,
 
 .block {
     display: block;
+
 }
 
 .border {
-    border-radius: "5px 5px 0 0"
+    border-radius: 15px 15px 0 0 !important
 }
 
 .list {
+    position: absolute;
+    top: 62px;
+    z-index: 5000;
     background-color: white;
     border: 1px solid blue;
-    border-radius: 0 0 5px 5px;
+    border-radius: 0 0 15px 15px;
     border-top: none;
     font-family: sans-serif;
-    width: 350px;
+    width: 100%;
     padding: 5px;
-    overflow-y: scroll;
-    height: 200px;
-
 }
 
 option {

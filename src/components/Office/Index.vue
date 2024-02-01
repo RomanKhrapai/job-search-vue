@@ -103,4 +103,8 @@ watch(profession, () => {
 getProfessions('', 10);
 </script>
   
-<style scoped></style>
+<style scoped>
+div.card-form {
+    overflow: visible !important;
+}
+</style>
