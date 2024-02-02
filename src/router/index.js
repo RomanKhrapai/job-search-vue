@@ -162,7 +162,7 @@ function query(store, to, from) {
     setTimeout(store.startFetch, 1);
 }
 
-function googleRoute(to, from, next, onAuth) {
+function googleRoute(to, from, next, onAuth,setIsAuthorized) {
     if (to.query?.token) {
         localStorage.access_token = to.query.token;
         axiosInstance.defaults.headers.common[
@@ -171,12 +171,14 @@ function googleRoute(to, from, next, onAuth) {
         const url = new URL(window.location.href);
         url.search = "";
         window.history.replaceState({}, "", url.href);
-        return next({ name: "home" });
-        // onAuth();
-    }
+        setIsAuthorized(true);
+        onAuth();
 
-    if (to.query?.new) {
-        return next({ name: "user-update" });
+        if (to.query?.new) {
+            return next({ name: "user-update" });
+        }
+
+        return next({ name: "home" });
     }
 }
 
@@ -184,9 +186,9 @@ router.beforeEach((to, from, next) => {
     console.log("to= ", to);
     console.log("from= ", from);
 
-    const { onAuth, setPath } = useAuthStore();
+    const { onAuth, setPath,setIsAuthorized } = useAuthStore();
     const { isAuthorized, role } = storeToRefs(useAuthStore());
-    googleRoute(to, from, next, onAuth);
+    googleRoute(to, from, next, onAuth,setIsAuthorized);
 
     if (to.path !== from.path) {
     }

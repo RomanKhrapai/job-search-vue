@@ -27,9 +27,11 @@ export const useAuthStore = defineStore("auth", () => {
     const email = computed(() => auth.value.user.email);
     const phone = computed(() => auth.value.user.phone);
     const companies = computed(() => auth.value.companies);
-    const image = computed(
-        () => "http://127.0.0.1:8080/" + auth.value.user.image
-    );
+    const image = computed(() => {
+        auth.value.user.image
+            ? "http://127.0.0.1:8080/" + auth.value.user.image
+            : null;
+    });
     const path = computed(() => auth.value.oldPath);
     const isAuthorized = computed(() => auth.value.isAuthorized);
 
@@ -49,7 +51,9 @@ export const useAuthStore = defineStore("auth", () => {
 
         try {
             const token = localStorage.getItem("access_token");
-
+            if (auth.value.role) {
+                return;
+            }
             if (!token) {
                 auth.value.isLoading = false;
                 return;
