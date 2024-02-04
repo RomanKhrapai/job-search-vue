@@ -1,12 +1,6 @@
 import { defineStore } from "pinia";
 import { useToast } from "vue-toastification";
 import axiosInstance from "../services/axios";
-import {
-    storeVacancy,
-    getVacancies,
-    getVacancy,
-    deleteVacancy,
-} from "./actions/vacancy.js";
 
 import { ref, computed } from "vue";
 

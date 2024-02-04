@@ -25,6 +25,12 @@ const routes = [
                 alias: "sadd",
             },
             {
+                path: "chat",
+                name: "chat",
+                component: () => import("../components/chat/Chat.vue"),
+                meta: {},
+            },
+            {
                 path: "user-update",
                 name: "user-update",
                 component: () => import("../components/Office/UserUpdate.vue"),
@@ -162,7 +168,7 @@ function query(store, to, from) {
     setTimeout(store.startFetch, 1);
 }
 
-function googleRoute(to, from, next, onAuth,setIsAuthorized) {
+function googleRoute(to, from, next, onAuth, setIsAuthorized) {
     if (to.query?.token) {
         localStorage.access_token = to.query.token;
         axiosInstance.defaults.headers.common[
@@ -186,9 +192,9 @@ router.beforeEach((to, from, next) => {
     console.log("to= ", to);
     console.log("from= ", from);
 
-    const { onAuth, setPath,setIsAuthorized } = useAuthStore();
+    const { onAuth, setPath, setIsAuthorized } = useAuthStore();
     const { isAuthorized, role } = storeToRefs(useAuthStore());
-    googleRoute(to, from, next, onAuth,setIsAuthorized);
+    googleRoute(to, from, next, onAuth, setIsAuthorized);
 
     if (to.path !== from.path) {
     }

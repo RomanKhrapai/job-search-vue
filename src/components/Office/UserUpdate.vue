@@ -24,9 +24,9 @@
                     :label="'phone'" :rules="phoneRules" name="phone" />
 
                 <div class="wrapper_radio">
-                    <CustomRadio v-model="role" type="radio" name="role" value='3'
-                        class="registration__input check-box__input" :label="'Employer'" />
                     <CustomRadio v-model="role" type="radio" name="role" value='2'
+                        class="registration__input check-box__input" :label="'Employer'" />
+                    <CustomRadio v-model="role" type="radio" name="role" value='3'
                         class="registration__input check-box__input" :label="'Worker'" />
                 </div>
 
@@ -47,9 +47,9 @@
                                 autocomplete="current-oldPassword" placeholder="oldPassword" name="oldPassword"
                                 :rules="oldPasswordRules" class="registration__input" :label="'oldPassword'" />
                             <div v-if="!roleStore" class="wrapper_radio">
-                                <CustomRadio v-model="role" type="radio" name="role" value='3'
-                                    class="registration__input check-box__input" :label="'Employer'" />
                                 <CustomRadio v-model="role" type="radio" name="role" value='2'
+                                    class="registration__input check-box__input" :label="'Employer'" />
+                                <CustomRadio v-model="role" type="radio" name="role" value='3'
                                     class="registration__input check-box__input" :label="'Worker'" />
                             </div>
 

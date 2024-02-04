@@ -5,6 +5,11 @@
                 add company
             </v-btn>
         </router-link>
+        <router-link :to="{ name: 'chat' }">
+            <v-btn color="green-darken-1" variant="text">
+                chat
+            </v-btn>
+        </router-link>
         <!-- <router-link to="/companies/create"> -->
         <router-link :to="{ name: 'user-update' }">
             <v-btn color="green-darken-1" variant="text">

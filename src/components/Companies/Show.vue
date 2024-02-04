@@ -3,15 +3,14 @@ import CustomOneSearchSelect from "../shared/form/CustomInput/CustomOneSearchSel
 import CustomForm from "../shared/form/CustomForm.vue";
 import NoFound from '.././NoFound.vue';
 import Reviews from '../Reviews.vue';
-// import ActivPanel from './ActivPanel.vue';
 import {
     maxString, minString, isRequired,
 } from "../../utils/validationRules";
 import { debounce } from "../../utils/debounce";
 import { useEmploymentStore } from "../../store/employmentStore";
-// import { useAuthStore } from '../../store/authStore.js';
 import { useFormParametersStore } from '../../store/formParametersStore';
-// import useComputed from '../../utils/useComputed';
+import { useAuthStore } from "../../store/authStore";
+import { useChatsStore } from "../../store/chatsStore";
 import { ref, defineProps, computed, watch } from 'vue'
 import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router'
@@ -24,7 +23,10 @@ const { id } = defineProps({
     id: String,
 });
 
-const { company, isLoading, reviews } = storeToRefs(useEmploymentStore())
+const { role } = storeToRefs(useAuthStore());
+const { createChats, setCurrentChat } = useChatsStore();
+const { chatsList } = storeToRefs(useChatsStore());
+const { company, isLoading } = storeToRefs(useEmploymentStore())
 const { professions } = storeToRefs(useFormParametersStore());
 const { getProfessions, setProfesion } = useFormParametersStore();
 
@@ -55,6 +57,18 @@ function handleSubmit() {
             path: '/vacancies/create',
         })
     }
+}
+async function toChatSubmit() {
+
+    let chat = chatsList.value.find(item => item.companyId === id)
+    if (!chat) {
+        chat = await createChats(id);
+    }
+    else { setCurrentChat(chat); };
+
+    router.push({
+        name: 'chat',
+    })
 }
 
 function redirectTo(path) {
@@ -152,6 +166,11 @@ getCompamyReviews(id);
                                         </v-card-actions>
                                     </v-card>
                                 </v-dialog>
+                            </v-card-actions>
+                            <v-card-actions v-if="role === 3">
+                                <v-btn color="deep-purple-lighten-2" variant="text" @click="toChatSubmit">
+                                    go to chat
+                                </v-btn>
                             </v-card-actions>
                         </div>
                     </div>
