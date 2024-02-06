@@ -29,10 +29,10 @@ export const useChatsStore = defineStore("chats", () => {
         if (!userId.value) {
             console.log("error");
         }
-        const channel = pusher.subscribe(
-            `private-send_message_${userId.value}`
-        );
-        // const channel = pusher.subscribe(`send_message_${userId.value}`);
+        // const channel = pusher.subscribe(
+        //     `private-send_message_${userId.value}`
+        // );
+        const channel = pusher.subscribe(`send_message_${userId.value}`);
         channel.bind("send_message", (data) => {
             setSuccessfulMessage("you have a new message");
             const chatId = data.message.chatId;
