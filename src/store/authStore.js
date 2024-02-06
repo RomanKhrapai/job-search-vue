@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { useToast } from "vue-toastification";
+import { useChatsStore } from "./chatsStore";
 import axiosInstance from "../services/axios";
 
 import { ref, computed } from "vue";
@@ -22,14 +23,15 @@ export const useAuthStore = defineStore("auth", () => {
         companies: [],
     });
 
+    const userId = computed(() => auth.value.user.id);
     const role = computed(() => auth.value.user.role);
     const name = computed(() => auth.value.user.name);
     const email = computed(() => auth.value.user.email);
     const phone = computed(() => auth.value.user.phone);
     const companies = computed(() => auth.value.companies);
     const image = computed(() => {
-        auth.value.user.image
-            ? "http://127.0.0.1:8080/" + auth.value.user.image
+        return auth.value.user.image
+            ? "http://127.0.0.1:8080/storage/" + auth.value.user.image
             : null;
     });
     const path = computed(() => auth.value.oldPath);
@@ -72,6 +74,9 @@ export const useAuthStore = defineStore("auth", () => {
 
             auth.value.companies = response.data.companies;
             auth.value.isAuthorized = true;
+
+            const { useChenel } = useChatsStore();
+            useChenel();
         } catch (error) {
             auth.value.isAuthorized = false;
             localStorage.removeItem("access_token");
@@ -100,6 +105,7 @@ export const useAuthStore = defineStore("auth", () => {
             ] = `Bearer ${response.data.access_token}`;
 
             auth.value.isAuthorized = true;
+            useChenel();
         } catch (error) {
         } finally {
             auth.value.isLoading = false;
@@ -199,6 +205,7 @@ export const useAuthStore = defineStore("auth", () => {
             ] = `Bearer ${response.data.access_token}`;
 
             auth.value.isAuthorized = true;
+            useChenel();
         } catch (error) {
         } finally {
             auth.value.isLoading = false;
@@ -214,6 +221,7 @@ export const useAuthStore = defineStore("auth", () => {
         image,
         email,
         phone,
+        userId,
 
         setPath,
         setIsAuthorized,

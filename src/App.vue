@@ -8,6 +8,9 @@ import { useAuthStore } from "./store/authStore"
 import { storeToRefs } from "pinia"
 import { ref, watch, onBeforeMount } from "vue";
 import { useRouter, useRoute } from 'vue-router';
+import { toast } from 'vue3-toastify';
+import { useChatsStore } from "./store/chatsStore";
+
 
 const auth = useAuthStore();
 
@@ -17,7 +20,8 @@ const route = useRoute();
 const isNightMode = ref(null)
 const tab = ref(null)
 
-const { isAuthorized, path, role } = storeToRefs(auth)
+const { successfulMessage } = storeToRefs(useChatsStore());
+const { isAuthorized, path, role } = storeToRefs(useAuthStore());
 
 watch(() => route.meta.id, (id) => {
   tab.value = id;
@@ -38,6 +42,16 @@ onBeforeMount(() => {
     "(prefers-color-scheme: dark)"
   ).matches;
   isNightMode.value = isNight === null ? !hasDarkPreference : isNight
+})
+
+
+watch(successfulMessage, (newVal) => {
+  if (newVal) {
+    toast(newVal);
+  }
+  console.log(newVal);
+  console.log(successfulMessage);
+  console.log('newVal');
 })
 
 auth.onAuth();
