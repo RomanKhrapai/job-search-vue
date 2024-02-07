@@ -108,7 +108,8 @@ getCompamyReviews(id);
                         <div class='film_info'>
                             <div class="box">
                                 <v-card-title>{{ company.name }}</v-card-title>
-
+                                <v-rating half-increments :length="5" readonly :size="28" :model-value="company.avgVote / 2"
+                                    color="warning" active-color="warning" />
                                 <v-card-subtitle>
                                     <v-card-title>address: </v-card-title>
                                     <span class="me-1">{{ company.address }}</span>

@@ -3,9 +3,26 @@
         <FilterBox class="filter">
             <CustomInput v-model="name" :label="'Search name:'" class="filter_input" />
             <CustomInput v-model="area" :label="'Search address:'" class="filter_input" />
+            <div class="sort_desc">
+
+                <v-btn v-if="isdesc" density="comfortable" icon="mdi-sort-ascending" class="sort_btn-text"
+                    @click="isdesc = false"></v-btn>
+                <v-btn v-else density="comfortable" icon="mdi-sort-descending" class="sort_btn-text"
+                    @click="isdesc = true"></v-btn>
+
+
+                <v-btn density="comfortable" icon="mdi-timer-check-outline" class="sort_btn-text"
+                    :class="{ 'active': sort === 'created_at' }" @click="sort = 'created_at'"></v-btn>
+                <v-btn density="comfortable" icon="mdi-star-circle-outline" class="sort_btn-text"
+                    :class="{ 'active': sort === 'received_reviews_avg_vote' }"
+                    @click="sort = 'received_reviews_avg_vote'"></v-btn>
+            </div>
         </FilterBox>
+
+
         <v-row no-gutters>
             <v-col v-for="company in companies" :key="company.id" cols="12" sm="4">
+
                 <v-sheet class="ma-2 pa-2">
                     <v-card class="mx-auto" @click="redirectTo(`/companies/${company.id}`)" max-width="344">
 
@@ -15,7 +32,8 @@
                         <v-card-title>
                             {{ company.name }}
                         </v-card-title>
-
+                        <v-rating half-increments :length="5" readonly :size="28" :model-value="company.avgVote / 2"
+                            color="warning" active-color="warning" />
                         <v-card-subtitle>
                             Вакансій: {{ company.vacancies.length }}
                         </v-card-subtitle>
@@ -31,7 +49,6 @@
             </v-col>
         </v-row>
         <!-- <Pagination /> -->
-
     </div>
 </template>
 
@@ -55,8 +72,11 @@ const employmentStore = useEmploymentStore();
 const { role } = storeToRefs(useAuthStore());
 const { companies } = storeToRefs(employmentStore);
 
-const name = ref("")
-const area = ref('')
+const name = ref("");
+const area = ref('');
+const isdesc = ref(false);
+const sort = ref('');
+
 
 const router = useRouter();
 
@@ -66,17 +86,9 @@ function redirectTo(path) {
         path,
     })
 }
-
-watch(name, () => {
+watch([name, area, isdesc, sort], ([newName, newArea, newIsdesc, newSort]) => {
     debounce(() => {
-        getCompanies(name.value, area.value);
-    },
-        200)
-})
-
-watch(area, () => {
-    debounce(() => {
-        getCompanies(name.value, area.value);
+        getCompanies(newName, newArea, newIsdesc, newSort);
     },
         200)
 })
@@ -101,5 +113,33 @@ onMounted(() => {
 
 .filter_input {
     margin-bottom: -30px;
+}
+
+.swich_hide .v-selection-control__wrapper {
+    visibility: hidden;
+    height: 0;
+    width: 0;
+}
+
+.sort_desc {
+    display: flex;
+    align-items: center;
+}
+
+.sort_btn-text {
+
+    margin: 5px;
+    /*  display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: aquamarine;
+    height: 30px;
+    width: 30px;
+    border-radius: 15px;
+    border: solid #00000012; */
+}
+
+.active {
+    background-color: aquamarine;
 }
 </style>

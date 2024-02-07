@@ -29,10 +29,17 @@ export const useChatsStore = defineStore("chats", () => {
         if (!userId.value) {
             console.log("error");
         }
+
+        // pusher
+        //     .channel(`send_message_${userId.value}`)
+        //     .listen("send_message", (event) => {
+        //         console.log("Received event from private channel:", event);
+        //     });
         // const channel = pusher.subscribe(
         //     `private-send_message_${userId.value}`
         // );
         const channel = pusher.subscribe(`send_message_${userId.value}`);
+
         channel.bind("send_message", (data) => {
             setSuccessfulMessage("you have a new message");
             const chatId = data.message.chatId;

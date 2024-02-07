@@ -44,3 +44,9 @@ body{
 .tooltip:hover .tooltiptext {
   visibility: visible;
 }
+
+.swich_hide .v-selection-control__wrapper {
+  visibility: hidden;
+  height: 0;
+  width: 0;
+}

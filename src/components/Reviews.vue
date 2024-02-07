@@ -99,6 +99,7 @@ const partOrFullReviews = computed(() => {
         isShowMore.value = false;
     }
     const arr = [...reviews.value]
+    // console.log((isShowMore.value ? arr : arr.splice(0, 3)));
     return isShowMore.value ? arr : arr.splice(0, 3);
 })
 
@@ -113,14 +114,15 @@ const partOrFullReviews = computed(() => {
             </v-btn>
         </div>
 
-        <ul class="reviews_list" v-if="reviews">
-            <template v-for="review, i in partOrFullReviews">
+        <ul class="reviews_list" v-if="reviews.length !== 0">
+            <template v-for="review in partOrFullReviews">
+
                 <li class=" reviews_item" @click="openDialog(review.review, 200)">
                     <div class="review_container">
                         <div class=" reviews_foto-box">
-                            <img v-if="review.owner.image" class="reviews_foto" width="60" height="60"
-                                :src="item.owner.image" alt="foto">
-                            <img v-if="!review.owner.image" class="reviews_foto" width="60" height="60"
+                            <img v-if="review?.owner.image" class="reviews_foto" width="60" height="60"
+                                :src="review.owner.image" alt="foto">
+                            <img v-if="!review?.owner.image" class="reviews_foto" width="60" height="60"
                                 src="/src/assets/images/avatar_img.jpg" alt="foto">
                         </div>
                         <div class=" reviews_body">

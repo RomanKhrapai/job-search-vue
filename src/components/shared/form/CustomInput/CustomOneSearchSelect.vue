@@ -53,7 +53,7 @@ const props = defineProps({
     },
     modelValue: {
         type: Object,
-        default: [],
+        default: {},
     },
     errorMessage: {
         type: String,
@@ -125,6 +125,7 @@ function handleFocus() {
 };
 
 function blurHandler(e) {
+
     setTimeout(() => {
         isFocus.value = false;
         validate();
