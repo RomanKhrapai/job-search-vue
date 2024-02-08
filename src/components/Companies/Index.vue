@@ -13,6 +13,7 @@
 
                 <v-btn density="comfortable" icon="mdi-timer-check-outline" class="sort_btn-text"
                     :class="{ 'active': sort === 'created_at' }" @click="sort = 'created_at'"></v-btn>
+
                 <v-btn density="comfortable" icon="mdi-star-circle-outline" class="sort_btn-text"
                     :class="{ 'active': sort === 'received_reviews_avg_vote' }"
                     @click="sort = 'received_reviews_avg_vote'"></v-btn>

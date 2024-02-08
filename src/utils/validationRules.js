@@ -59,6 +59,24 @@ export const maxString = (limit) => (val) => {
     return val.length >= limit ? `must be more than ${limit} characters` : null;
 };
 
+export const isRequiredId = (data) => {
+    return !data?.id ? `select from the list` : null;
+};
+
+export const isRequiredObjName = (data) => {
+    return !data?.name?.trim() ? `select from the list` : null;
+};
+export const maxStringObjName = (limit) => (val) => {
+    return val.name.length >= limit
+        ? `must be more than ${limit} characters`
+        : null;
+};
+export const minStringObjName = (limit) => (val) => {
+    return val.name.length <= limit
+        ? `must be less than ${limit} characters`
+        : null;
+};
+
 export default {
     isRequired,
     nameValidation,

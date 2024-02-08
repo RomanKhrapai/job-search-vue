@@ -81,7 +81,7 @@ const type = ref("")
 const description = ref("")
 const selectedSkills = ref([]);
 
-const form = ref(null)
+const form = ref(null);
 const { isAuthorized } = storeToRefs(useAuthStore());
 const { getAreas, getFormParameters } = useFormParametersStore();
 const { company, vacancy } = storeToRefs(useEmploymentStore());

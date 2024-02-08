@@ -1,16 +1,18 @@
 <script setup>
-// import Modal from './shared/Modal.vue';
+import CustomTextArea from '../shared/form/CustomInput/CustomTextArea.vue';
+import CustomOneSearchSelect from '../shared/form/CustomInput/CustomOneSearchSelect.vue'
+import CustomForm from '../shared/form/CustomForm.vue';
 import NoFound from '.././NoFound.vue';
 // import Reviews from './Reviews.vue'
 // import ActivPanel from './ActivPanel.vue';
 import { useEmploymentStore } from "../../store/employmentStore";
-import { useAuthStore } from '../../store/authStore.js';
-// import { useReviewsStore } from '../store/reviewsStore';
-import useComputed from '../../utils/useComputed';
-import { ref, defineProps } from 'vue'
+import { ref, defineProps, computed, watch } from 'vue'
 import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router'
 import { getVacancy, deleteVacancy } from "../../store/actions/vacancy"
+import { maxString, isRequiredId } from '../../utils/validationRules';
+import { getCandidates } from '../../store/actions/candidate';
+import { useChatsStore } from '../../store/chatsStore';
 
 const router = useRouter();
 
@@ -18,9 +20,18 @@ const { id } = defineProps({
     id: String,
 });
 
-const { vacancy, isLoading } = storeToRefs(useEmploymentStore())
+const { vacancy, isLoading, candidates } = storeToRefs(useEmploymentStore())
+const { sendApplyVacancy, getChatsList } = useChatsStore();
 
 const dialogDelete = ref(false);
+const dialogSendApp = ref(false);
+
+const candidate = ref({ id: '', name: '' });
+const message = ref('');
+const formSendApp = ref(null);
+
+const messageRules = computed(() => [maxString(1000),]);
+const candidateRules = computed(() => [isRequiredId,]);
 
 function handDestroy() {
     deleteVacancy(id)
@@ -30,14 +41,33 @@ function handDestroy() {
     })
 }
 
-function redirectTo(path) {
+function sendApply() {
+    const isFormValid = formSendApp.value.validate()
+    if (isFormValid) {
+        sendApplyVacancy(message.value, candidate.value, vacancy.value)
+        dialogSendApp.value = false;
+        router.push({
+            name: 'chat',
+        })
+    };
 
-    router.push({
-        path,
-    })
+
 }
 
+
+const resumes = computed(() => {
+    return candidates.value.map(item => {
+        return { id: item.id, name: item.title }
+    })
+});
+
+if (candidates.value.length === 0) {
+    getCandidates();
+}
+
+getChatsList();
 getVacancy(id);
+
 
 </script>
 
@@ -49,6 +79,38 @@ getVacancy(id);
                     <v-card>
                         <div class="box">
                             <v-card-title>{{ vacancy.title }}</v-card-title>
+                            <v-dialog v-model="dialogSendApp" width="auto">
+                                <template v-slot:activator="{ props }">
+                                    <v-btn color="primary" v-bind="props">send apply for a job </v-btn>
+                                </template>
+                                <v-card class="card-form">
+                                    <CustomForm ref="formSendApp" class="login__form" @submit.prevent="sendApply">
+
+                                        <v-card-title class="text-h5"> send apply for this job vacancy.title
+                                        </v-card-title>
+                                        <v-card-text>
+
+                                            <CustomOneSearchSelect v-model="candidate" class="login__input"
+                                                :label="'resume'" name="resume" :list-class="'relative'" :options="resumes"
+                                                :rules="candidateRules" :no-btn="true" />
+
+                                            <CustomTextArea v-model="message" autocomplete="message"
+                                                placeholder="enter message" name="message" :rules="messageRules"
+                                                class="login__input" label="message" />
+
+                                        </v-card-text>
+                                        <v-card-actions>
+                                            <v-spacer></v-spacer>
+                                            <v-btn color="green-darken-1" variant="text" @click="dialogSendApp = false">
+                                                Close
+                                            </v-btn>
+                                            <v-btn color="green-darken-1" variant="text" type="submit">send
+                                            </v-btn>
+
+                                        </v-card-actions>
+                                    </CustomForm>
+                                </v-card>
+                            </v-dialog>
                             <v-dialog v-if="vacancy.isOwner" v-model="dialogDelete" width="auto">
                                 <template v-slot:activator="{ props }">
                                     <v-btn color="primary" v-bind="props"> destroy </v-btn>

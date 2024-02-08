@@ -35,7 +35,7 @@ const form = inject('form', null);
 const props = defineProps({
     noBtn: {
         type: Boolean,
-        default: "false",
+        default: false,
     },
     options: {
         type: Array,
@@ -108,7 +108,7 @@ onBeforeUnmount(() => {
 function validate() {
     isValid.value = rules.every((rule) => {
 
-        const ruleResult = rule(props.modelValue.name);
+        const ruleResult = rule(props.modelValue);
         const hasPassed = !ruleResult
 
         if (!hasPassed) {

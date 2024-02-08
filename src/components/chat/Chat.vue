@@ -88,7 +88,7 @@
                                                 </span>
                                                 <span class=" messages_time">{{ message.date }}</span>
                                             </div>
-                                            <div> {{ message.content }}</div>
+                                            <div v-html="message.content"> </div>
                                         </div>
                                         <div class=" messages_foto-box">
                                             <img v-if="currentChat.yourImage" class="messages_foto" width="60" height="60"
@@ -114,7 +114,7 @@
                                                 </span>
                                                 <span class=" messages_time">{{ message?.date }}</span>
                                             </div>
-                                            <div> {{ message.content }}</div>
+                                            <div v-html="message.content"> </div>
                                         </div>
                                     </div>
 

@@ -4,7 +4,7 @@ import CustomForm from "../shared/form/CustomForm.vue";
 import NoFound from '.././NoFound.vue';
 import Reviews from '../Reviews.vue';
 import {
-    maxString, minString, isRequired,
+    isRequiredObjName, maxStringObjName, minStringObjName
 } from "../../utils/validationRules";
 import { debounce } from "../../utils/debounce";
 import { useEmploymentStore } from "../../store/employmentStore";
@@ -36,7 +36,7 @@ const dialogAddVacancy = ref(false);
 const profession = ref({ id: '', name: '' });
 const form = ref(null)
 
-const professionRules = computed(() => [isRequired, maxString(200), minString(3)]);
+const professionRules = computed(() => [isRequiredObjName, maxStringObjName(200), minStringObjName(3)]);
 
 // const { rating, count } = useComputed(company, readRating)
 function handDestroy() {

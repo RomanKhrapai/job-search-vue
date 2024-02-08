@@ -38,7 +38,7 @@ export const useChatsStore = defineStore("chats", () => {
         // const channel = pusher.subscribe(
         //     `private-send_message_${userId.value}`
         // );
-        const channel = pusher.subscribe(`send_message_${userId.value}`);
+        const channel = pusher.subscribe(`users_${userId.value}`);
 
         channel.bind("send_message", (data) => {
             setSuccessfulMessage("you have a new message");
@@ -59,6 +59,10 @@ export const useChatsStore = defineStore("chats", () => {
                     }),
                 ];
             }
+        });
+        channel.bind("send-pdf", (data) => {
+            setSuccessfulMessage("your report is ready");
+            console.log(data.pdf);
         });
     }
 
@@ -161,6 +165,52 @@ export const useChatsStore = defineStore("chats", () => {
         }
     }
 
+    async function sendApplyVacancy(content, resume, vacancy) {
+        const { userId } = storeToRefs(useAuthStore());
+        setIsError(true);
+        setIsLoading(true);
+
+        let chatId = chats.value.chatsList.find(
+            (chat) => chat.companyId === vacancy.company.id
+        )?.id;
+
+        if (!chatId) {
+            await createChats(vacancy.company.id, userId.value);
+            chatId = chats.value.chatsList.find(
+                (chat) => chat.companyId === vacancy.company.id
+            )?.id;
+        }
+
+        const message = `<<<<sending resume>>>> 
+        I would like to submit my resume
+         <a href="/candidates/${resume.id} " target="_blank">
+         ${resume.name}
+         </a> 
+         for the vacancy
+         <a href="/vacancies/${vacancy.id}" target="_blank">
+         ${vacancy.title}
+         </a><br>
+         ${content}`;
+
+        if (!chatId) return;
+        try {
+            const response = await axiosInstance.post(`/chats/${chatId}`, {
+                content: message,
+            });
+            chats.value.messages = [
+                response.data.data,
+                ...chats.value.messages.map((item) => {
+                    item.read = false;
+                    return item;
+                }),
+            ];
+        } catch (error) {
+            console.log(error);
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
     return {
         chats,
 
@@ -180,5 +230,6 @@ export const useChatsStore = defineStore("chats", () => {
         getChatsList,
         sendMessage,
         useChenel,
+        sendApplyVacancy,
     };
 });
