@@ -47,7 +47,7 @@ import CustomInput from "../shared/form/CustomInput/CustomInput.vue";
 import Button from "../shared/form/Button/Button.vue";
 import CustomOneSelect from "../shared/form/CustomInput/CustomOneSelect.vue";
 import {
-    maxString, minString, isRequired, isNumber, isPositiveNumber
+    maxString, minString, isRequired, isNumber, isPositiveNumber, isRequiredObjName
 } from "../../utils/validationRules";
 import MainTitle from "../shared/MainTitle.vue";
 import { useAuthStore } from "../../store/authStore"
@@ -84,7 +84,7 @@ const { profession, experience, types, natures, areas, skills } = storeToRefs(us
 const titleRules = computed(() => [isRequired, maxString(200), minString(3)]);
 const descriptionRules = computed(() => [isRequired, maxString(2000), minString(3)]);
 const skillsRules = computed(() => [isRequired, maxString(200), minString(3)]);
-const areaRules = computed(() => [isRequired]);
+const areaRules = computed(() => [isRequiredObjName]);
 const natureRules = computed(() => [isRequired]);
 const typeRules = computed(() => [isRequired]);
 const salaryRules = computed(() => [isRequired, isNumber, isPositiveNumber]);

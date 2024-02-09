@@ -20,7 +20,7 @@ const route = useRoute();
 const isNightMode = ref(null)
 const tab = ref(null)
 
-const { successfulMessage } = storeToRefs(useChatsStore());
+const { successfulMessage, errorMessage, infoMessage } = storeToRefs(useChatsStore());
 const { isAuthorized, path, role } = storeToRefs(useAuthStore());
 
 watch(() => route.meta.id, (id) => {
@@ -46,13 +46,20 @@ onBeforeMount(() => {
 
 
 watch(successfulMessage, (newVal) => {
-  if (newVal) {
-    toast(newVal);
-  }
-  console.log(newVal);
-  console.log(successfulMessage);
-  console.log('newVal');
-})
+  if (newVal) toast(newVal, {
+    "type": "success"
+  })
+});
+watch(errorMessage, (newVal) => {
+  if (newVal) toast(newVal, {
+    "type": "error"
+  })
+});
+watch(infoMessage, (newVal) => {
+  if (newVal) toast(newVal, {
+    "type": "info"
+  })
+});
 
 auth.onAuth();
 </script>

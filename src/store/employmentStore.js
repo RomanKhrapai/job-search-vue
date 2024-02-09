@@ -20,8 +20,9 @@ export const useEmploymentStore = defineStore("employment", () => {
         candidate: {},
         candidates: [],
         reviews: [],
+        lastPage:1,
     });
-
+    const lastPage = computed(() => employment.value.lastPage);
     const reviews = computed(() => employment.value.reviews);
     const candidates = computed(() => employment.value.candidates);
     const candidate = computed(() => employment.value.candidate);
@@ -34,6 +35,10 @@ export const useEmploymentStore = defineStore("employment", () => {
     const imageURL = computed(() => employment.value.imageURL);
     const fullImageURL = computed(() => employment.value.fullImageURL);
     const errorImage = computed(() => employment.value.errorImage);
+
+    function setLastPage(data) {
+        employment.value.lastPage = data;
+    }
 
     function setReviews(data) {
         employment.value.reviews = data;
@@ -118,6 +123,7 @@ export const useEmploymentStore = defineStore("employment", () => {
         candidates,
         candidate,
         reviews,
+        lastPage,
 
         imageURL,
         fullImageURL,
@@ -136,5 +142,7 @@ export const useEmploymentStore = defineStore("employment", () => {
         setCompany,
 
         setReviews,
+
+        setLastPage,
     };
 });

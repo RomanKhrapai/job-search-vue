@@ -30,7 +30,6 @@ export const useFormParametersStore = defineStore("formParameters", () => {
 
     function setProfesion(data) {
         formParameters.value.profession = data;
-        console.log(data.id);
         if (data.id) {
             getSkills(data.id);
         }
@@ -47,7 +46,7 @@ export const useFormParametersStore = defineStore("formParameters", () => {
     async function getProfessions(name, limit) {
         formParameters.value.isLoading = true;
         try {
-            const response = await axiosInstance.get(`profession/search`, {
+            const response = await axiosInstance.get(`professions/search`, {
                 params: { name: name, limit: limit },
             });
             formParameters.value.professions = response.data;
@@ -60,7 +59,7 @@ export const useFormParametersStore = defineStore("formParameters", () => {
     async function getAreas(name, limit) {
         formParameters.value.isLoading = true;
         try {
-            const response = await axiosInstance.get(`area/search`, {
+            const response = await axiosInstance.get(`areas/search`, {
                 params: { name: name, limit: limit },
             });
 

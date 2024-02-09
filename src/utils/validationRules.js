@@ -48,7 +48,7 @@ export const isNumber = (val) => {
 
 export const isPositiveNumber = (val) => {
     const number = Number(val);
-    return isNaN(number) || number <= 0 ? "Must be a positive number" : null;
+    return isNaN(number) || number < 0 ? "Must be a positive number" : null;
 };
 
 export const minString = (limit) => (val) => {

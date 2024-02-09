@@ -15,8 +15,13 @@ export const useChatsStore = defineStore("chats", () => {
         chatsList: [],
         currentChat: null,
         messages: [],
-        successfulMessage: "",
+        successfulMessage: null,
+        errorMessage: null,
+        infoMessage: null,
     });
+
+    const errorMessage = computed(() => chats.value.errorMessage);
+    const infoMessage = computed(() => chats.value.infoMessage);
     const successfulMessage = computed(() => chats.value.successfulMessage);
     const messages = computed(() => chats.value.messages);
     const chatsList = computed(() => chats.value.chatsList);
@@ -30,18 +35,10 @@ export const useChatsStore = defineStore("chats", () => {
             console.log("error");
         }
 
-        // pusher
-        //     .channel(`send_message_${userId.value}`)
-        //     .listen("send_message", (event) => {
-        //         console.log("Received event from private channel:", event);
-        //     });
-        // const channel = pusher.subscribe(
-        //     `private-send_message_${userId.value}`
-        // );
         const channel = pusher.subscribe(`users_${userId.value}`);
 
         channel.bind("send_message", (data) => {
-            setSuccessfulMessage("you have a new message");
+            setInfoMessage("you have a new message");
             const chatId = data.message.chatId;
             chats.value.chatsList = chats.value.chatsList.map((item) => {
                 if (item.id === chatId && currentChat.value.id !== chatId) {
@@ -61,8 +58,13 @@ export const useChatsStore = defineStore("chats", () => {
             }
         });
         channel.bind("send-pdf", (data) => {
-            setSuccessfulMessage("your report is ready");
-            console.log(data.pdf);
+            window.open(
+                data.pdf + "?" + Math.random().toString(36).substring(7),
+                "_blank"
+            );
+        });
+        channel.bind("send-error", (data) => {
+            setErrorMessage(data.error);
         });
     }
 
@@ -70,6 +72,18 @@ export const useChatsStore = defineStore("chats", () => {
         chats.value.successfulMessage = data;
         setTimeout(() => {
             chats.value.successfulMessage = null;
+        }, 200);
+    }
+    function setInfoMessage(data) {
+        chats.value.infoMessage = data;
+        setTimeout(() => {
+            chats.value.infoMessage = null;
+        }, 200);
+    }
+    function setErrorMessage(data) {
+        chats.value.errorMessage = data;
+        setTimeout(() => {
+            chats.value.errorMessage = null;
         }, 200);
     }
 
@@ -85,6 +99,20 @@ export const useChatsStore = defineStore("chats", () => {
 
     function setIsLoading(data) {
         chats.value.isLoading = data;
+    }
+
+    async function generatePDF() {
+        setIsError(true);
+        setIsLoading(true);
+
+        try {
+            const response = await axiosInstance.get(`/reports/feedback`);
+            setInfoMessage(response.data.message);
+        } catch (error) {
+            console.log(error);
+        } finally {
+            chats.value.isLoading = false;
+        }
     }
 
     async function getChatsList() {
@@ -220,16 +248,21 @@ export const useChatsStore = defineStore("chats", () => {
         messages,
         currentChat,
         successfulMessage,
+        infoMessage,
+        errorMessage,
 
         setIsLoading,
         setIsError,
         setCurrentChat,
         setSuccessfulMessage,
+        setErrorMessage,
+        setInfoMessage,
 
         createChats,
         getChatsList,
         sendMessage,
         useChenel,
         sendApplyVacancy,
+        generatePDF,
     };
 });

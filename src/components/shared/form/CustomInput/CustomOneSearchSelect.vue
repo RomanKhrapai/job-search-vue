@@ -172,6 +172,8 @@ option:hover,
     font-family: sans-serif;
     width: 100%;
     padding: 5px;
+    max-height: 300px;
+    overflow: auto;
 }
 
 option {

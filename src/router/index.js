@@ -189,8 +189,8 @@ function googleRoute(to, from, next, onAuth, setIsAuthorized) {
 }
 
 router.beforeEach((to, from, next) => {
-    console.log("to= ", to);
-    console.log("from= ", from);
+    // console.log("to= ", to);
+    // console.log("from= ", from);
 
     const { onAuth, setPath, setIsAuthorized } = useAuthStore();
     const { isAuthorized, role } = storeToRefs(useAuthStore());
@@ -206,7 +206,7 @@ router.beforeEach((to, from, next) => {
     const isEmploer = to.matched.find((record) => record.meta.role == 2);
     const isWorker = to.matched.find((record) => record.meta.role == 3);
 
-    console.log(to.matched.find((record) => record.meta.role));
+    // console.log(to.matched.find((record) => record.meta.role));
 
     // if (!isAuth) {
     //     next();

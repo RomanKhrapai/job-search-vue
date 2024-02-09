@@ -1,19 +1,25 @@
 import axiosInstance from "../../services/axios.js";
 import { useEmploymentStore } from "../employmentStore.js";
 import { getCandidateReviews } from "./review";
+import { useChatsStore } from "../chatsStore";
 import { storeToRefs } from "pinia";
 
-export async function getCandidates(title, profession_id, area_id) {
-    const { setCandidates, setIsLoading } = useEmploymentStore();
+export async function getCandidates(title, profession_id, area_id, page) {
+    const { setCandidates, setIsLoading, setLastPage } = useEmploymentStore();
+    const { setErrorMessage } = useChatsStore();
     setIsLoading(true);
 
     try {
         const response = await axiosInstance.get(`/candidates`, {
-            params: { title, area_id, profession_id },
+            params: { title, area_id, profession_id, page },
         });
-
+        setLastPage(response.data.meta.last_page);
         setCandidates(response.data.data);
     } catch (error) {
+        if (error?.response?.status === 422) {
+            setErrorMessage("the query parameters are not valid");
+        }
+        console.log(error);
     } finally {
         setIsLoading(false);
     }
