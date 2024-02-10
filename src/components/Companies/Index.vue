@@ -87,7 +87,10 @@ function redirectTo(path) {
     })
 }
 
-watch([name, area, isdesc, sort, page], ([newName, newArea, newIsdesc, newSort, newPage]) => {
+watch([name, area, isdesc, sort, page], (
+    [newName, newArea, newIsdesc, newSort, newPage], [oldName, oldArea, oldIsdesc, oldSort, oldPage]
+) => {
+    if (newPage === oldPage) page.value = 1;
 
     const query = {};
     if (newName) query.name = newName;

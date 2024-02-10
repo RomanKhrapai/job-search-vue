@@ -8,7 +8,9 @@
             <CustomOneSearchSelect v-model="area" class="" :label="'area'" name="area" :list-class="'relative'"
                 :options="areas" :noBtn="true" />
         </FilterBox>
+
         <NoFound v-if="!isLoading && candidates.length === 0" />
+
         <div v-if="!isLoading && candidates.length !== 0">
             <template v-for="candidate in candidates">
                 <router-link :to="`/candidates/${candidate.id}`">
@@ -83,14 +85,10 @@ const { getProfessions, getAreas } = useFormParametersStore();
 const router = useRouter();
 const route = useRoute();
 
-
-
 const name = ref(route.query?.name || '')
 const page = ref(Number(route.query?.page) || 1);
 const profession = ref({ id: '', name: '' });
 const area = ref({ id: '', name: '' });
-
-
 
 function redirectTo(path) {
 
@@ -125,17 +123,13 @@ watch(
         [newName, newArea, newProfession, newPage],
         [oldName, oldArea, oldProfession, oldPage]
     ) => {
-        if (newPage !== oldPage) {
-            name.value = '';
-            if (Boolean(area.value.id)) area.value = { id: '', name: '' };
-            if (Boolean(profession.value.id)) profession.value = { id: '', name: '' };
-        } else {
-            page.value = 1;
 
-            debounce(() => {
-                getCandidates(newName, newProfession.id, newArea.id, newPage);
-            }, 200, 'getCandidates');
-        }
+        if (newPage === oldPage) page.value = 1;
+
+        debounce(() => {
+            getCandidates(newName, newProfession.id, newArea.id, newPage);
+        }, 200, 'getCandidates');
+
     });
 
 watch(area, (newArea) => {

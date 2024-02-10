@@ -8,7 +8,8 @@ export async function getCandidates(title, profession_id, area_id, page) {
     const { setCandidates, setIsLoading, setLastPage } = useEmploymentStore();
     const { setErrorMessage } = useChatsStore();
     setIsLoading(true);
-
+    setLastPage(1);
+    setCandidates([]);
     try {
         const response = await axiosInstance.get(`/candidates`, {
             params: { title, area_id, profession_id, page },
