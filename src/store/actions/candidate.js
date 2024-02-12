@@ -1,8 +1,28 @@
 import axiosInstance from "../../services/axios.js";
 import { useEmploymentStore } from "../employmentStore.js";
+import { useAuthStore } from "../authStore.js";
 import { getCandidateReviews } from "./review";
 import { useChatsStore } from "../chatsStore";
 import { storeToRefs } from "pinia";
+
+export async function getCandidateOffer(candidateId, deep) {
+    const { setVacancies, setIsLoading, setLastPage } = useEmploymentStore();
+    setIsLoading(true);
+    setLastPage(1);
+    try {
+        const response = await axiosInstance.get(
+            `/candidates/offers/${candidateId}`,
+            {
+                params: { deep },
+            }
+        );
+        setLastPage(response.data.meta.last_page);
+        setVacancies(response.data.data);
+    } catch (error) {
+    } finally {
+        setIsLoading(false);
+    }
+}
 
 export async function getCandidates(title, profession_id, area_id, page) {
     const { setCandidates, setIsLoading, setLastPage } = useEmploymentStore();
@@ -60,6 +80,7 @@ export async function storeCandidate({
     description,
 }) {
     const { setCandidate, setIsLoading } = useEmploymentStore();
+    const { authData } = useAuthStore();
     setIsLoading(true);
 
     try {
@@ -74,7 +95,7 @@ export async function storeCandidate({
             skills: skills,
             description: description,
         });
-
+        authData();
         setCandidate(response.data.data);
         return response.data.data.id;
     } catch (error) {
@@ -86,9 +107,12 @@ export async function storeCandidate({
 
 export async function deleteCandidate(id) {
     const { setIsLoading } = useEmploymentStore();
+    const { authData } = useAuthStore();
+
     setIsLoading(true);
     try {
         const response = await axiosInstance.delete(`/candidates/${id}`);
+        authData();
     } catch (error) {
         console.log(error);
     } finally {

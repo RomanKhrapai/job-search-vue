@@ -2,7 +2,6 @@
 
 import TogleDayOrNight from "@/components/TogleDayOrNight";
 import UserMenu from "./components/auth/UserMenu.vue";
-import SearchForm from "./components/shared/form/SearchForm.vue";
 import Loader from "./components/Loader.vue";
 import { useAuthStore } from "./store/authStore"
 import { storeToRefs } from "pinia"
@@ -101,9 +100,8 @@ auth.onAuth();
           </div>
 
         </v-tabs>
-        <UserMenu v-if="isAuthorized"> </UserMenu>
+        <UserMenu v-if="isAuthorized" />
       </div>
-      <SearchForm />
     </div>
     <main class="container">
       <RouterView />

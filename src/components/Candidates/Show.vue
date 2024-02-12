@@ -1,11 +1,8 @@
 <script setup>
-// import Modal from './shared/Modal.vue';
 import NoFound from '.././NoFound.vue';
 import Reviews from '../Reviews.vue';
-// import ActivPanel from './ActivPanel.vue';
 import { useEmploymentStore } from "../../store/employmentStore";
 import { getCandidate, deleteCandidate } from '../../store/actions/candidate';
-// import { useReviewsStore } from '../store/reviewsStore';
 import { ref, defineProps } from 'vue'
 import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router'

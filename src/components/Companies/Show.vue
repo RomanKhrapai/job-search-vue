@@ -94,18 +94,18 @@ getCompamyReviews(id);
 
         <v-card v-if="company" class="mx-auto my-12">
             <div>
-                <div class="film_box">
-                    <div class="film_box-background">
+                <div class="vacancy_box">
+                    <div class="vacancy_box-background">
 
-                        <div class="film_img-box">
-                            <div class="film_img">
+                        <div class="vacancy_img-box">
+                            <div class="vacancy_img">
                                 <v-img v-if="company?.image" :src="company.image" height="200" width="200" cover></v-img>
                                 <img v-if="!company?.image" height="200" width="200" src="/src/assets/images/fix-poster.jpg"
                                     alt="Постер фільму відсутній">
                             </div>
 
                         </div>
-                        <div class='film_info'>
+                        <div class='vacancy_info'>
                             <div class="box">
                                 <v-card-title>{{ company.name }}</v-card-title>
                                 <v-rating half-increments :length="5" readonly :size="28" :model-value="company.avgVote / 2"
@@ -183,11 +183,14 @@ getCompamyReviews(id);
 
                 <template v-if="company.vacancies">
                     <v-card-title>vacancies</v-card-title>
-                    <v-card-actions v-for="vacancy, i in company.vacancies">
-                        <v-btn color="deep-purple-lighten-2" variant="text" @click="redirectTo(`/vacancies/${vacancy.id}`)">
-                            {{ i + 1 }}. {{ vacancy.title }}
-                        </v-btn>
-                    </v-card-actions>
+                    <ul>
+                        <li v-for="vacancy, i in company.vacancies">
+                            <v-card class="mx-10 my-1" :title="` ${i + 1}. ${vacancy.title}`"
+                                :append-icon="vacancy.isClosed ? 'mdi-lock-alert-outline' : ''"
+                                :href="`/vacancies/${vacancy.id}`" target="_blank" rel="noopener"></v-card>
+                        </li>
+                    </ul>
+
                 </template>
             </div>
         </v-card>
@@ -219,27 +222,27 @@ getCompamyReviews(id);
     justify-content: space-around;
 }
 
-.film_box {
+.vacancy_box {
     background-size: cover;
     background-repeat: no-repeat;
 }
 
-.film_box-background {
+.vacancy_box-background {
     background-image: linear-gradient(to right, rgba(220.5, 220.5, 220.5, 1) calc((50vw - 170px) - 340px), rgba(220.5, 220.5, 220.5, 0.44) 50%, rgba(220.5, 220.5, 220.5, 0.84) 100%);
     display: flex;
     align-items: flex-end;
 }
 
-.film_img-box {
+.vacancy_img-box {
     padding: 15px;
 
 }
 
-.film_img {
+.vacancy_img {
     box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
 }
 
-.film_info {
+.vacancy_info {
     border-radius: 30px 30px 0 0;
     background-image: linear-gradient(to right, rgba(220.5, 220.5, 220.5, 1) 0, rgba(220.5, 220.5, 220.5, 0.44) 50%, rgba(220.5, 220.5, 220.5, 0.84) 100%);
     box-shadow: 0px -14px 32px 3px rgba(220.5, 220.5, 220.5, 1), 0px 0px 0px -4px rgba(220.5, 220.5, 220.5, 1)

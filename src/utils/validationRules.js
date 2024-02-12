@@ -14,10 +14,9 @@ export const emailValidation = (str) => {
 };
 export const phoneValidation = (num) => {
     if (num.trim() === "") return null;
-    if (str.length <= 8) return "number is too short";
-    if (str.length >= 17) return "number is too long";
-    if (!/^\+?[0-9\s-]+$/.test(yourString))
-        return "must not contain extra characters";
+    if (num.length <= 8) return "number is too short";
+    if (num.length >= 17) return "number is too long";
+    if (!/^\+?[0-9\s-]+$/.test(num)) return "must not contain extra characters";
     return null;
 };
 

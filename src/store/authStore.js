@@ -21,6 +21,7 @@ export const useAuthStore = defineStore("auth", () => {
             phone: null,
         },
         companies: [],
+        candidates: [],
     });
 
     const userId = computed(() => auth.value.user.id);
@@ -29,6 +30,7 @@ export const useAuthStore = defineStore("auth", () => {
     const email = computed(() => auth.value.user.email);
     const phone = computed(() => auth.value.user.phone);
     const companies = computed(() => auth.value.companies);
+    const candidates = computed(() => auth.value.candidates);
     const image = computed(() => {
         return auth.value.user.image
             ? "http://127.0.0.1:8080/storage/" + auth.value.user.image
@@ -46,6 +48,19 @@ export const useAuthStore = defineStore("auth", () => {
     }
     function clearPath() {
         auth.value.oldPath = null;
+    }
+
+    async function authData() {
+        auth.value.isLoading = true;
+
+        try {
+            const response = await axiosInstance.get(`authdata`);
+            auth.value.companies = response.data.companies;
+            auth.value.candidates = response.data.candidates;
+        } catch (error) {
+        } finally {
+            auth.value.isLoading = false;
+        }
     }
 
     async function onAuth() {
@@ -72,9 +87,8 @@ export const useAuthStore = defineStore("auth", () => {
             auth.value.user.role = response.data.user.role_id;
             auth.value.user.phone = response.data.user.phone;
 
-            auth.value.companies = response.data.companies;
             auth.value.isAuthorized = true;
-
+            authData();
             const { useChenel } = useChatsStore();
             useChenel();
         } catch (error) {
@@ -106,6 +120,7 @@ export const useAuthStore = defineStore("auth", () => {
 
             auth.value.isAuthorized = true;
             useChenel();
+            authData();
         } catch (error) {
         } finally {
             auth.value.isLoading = false;
@@ -206,6 +221,7 @@ export const useAuthStore = defineStore("auth", () => {
 
             auth.value.isAuthorized = true;
             useChenel();
+            authData();
         } catch (error) {
         } finally {
             auth.value.isLoading = false;
@@ -218,6 +234,7 @@ export const useAuthStore = defineStore("auth", () => {
         name,
         path,
         companies,
+        candidates,
         image,
         email,
         phone,
@@ -232,5 +249,6 @@ export const useAuthStore = defineStore("auth", () => {
         registerUser,
         updatePassword,
         updateUser,
+        authData,
     };
 });

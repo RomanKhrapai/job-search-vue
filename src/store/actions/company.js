@@ -1,6 +1,7 @@
 import axiosInstance from "../../services/axios.js";
 import { useEmploymentStore } from "../employmentStore.js";
 import { useChatsStore } from "../chatsStore";
+import { useAuthStore } from "../authStore.js";
 import { storeToRefs } from "pinia";
 
 export async function getCompanies(name, address, isDesc, sort, page) {
@@ -54,6 +55,7 @@ export async function getCompany(id) {
 
 export async function storeCompany({ name, address, description }) {
     const { setIsLoading, setCompamies } = useEmploymentStore();
+    const {authData} = useAuthStore();
     const { imageURL } = storeToRefs(useEmploymentStore());
     setIsLoading(true);
 
@@ -65,7 +67,7 @@ export async function storeCompany({ name, address, description }) {
             description: description,
         });
         setCompamies([response.data.data]);
-
+        authData();
         return response.data.data.id;
     } catch (error) {
         console.log(error);
@@ -76,11 +78,13 @@ export async function storeCompany({ name, address, description }) {
 
 export async function deleteCompany(id) {
     const { setIsLoading } = useEmploymentStore();
+    const {authData} = useAuthStore();
     setIsLoading(true);
 
     try {
         const response = await axiosInstance.delete(`/companies/${id}`);
         getCompanies();
+        authData();
     } catch (error) {
     } finally {
         setIsLoading(false);

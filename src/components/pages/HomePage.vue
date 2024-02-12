@@ -3,15 +3,15 @@
 
         <!-- <GridFilms v-if="films" :films="films" /> -->
         <NoFoundJob class="full-box" />
-        <Pagination />
+        <!-- <Pagination />  -->
 
     </div>
 </template>
 
 <script setup>
 
-import GridFilms from "../GridFilms.vue"
-import Pagination from "../Pagination.vue"
+
+// import Pagination from "../Pagination.vue"
 import NoFoundJob from "../NoFoundJob.vue"
 import { debounce } from "../../utils/debounce"
 import { watch, onMounted } from 'vue'

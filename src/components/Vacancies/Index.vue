@@ -12,45 +12,7 @@
         <NoFoundJob v-if="!isLoading && !vacancies[0]" class="full-box" />
 
         <div v-if="!isLoading && vacancies[0]">
-            <template v-for="vacancy in vacancies">
-                <router-link :to="`/vacancies/${vacancy.id}`">
-
-                    <v-col cols="12">
-                        <v-card class="mx-auto card" prepend-icon="mdi-twitter" :title="vacancy.title">
-                            <template v-slot:prepend>
-                                {{ vacancy.profession }}
-                            </template>
-
-                            <v-card-text class="text-h5 py-2">
-                                {{ vacancy.description }}
-                            </v-card-text>
-
-                            <v-card-actions>
-                                <v-list-item class="w-100">
-                                    <template v-slot:prepend>
-                                        <v-avatar color="grey-darken-3" :image="vacancy.company.image"></v-avatar>
-                                    </template>
-
-                                    <v-list-item-title>{{ vacancy.company.name }}</v-list-item-title>
-
-                                    <v-list-item-subtitle>Sarary: {{ vacancy.salary }} - {{ vacancy.max_salary
-                                    }}</v-list-item-subtitle>
-
-                                    <template v-slot:append>
-                                        <div class="justify-self-end">
-                                            <v-icon class="me-1" icon="mdi-heart"></v-icon>
-                                            <span class="subheading me-2">256</span>
-                                            <span class="me-1">·</span>
-                                            <v-icon class="me-1" icon="mdi-share-variant"></v-icon>
-                                            <span class="subheading">45</span>
-                                        </div>
-                                    </template>
-                                </v-list-item>
-                            </v-card-actions>
-                        </v-card>
-                    </v-col>
-                </router-link>
-            </template>
+            <Vacancies v-if="!isLoading && vacancies[0]" :vacancies="vacancies" />
             <v-pagination v-model="page" :length="lastPage" :total-visible="6"></v-pagination>
 
         </div>
@@ -59,6 +21,7 @@
 
 
 <script setup>
+import Vacancies from "./Vacancies.vue";
 import FilterBox from "../shared/FilterBox.vue"
 import CustomInput from "../shared/form/CustomInput/CustomInput.vue";
 import CustomOneSearchSelect from "../shared/form/CustomInput/CustomOneSearchSelect.vue";
@@ -164,9 +127,7 @@ onMounted(async () => {
     min-width: 60px;
 }
 
-.card {
-    background-color: $bg-secondary-color;
-}
+
 
 .filter_input {
     margin-bottom: -30px;

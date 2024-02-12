@@ -35,29 +35,29 @@ export async function getCandidateReviews(id) {
     }
 }
 
-export async function getVacancy(id) {
-    const { setVacancy, setIsLoading } = useEmploymentStore();
-    const { vacancies } = storeToRefs(useEmploymentStore());
-    setIsLoading(true);
+// export async function getVacancy(id) {
+//     const { setVacancy, setIsLoading } = useEmploymentStore();
+//     const { vacancies } = storeToRefs(useEmploymentStore());
+//     setIsLoading(true);
 
-    try {
-        const vacancy = vacancies.value.find((item) => item.id === +id);
+//     try {
+//         const vacancy = vacancies.value.find((item) => item.id === +id);
 
-        if (vacancy) {
-            setVacancy(vacancy);
-            setIsLoading(false);
-            return;
-        }
+//         if (vacancy) {
+//             setVacancy(vacancy);
+//             setIsLoading(false);
+//             return;
+//         }
 
-        const response = await axiosInstance.get(`/vacancies/${id}`);
+//         const response = await axiosInstance.get(`/vacancies/${id}`);
 
-        setVacancy(response.data.data);
-    } catch (error) {
-        console.log(error);
-    } finally {
-        setIsLoading(false);
-    }
-}
+//         setVacancy(response.data.data);
+//     } catch (error) {
+//         console.log(error);
+//     } finally {
+//         setIsLoading(false);
+//     }
+// }
 
 export async function storeReview(
     id,

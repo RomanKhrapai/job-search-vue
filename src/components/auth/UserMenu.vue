@@ -1,5 +1,6 @@
 <template>
     <div class="menu-container">
+        <a v-if="role !== '' && role !== 2 && role !== 3" :href="serverHost"><v-tab>admin panel</v-tab></a>
         <div class="menu-btn" @click="useLogOut()" v-tooltip="'Вийти'">
             <img v-if="image" loading="lazy" :src="image" height="40" width="40" alt="avatar">
             <v-icon v-else size="large" :icon="'mdi-account'"></v-icon>
@@ -14,9 +15,10 @@ import { useAuthStore } from "../../store/authStore"
 import { storeToRefs } from "pinia"
 import { useRoute, useRouter } from 'vue-router'
 
+const serverHost = import.meta.env.VITE_SERVER_HOST;
 const route = useRoute()
 const router = useRouter()
-const { name, image } = storeToRefs(useAuthStore())
+const { name, image, role } = storeToRefs(useAuthStore())
 
 const { logOut } = useAuthStore()
 

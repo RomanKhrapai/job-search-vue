@@ -3,23 +3,23 @@ import CustomTextArea from '../shared/form/CustomInput/CustomTextArea.vue';
 import CustomOneSearchSelect from '../shared/form/CustomInput/CustomOneSearchSelect.vue'
 import CustomForm from '../shared/form/CustomForm.vue';
 import NoFound from '.././NoFound.vue';
-// import Reviews from './Reviews.vue'
-// import ActivPanel from './ActivPanel.vue';
+
 import { useEmploymentStore } from "../../store/employmentStore";
 import { ref, defineProps, computed, watch } from 'vue'
 import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router'
-import { getVacancy, deleteVacancy } from "../../store/actions/vacancy"
+import { getVacancy, deleteVacancy, updateVacancyStatus } from "../../store/actions/vacancy"
 import { maxString, isRequiredId } from '../../utils/validationRules';
 import { getCandidates } from '../../store/actions/candidate';
 import { useChatsStore } from '../../store/chatsStore';
+import { useAuthStore } from '../../store/authStore';
 
 const router = useRouter();
 
 const { id } = defineProps({
     id: String,
 });
-
+const { role, isAuthorized } = storeToRefs(useAuthStore());
 const { vacancy, isLoading, candidates } = storeToRefs(useEmploymentStore())
 const { sendApplyVacancy, getChatsList } = useChatsStore();
 
@@ -50,10 +50,7 @@ function sendApply() {
             name: 'chat',
         })
     };
-
-
 }
-
 
 const resumes = computed(() => {
     return candidates.value.map(item => {
@@ -61,13 +58,10 @@ const resumes = computed(() => {
     })
 });
 
-if (candidates.value.length === 0) {
-    getCandidates();
-}
+if (candidates.value.length === 0 && isAuthorized.value) getCandidates();
+if (isAuthorized.value) getChatsList();
 
-getChatsList();
 getVacancy(id);
-
 
 </script>
 
@@ -79,7 +73,12 @@ getVacancy(id);
                     <v-card>
                         <div class="box">
                             <v-card-title>{{ vacancy.title }}</v-card-title>
-                            <v-dialog v-model="dialogSendApp" width="auto">
+                            <router-link v-if="!isAuthorized && !vacancy.isClosed" to="/auth/login">
+                                <v-btn color="primary">send apply for a job </v-btn>
+                            </router-link>
+
+                            <v-dialog v-if="role !== 2 && isAuthorized && !vacancy.isClosed" v-model="dialogSendApp"
+                                width="auto">
                                 <template v-slot:activator="{ props }">
                                     <v-btn color="primary" v-bind="props">send apply for a job </v-btn>
                                 </template>
@@ -129,12 +128,15 @@ getVacancy(id);
                                     </v-card-actions>
                                 </v-card>
                             </v-dialog>
+                            <v-btn v-if="vacancy.isOwner" color="primary" @click="updateVacancyStatus(!vacancy.isClosed)">{{
+                                !vacancy.isClosed ? 'close ' :
+                                "open" }} vacancy </v-btn>
                         </div>
 
                         <v-img v-if="vacancy?.company?.image" :src="vacancy.company.image" height="200" width="200"
                             cover></v-img>
                         <img v-if="!vacancy?.company?.image" height="200" width="200"
-                            src="/src/assets/images/fix-poster.jpg" alt="Постер фільму відсутній">
+                            src="/src/assets/images/fix-poster.jpg" alt="">
                         <v-card-text>
 
                             <v-row>
@@ -147,6 +149,12 @@ getVacancy(id);
                             <v-row>
                                 <v-col>
                                     <strong>Profession:</strong> {{ vacancy.profession }}
+                                </v-col>
+
+                            </v-row>
+                            <v-row>
+                                <v-col>
+                                    <strong>Status:</strong> {{ !vacancy.isClosed ? 'Opened' : 'Closed' }}
                                 </v-col>
 
                             </v-row>

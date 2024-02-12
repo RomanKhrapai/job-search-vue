@@ -10,7 +10,7 @@ export const pusher = new Pusher(import.meta.env.VITE_PUSHER_APP_KEY, {
 
     channelAuthorization: {
         // transport: "jsonp",
-        endpoint: "http://localhost:8080/broadcasting/auth",
+        endpoint: `${import.meta.env.VITE_SERVER_HOST}broadcasting/auth`,
         headers: {
             // Authorization: token,
             Accept: "application/json",

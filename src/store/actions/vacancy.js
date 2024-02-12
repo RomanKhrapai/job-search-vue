@@ -1,6 +1,28 @@
 import axiosInstance from "../../services/axios.js";
 import { useEmploymentStore } from "../employmentStore.js";
+import { useChatsStore } from "../chatsStore.js";
+import { useAuthStore } from "../authStore.js";
 import { storeToRefs } from "pinia";
+
+export async function getVacancyOffer(vacancyId, deep) {
+    const { setCandidates, setIsLoading, setLastPage } = useEmploymentStore();
+    setIsLoading(true);
+    setLastPage(1);
+    try {
+        const response = await axiosInstance.get(
+            `/vacancies/offers/${vacancyId}`,
+            {
+                params: { deep },
+            }
+        );
+        console.log(response);
+        setLastPage(response.data.meta.last_page);
+        setCandidates(response.data.data);
+    } catch (error) {
+    } finally {
+        setIsLoading(false);
+    }
+}
 
 export async function getVacancies(title, profession_id, area_id, page) {
     const { setVacancies, setIsLoading, setLastPage } = useEmploymentStore();
@@ -56,6 +78,7 @@ export async function storeVacancy({
 }) {
     const { setVacancy, setIsLoading } = useEmploymentStore();
     const { company } = storeToRefs(useEmploymentStore());
+    const {authData} = useAuthStore();
     setIsLoading(true);
 
     try {
@@ -73,6 +96,7 @@ export async function storeVacancy({
         });
 
         setVacancy(response.data.data);
+        authData();
         return response.data.data.id;
     } catch (error) {
         console.log(error);
@@ -81,12 +105,37 @@ export async function storeVacancy({
     }
 }
 
-export async function deleteVacancy(id) {
+export async function updateVacancyStatus(isClosed) {
+    const { setVacancy, setIsLoading } = useEmploymentStore();
+    const {authData} = useAuthStore();
+    const { setErrorMessage, setSuccessfulMessage } = useChatsStore();
+    const { vacancy } = storeToRefs(useEmploymentStore());
     setIsLoading(true);
+
+    try {
+        const response = await axiosInstance.patch(
+            `/vacancies/${vacancy.value.id}`,
+            { closed: isClosed }
+        );
+        authData();
+        setVacancy(response.data.data);
+        setSuccessfulMessage(" status changed");
+    } catch (error) {
+        setErrorMessage("status change error");
+    } finally {
+        setIsLoading(false);
+    }
+}
+
+export async function deleteVacancy(id) {
+    const {authData} = useAuthStore(); 
     const { setIsLoading } = useEmploymentStore();
+    setIsLoading(true);
+   
 
     try {
         const response = await axiosInstance.delete(`/vacancies/${id}`);
+        authData();
     } catch (error) {
         console.log(error);
     } finally {

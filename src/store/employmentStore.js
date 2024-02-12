@@ -20,7 +20,7 @@ export const useEmploymentStore = defineStore("employment", () => {
         candidate: {},
         candidates: [],
         reviews: [],
-        lastPage:1,
+        lastPage: 1,
     });
     const lastPage = computed(() => employment.value.lastPage);
     const reviews = computed(() => employment.value.reviews);
