@@ -6,7 +6,7 @@
                 :class="[isValid && 'no-margin', !isValid && 'custom-input--error', isFocus && 'border']" autocomplete="off"
                 list="" id="input" name="browsers" v-model="textInput" v-bind="$attrs" class="custom-input">
 
-            <Button class="add-btn" type="button" @click="optionAdd"> add </Button>
+            <Button class="add-btn" type="button" @click="optionAdd"> Add </Button>
             <span v-if="!isValid" class=" custom-input__error">{{ error }}</span>
         </label>
 
@@ -194,7 +194,7 @@ option:hover,
     position: absolute;
     z-index: 100;
     background-color: white;
-    border: 1px solid blue;
+    border: 1px solid #643843;
     border-radius: 0 0 5px 5px;
     border-top: none;
     font-family: sans-serif;
@@ -206,7 +206,7 @@ option:hover,
 option {
     background-color: white;
     padding: 4px;
-    color: blue;
+    color: #643843;
     margin-bottom: 1px;
     font-size: 18px;
     cursor: pointer;
@@ -231,6 +231,7 @@ option {
 label>.add-btn {
     position: absolute;
     right: 0px;
+    border-radius: 15px;
     height: 40px;
     min-width: 50px;
     text-align: center;

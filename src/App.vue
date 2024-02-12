@@ -9,6 +9,7 @@ import { ref, watch, onBeforeMount } from "vue";
 import { useRouter, useRoute } from 'vue-router';
 import { toast } from 'vue3-toastify';
 import { useChatsStore } from "./store/chatsStore";
+import Footer from "./components/shared/Footer.vue";
 
 
 const auth = useAuthStore();
@@ -18,6 +19,7 @@ const route = useRoute();
 
 const isNightMode = ref(null)
 const tab = ref(null)
+const nightMode = ref(localStorage.getItem("nightMode") || false)
 
 const { successfulMessage, errorMessage, infoMessage } = storeToRefs(useChatsStore());
 const { isAuthorized, path, role } = storeToRefs(useAuthStore());
@@ -32,15 +34,16 @@ watch(isAuthorized, (newVal) => {
     auth.clearPath();
   }
 })
-watch(isNightMode, (val) => localStorage.setItem("isNight", val))
+
+watch(nightMode, (val) => localStorage.setItem("nightMode", val))
 
 onBeforeMount(() => {
-  const isNight = JSON.parse(localStorage.getItem("isNight"))
+  const isNight = JSON.parse(localStorage.getItem("nightMode"))
 
   const hasDarkPreference = window.matchMedia(
     "(prefers-color-scheme: dark)"
   ).matches;
-  isNightMode.value = isNight === null ? !hasDarkPreference : isNight
+  nightMode.value = isNight === null ? !hasDarkPreference : isNight
 })
 
 
@@ -66,29 +69,29 @@ auth.onAuth();
 
 
 <template>
-  <div class="container-app"
-    :style="{ backgroundColor: isNightMode ? '#fff' : '#000000e0', color: !isNightMode ? '#aaa' : '#000000e0' }">
-    <div class="bg-header" :class="[!isNightMode ? 'bg-header-dark' : 'bg-header-white']">
+  <div id="page1" class="container-app" :class="{ 'theme-dark': nightMode }">
+
+    <div class="bg-header" :class="[nightMode ? 'bg-header-dark' : 'bg-header-white']">
       <div class="container heder-nav">
         <v-tabs v-model="tab" color="deep-purple-accent-4" align-tabs="start">
           <router-link to="/">
             <v-tab :value="1" size="x-large" hide-slider variant="text">
-              <span class="logo">
+              <span :class="[nightMode ? 'logo-dark' : 'logo']">
                 <v-icon size="x-large" :icon="'mdi-earth'"></v-icon>
               </span>
             </v-tab>
           </router-link>
 
-          <router-link v-if="isAuthorized" to="/candidates">
+          <router-link v-if="isAuthorized" to="/candidates" :class="[nightMode && 'link']">
             <v-tab :value="3">resumes</v-tab>
           </router-link>
-          <router-link to="/vacancies">
+          <router-link to="/vacancies" :class="[nightMode && 'link']">
             <v-tab :value="4">vacancies</v-tab>
           </router-link>
-          <router-link to="/companies">
+          <router-link to="/companies" :class="[nightMode && 'link']">
             <v-tab :value="5">companies</v-tab>
           </router-link>
-          <router-link v-if="isAuthorized" to="/my-office">
+          <router-link v-if="isAuthorized" to="/my-office" :class="[nightMode && 'link']">
             <v-tab :value="2"> my-office </v-tab>
           </router-link>
 
@@ -102,13 +105,15 @@ auth.onAuth();
         </v-tabs>
         <UserMenu v-if="isAuthorized" />
       </div>
+      <input type="checkbox" id="theme-toggle" v-model="nightMode">
+      <label class="theme-toggle" for="theme-toggle"><span></span></label>
     </div>
     <main class="container">
       <RouterView />
       <!-- <Loader v-if="isLoading" /> -->
       <div :class="{ masck: !isNightMode }"></div>
     </main>
-    <TogleDayOrNight v-model="isNightMode" />
+    <!-- <TogleDayOrNight v-model="isNightMode" /> -->
   </div>
 </template>
 
@@ -139,7 +144,11 @@ auth.onAuth();
 .logo {
   padding: 9px 10px;
   background: radial-gradient(ellipse at 50%, #3333337e, #33333300 75%);
+}
 
+.logo-dark {
+  padding: 9px 10px;
+  background: radial-gradient(ellipse at 50%, #ffffff, #33333300 75%);
 }
 
 .header {
@@ -151,13 +160,13 @@ auth.onAuth();
 
 .header-nav {
   background: #7e7d7d96;
-
 }
 
 .bg-header {
   min-width: 320px;
   height: 170px;
   animation: show 2s;
+  display: flex;
 
   @keyframes show {
     from {
@@ -179,13 +188,13 @@ auth.onAuth();
   left: 0;
   z-index: 1;
   pointer-events: none;
-  background: linear-gradient(90deg, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.15))
+  // background: linear-gradient(90deg, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.15))
 }
 
 .bg-header-dark {
   background: linear-gradient(90deg, rgba(0, 0, 0, 0.515), rgba(0, 0, 0, 0.526)),
     center / auto 100% no-repeat url('../src/assets/images/header.jpg'),
-    #000103;
+    #66232c;
 }
 
 .bg-header-white {

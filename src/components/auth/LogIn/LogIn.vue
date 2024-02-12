@@ -2,15 +2,15 @@
     <AuthContainer class="registration">
         <MainTitle class="registration__title">Login</MainTitle>
         <CustomForm ref="form" class="login__form" @submit.prevent="handleSubmit">
-            <CustomInput v-model="email" autocomplete="email" placeholder="Електронна пошта" name="email"
-                :rules="emailRules" class="login__input" :label="'Електронна пошта'" />
-            <CustomInput v-model="password" type="password" autocomplete="current-password" placeholder="Пароль"
-                name="password" :rules="passwordRules" class="login__input" :label="'Пароль'" />
-            <Button class="login__btn" type="submit">Увійти</Button>
+            <CustomInput v-model="email" autocomplete="email" placeholder="Email" name="email" :rules="emailRules"
+                class="login__input" :label="'Email'" />
+            <CustomInput v-model="password" type="password" autocomplete="current-password" placeholder="Password"
+                name="password" :rules="passwordRules" class="login__input" :label="'Password'" />
+            <Button class="login__btn" type="submit">Sign in</Button>
 
         </CustomForm>
         <div class="wraper_link">
-            <span class="link" @click="$router.push({ name: 'registration' })"> Login</span>
+            <span class="link" @click="$router.push({ name: 'registration' })">Registration</span>
             <a class="link" href="http://127.0.0.1:8080/auth/redirect">
                 <svg class="image" xmlns="https://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 48 48"
                     aria-hidden="true">

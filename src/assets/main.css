@@ -3,13 +3,24 @@
 body{
   margin: 0;
   padding: 0;
-  background-color: rgb(255, 255, 255);
+  background-color: #F6F4EB;
   font-family: 'Montserrat', sans-serif;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
+
+main {
+  flex-grow: 1;
+  padding-bottom: 60px;
+  padding-top: 60px;
+}
+
 #app{
-  height: 100vh;
+  height: 100%;
 
 }
+
 .tooltip {
   position: relative;
 }
@@ -49,4 +60,111 @@ body{
   visibility: hidden;
   height: 0;
   width: 0;
+}
+
+.link {
+  text-decoration: none;
+  color: #561C24;
+}
+
+::-webkit-scrollbar {
+  width: 3px;
+  height: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #561C24;
+}
+
+:root {
+  --toggle-size: 10rem;
+    --switch-w: 4em;
+    --switch-h: 2em;
+  --switch-handle-scale: .65;
+    --switch-off-handle-x: -.125em;
+    --switch-on-handle-x: calc(100% - .125em);
+  --switch-transition-duration: .2s;
+}
+
+#page1 {
+    background: #F6F4EB;
+    
+  &.theme-dark {
+    background: #351115;
+  }
+}
+
+#theme-toggle {
+  display: none;
+  
+  & + label {
+    margin-top: 10px;
+    font-size: 20px;
+    display: flex;
+    height: var(--switch-h);
+    width: var(--switch-w);
+    border-radius: calc(var(--switch-h) / 2);
+    background-size: auto 8em;
+      background-position: bottom;
+      background-image: linear-gradient(180deg, #E8D8C4 0%, #fffad8 19%, #6D2932 66%, #C7B7A3 100%);
+        transition: var(--switch-transition-duration);
+    border: .125em solid hsl(207, 30%, 95%);
+    overflow: hidden;
+
+    span {
+      background: #fffad8;
+      border-radius: 50%;
+      height: var(--switch-h);
+      width: var(--switch-h);
+      transform: translateX(var(--switch-off-handle-x)) scale(var(--switch-handle-scale));  
+      transition: var(--switch-transition-duration);
+            cursor: pointer;
+            box-shadow: 0 0 .25em .0625em #fbee8d, 0 0 2em 0 #FFEB3B, inset -.25em -.25em 0 0 #fbee8e, inset -.3125em -.3125em 0 .625em #fff5b2;
+            margin-top: var(--switch-off-handle-x);
+    }
+  }
+  
+  &:checked {
+    font-size: 20px;
+
+    & + label {
+      background-position: top;
+            border-color: #561C24;
+            background-image: linear-gradient(180deg, #E8D8C4 0%, #561C24 19%, #6D2932 66%, #C7B7A3 100%);
+      
+      span {
+        background: transparent;
+                transform: translateX(var(--switch-on-handle-x)) scale(var(--switch-handle-scale));
+                box-shadow: inset -.1875em -.1875em 0 0 #fbe7ef, inset -.5625em -.5625em 0 0 #fffff7;
+      }
+    }
+  }
+}
+
+/*-- Housekeeping --*/
+
+html {
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+  
+}
+
+body {
+  margin: 0;
+}
+
+#page {
+  /* min-height: 100%; */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: .2s ease;
+}
+
+.padding-bottom {
+  padding-bottom: 10px;
 }

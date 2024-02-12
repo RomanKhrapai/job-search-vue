@@ -2,7 +2,7 @@
     <label class="custom-label " :class="[labelClass]"> {{ label }}
         <textarea v-on="listeners" v-bind="$attrs" @blur="blurHandler" :value="props.modelValue" class="custom-input"
             :class="!isValid && 'custom-input--error'"></textarea>
-        <span v-if="!isValid" class="custom-input__error">{{ error }}</span>
+        <span v-if="!isValid" class="custom-input__error bottom--error">{{ error }}</span>
     </label>
 </template>
   
@@ -89,4 +89,8 @@ function reset() {
   
 <style lang="scss" scoped>
 @import "./style.module.scss";
+
+.bottom--error {
+    bottom: 15px;
+}
 </style>

@@ -64,21 +64,82 @@ if (isAuthorized.value) getChatsList();
 getVacancy(id);
 
 </script>
-
 <template>
     <div class="">
         <v-container>
             <v-row>
                 <v-col>
-                    <v-card>
-                        <div class="box">
-                            <v-card-title>{{ vacancy.title }}</v-card-title>
-                            <router-link v-if="!isAuthorized && !vacancy.isClosed" to="/auth/login">
-                                <v-btn color="primary">send apply for a job </v-btn>
-                            </router-link>
+                    <v-card class="wrapper_vacancies">
+                        <v-card-title class="vacancies_title">{{ vacancy.title }}</v-card-title>
+                        <div class="box_second">
+                            <div class="wrapper_vacancies__image">
+                                <v-img class="image_vacancies" v-if="vacancy?.company?.image" :src="vacancy.company.image"
+                                    height="200" width="200" cover></v-img>
+                                <img class="image_vacancies" v-if="!vacancy?.company?.image" height="200" width="200"
+                                    src="/src/assets/images/fix-poster.jpg" alt="The movie poster is missing">
+                            </div>
 
-                            <v-dialog v-if="role !== 2 && isAuthorized && !vacancy.isClosed" v-model="dialogSendApp"
-                                width="auto">
+                            <v-card-text class="wrapper_vacancies__text">
+                                <div class="block_text">
+                                    <div class="block_text__first">
+                                        <v-row class="padding-bottom">
+                                            <router-link class="link" :to="`/companies/${vacancy.company?.id}`">
+                                                <v-col class="vacancies__text">
+                                                    <strong>Company:</strong> {{ vacancy.company?.name }}
+                                                </v-col>
+                                            </router-link>
+                                        </v-row>
+                                        <v-row class="padding-bottom">
+                                            <v-col class="vacancies__text">
+                                                <strong>Profession:</strong> {{ vacancy.profession }}
+                                            </v-col>
+
+                                        </v-row>
+                                        <v-row>
+                                            <v-col class="vacancies__text">
+                                                <strong>Salary:</strong> {{ vacancy.salary }} - {{ vacancy.max_salary }}
+                                            </v-col>
+                                        </v-row>
+                                    </div>
+                                    <div class="block_text__second">
+                                        <v-row class="padding-bottom">
+                                            <v-col class="vacancies__text">
+                                                <strong>Area:</strong> {{ vacancy.area }}
+                                            </v-col>
+                                        </v-row>
+                                        <v-row class="padding-bottom">
+                                            <v-col class="vacancies__text">
+                                                <strong>Nature:</strong> {{ vacancy.nature }}
+                                            </v-col>
+                                        </v-row>
+                                        <v-row>
+                                            <v-col class="vacancies__text">
+                                                <strong>Type:</strong> {{ vacancy.type }}
+                                            </v-col>
+                                        </v-row>
+                                    </div>
+                                </div>
+
+                                <v-row>
+                                    <v-col class="vacancies__text">
+                                        <strong>Description:</strong> {{ vacancy.description }}
+                                    </v-col>
+                                </v-row>
+                                <v-row>
+                                    <v-col class="vacancies__text">
+                                        <strong>Skills:</strong>
+
+                                        <v-chip v-for="skill, i in vacancy.skills" :key="i" variant="flat"
+                                            color="secondary">
+                                            {{ skill }}
+                                        </v-chip>
+                                    </v-col>
+                                </v-row>
+                            </v-card-text>
+
+                        </div>
+                        <div class="box">
+                            <v-dialog v-model="dialogSendApp" width="auto">
                                 <template v-slot:activator="{ props }">
                                     <v-btn color="primary" v-bind="props">send apply for a job </v-btn>
                                 </template>
@@ -128,72 +189,12 @@ getVacancy(id);
                                     </v-card-actions>
                                 </v-card>
                             </v-dialog>
-                            <v-btn v-if="vacancy.isOwner" color="primary" @click="updateVacancyStatus(!vacancy.isClosed)">{{
-                                !vacancy.isClosed ? 'close ' :
-                                "open" }} vacancy </v-btn>
                         </div>
-
-                        <v-img v-if="vacancy?.company?.image" :src="vacancy.company.image" height="200" width="200"
-                            cover></v-img>
-                        <img v-if="!vacancy?.company?.image" height="200" width="200"
-                            src="/src/assets/images/fix-poster.jpg" alt="">
-                        <v-card-text>
-
-                            <v-row>
-                                <router-link :to="`/companies/${vacancy.company?.id}`">
-                                    <v-col>
-                                        <strong>Company:</strong> {{ vacancy.company?.name }}
-                                    </v-col>
-                                </router-link>
-                            </v-row>
-                            <v-row>
-                                <v-col>
-                                    <strong>Profession:</strong> {{ vacancy.profession }}
-                                </v-col>
-
-                            </v-row>
-                            <v-row>
-                                <v-col>
-                                    <strong>Status:</strong> {{ !vacancy.isClosed ? 'Opened' : 'Closed' }}
-                                </v-col>
-
-                            </v-row>
-                            <v-row>
-                                <v-col>
-                                    <strong>Salary:</strong> {{ vacancy.salary }} - {{ vacancy.max_salary }}
-                                </v-col>
-                            </v-row>
-                            <v-row>
-                                <v-col>
-                                    <strong>Area:</strong> {{ vacancy.area }}
-                                </v-col>
-                            </v-row>
-                            <v-row>
-                                <v-col>
-                                    <strong>Nature:</strong> {{ vacancy.nature }}
-                                </v-col>
-                                <v-col>
-                                    <strong>Type:</strong> {{ vacancy.type }}
-                                </v-col>
-                            </v-row>
-                            <v-row>
-                                <v-col>
-                                    <strong>Description:</strong> {{ vacancy.description }}
-                                </v-col>
-                            </v-row>
-                            <v-row>
-                                <v-col>
-                                    <strong>Skills:</strong>
-                                    <v-chip v-for="skill, i in vacancy.skills" :key="i" variant="flat" color="secondary">
-                                        {{ skill }}
-                                    </v-chip>
-                                </v-col>
-                            </v-row>
-                        </v-card-text>
                     </v-card>
                 </v-col>
             </v-row>
         </v-container>
+
 
         <NoFound v-if="!vacancy && !isLoading" />
     </div>
@@ -201,50 +202,69 @@ getVacancy(id);
 
     
 <style scoped>
+.wrapper_vacancies {
+    padding: 20px;
+    height: auto;
+    border-radius: 30px;
+    background-image: linear-gradient(to right, #579BB1 0, #E1D7C6 50%, #ECE8DD 100%);
+    box-shadow: 0px -14px 32px 3px rgba(220.5, 220.5, 220.5, 1), 0px 0px 0px -4px rgba(220.5, 220.5, 220.5, 1);
+}
+
+/* #579BB1
+#E1D7C6
+#ECE8DD
+#F8F4EA */
+.vacancies_title {
+    padding: 0;
+    margin-bottom: 20px;
+}
+
+.box_second {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.image_vacancies {
+    box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
+}
+
 .btn-box {
     padding: 5px;
     display: flex;
     justify-content: center;
 }
 
-.box {
-    padding: 5px;
+.wrapper_vacancies__image {
+    width: 30%;
+    height: 30%;
 }
 
-.show-video__playr {
-    height: 70vh;
-    width: 70vw
-}
-
-.modal-footer {
+.wrapper_vacancies__text {
     display: flex;
-    justify-content: space-around;
+    flex-direction: column;
+    width: 65%;
+    height: 65%;
+    gap: 20px;
+    padding: 25px;
+    border-radius: 10px;
 }
 
-.film_box {
-    background-size: cover;
-    background-repeat: no-repeat;
-}
-
-.film_box-background {
-    background-image: linear-gradient(to right, rgba(220.5, 220.5, 220.5, 1) calc((50vw - 170px) - 340px), rgba(220.5, 220.5, 220.5, 0.44) 50%, rgba(220.5, 220.5, 220.5, 0.84) 100%);
+.block_text {
     display: flex;
-    align-items: flex-end;
+    margin-bottom: 20px;
 }
 
-.film_img-box {
-    padding: 15px;
+.block_text__first,
+.block_text__second {
+    width: 45%;
+    height: auto;
 
 }
 
-.film_img {
-    box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
-}
-
-.film_info {
-    border-radius: 30px 30px 0 0;
-    background-image: linear-gradient(to right, rgba(220.5, 220.5, 220.5, 1) 0, rgba(220.5, 220.5, 220.5, 0.44) 50%, rgba(220.5, 220.5, 220.5, 0.84) 100%);
-    box-shadow: 0px -14px 32px 3px rgba(220.5, 220.5, 220.5, 1), 0px 0px 0px -4px rgba(220.5, 220.5, 220.5, 1)
+.vacancies__text {
+    padding: 0;
+    font-size: 16px;
+    line-height: 18px;
 }
 
 .box {

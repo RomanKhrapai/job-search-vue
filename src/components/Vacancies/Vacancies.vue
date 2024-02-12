@@ -1,6 +1,6 @@
 <template>
     <template v-for="vacancy in vacancies">
-        <router-link :to="`/vacancies/${vacancy.id}`">
+        <router-link :to="`/vacancies/${vacancy.id}`" class="link">
 
             <v-col cols="12">
                 <v-card class="mx-auto card" prepend-icon="mdi-twitter" :title="vacancy.title">

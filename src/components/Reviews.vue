@@ -134,7 +134,7 @@ const partOrFullReviews = computed(() => {
                                 </span>
                                 <span class=" reviews_time">
                                     <v-btn v-if="isAuthorized" variant="text" @click="createReview(review.id)"
-                                        v-tooltip="'add'">
+                                        v-tooltip="'Add'" class="btn_add">
                                         <span class="mdi mdi-plus reviews_btn-text"></span>
                                     </v-btn>
                                     <v-btn v-if="review.isOwner" variant="text" @click.stop="changeReview(review)"
