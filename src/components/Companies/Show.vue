@@ -92,7 +92,7 @@ getCompamyReviews(id);
 <template>
     <div class="">
 
-        <v-card v-if="company" class="mx-auto my-12">
+        <v-card v-if="company.id" class="mx-auto my-12">
             <div>
                 <div class="vacancy_box">
                     <div class="vacancy_box-background">
@@ -196,7 +196,7 @@ getCompamyReviews(id);
         </v-card>
         <Reviews v-if="company.id" :id="Number(company.id)" :isUser='false' />
 
-        <NoFound v-if="!company && !isLoading" />
+        <NoFound v-if="!company.id && !isLoading" />
     </div>
 </template>
 
@@ -254,5 +254,4 @@ getCompamyReviews(id);
 div.card-form {
     overflow: visible !important;
 }
-
 </style>

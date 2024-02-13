@@ -22,7 +22,6 @@
                     Chat
                 </v-btn>
             </router-link>
-            <!-- <router-link to="/companies/create"> -->
             <router-link :to="{ name: 'user-update' }" class="office_link">
                 <v-btn class="office_link__btn" variant="text">
                     <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24">
@@ -43,7 +42,7 @@
                 Download report
             </v-btn>
 
-            <v-dialog v-model="dialogAddResume" width="auto" class="office_link">
+            <v-dialog v-if="role == 3" v-model="dialogAddResume" width="auto" class="office_link">
                 <template v-slot:activator="{ props }">
                     <v-btn class="office_link btn--report" v-bind="props">
                         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">

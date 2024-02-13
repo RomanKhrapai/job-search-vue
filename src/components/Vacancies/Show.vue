@@ -3,6 +3,7 @@ import CustomTextArea from '../shared/form/CustomInput/CustomTextArea.vue';
 import CustomOneSearchSelect from '../shared/form/CustomInput/CustomOneSearchSelect.vue'
 import CustomForm from '../shared/form/CustomForm.vue';
 import NoFound from '.././NoFound.vue';
+import Loader from '../Loader.vue';
 
 import { useEmploymentStore } from "../../store/employmentStore";
 import { ref, defineProps, computed, watch } from 'vue'
@@ -66,7 +67,8 @@ getVacancy(id);
 </script>
 <template>
     <div class="">
-        <v-container>
+        <Loader v-if="isLoading" />
+        <v-container v-if="vacancy.id">
             <v-row>
                 <v-col>
                     <v-card class="wrapper_vacancies">
@@ -171,6 +173,9 @@ getVacancy(id);
                                     </CustomForm>
                                 </v-card>
                             </v-dialog>
+                            <v-btn v-if="vacancy.isOwner" color="primary" @click="updateVacancyStatus(!vacancy.isClosed)">{{
+                                !vacancy.isClosed ? 'close ' :
+                                "open" }} vacancy </v-btn>
                             <v-dialog v-if="vacancy.isOwner" v-model="dialogDelete" width="auto">
                                 <template v-slot:activator="{ props }">
                                     <v-btn color="primary" v-bind="props"> destroy </v-btn>
@@ -196,7 +201,7 @@ getVacancy(id);
         </v-container>
 
 
-        <NoFound v-if="!vacancy && !isLoading" />
+        <NoFound v-if="!vacancy.id && !isLoading" />
     </div>
 </template>
 

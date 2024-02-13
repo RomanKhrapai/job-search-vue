@@ -34,7 +34,6 @@ const routes = [
                 name: "user-update",
                 component: () => import("../components/Office/UserUpdate.vue"),
                 meta: { isAuthorized: true },
-                alias: "sadd",
             },
         ],
     },
@@ -212,14 +211,17 @@ router.beforeEach(async (to, from, next) => {
 
     if (isRedirect) {
         next({ name: isRedirect });
-    } else if ((!isAuth && isGuest) || (!isRole && !isGuest && !isUser)) {
+    } else if (
+        (!isAuth && isGuest) ||
+        (!isRole && !isGuest && !isUser) ||
+        (isAuth && isUser && !routeRole)
+    ) {
         next();
     } else if (!isAuth && isRole) {
         next({ name: "login" });
-    } else if (isAuth && routeRole == role.value) {
+    } else if (isAuth && (routeRole != role.value || (isStart && routeRole))) {
         next({ name: "office" });
-        return;
-    } else if (isAuth && isUser) {
+    } else if ((isAuth && isUser) || (isAuth && routeRole == role.value)) {
         next();
     } else {
         next({ name: "NotFound" });

@@ -1,6 +1,7 @@
 <script setup>
-import NoFound from '.././NoFound.vue';
+import NoFound from '../NoFound.vue';
 import Reviews from '../Reviews.vue';
+import Loader from '../Loader.vue';
 import { useEmploymentStore } from "../../store/employmentStore";
 import { getCandidate, deleteCandidate } from '../../store/actions/candidate';
 import { ref, defineProps } from 'vue'
@@ -24,21 +25,14 @@ function handDestroy() {
     })
 }
 
-function redirectTo(path) {
-
-    router.push({
-        path,
-    })
-}
-
 getCandidate(id);
-
 
 </script>
 
 <template>
     <div class="">
-        <v-container>
+        <Loader v-if="isLoading" />
+        <v-container v-if="candidate.id">
             <v-row>
                 <v-col>
                     <v-card>
@@ -128,7 +122,7 @@ getCandidate(id);
             </v-row>
         </v-container>
 
-        <NoFound v-if="!candidate && !isLoading" />
+        <NoFound v-if="!candidate.id && !isLoading" />
     </div>
 </template>
 

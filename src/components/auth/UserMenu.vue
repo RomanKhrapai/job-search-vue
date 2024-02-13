@@ -1,7 +1,7 @@
 <template>
     <div class="menu-container">
         <a v-if="role !== '' && role !== 2 && role !== 3" :href="serverHost"><v-tab>admin panel</v-tab></a>
-        <div class="menu-btn" @click="useLogOut()" v-tooltip="'Вийти'">
+        <div class="menu-btn" @click="useLogOut()">
             <img v-if="image" loading="lazy" :src="image" height="40" width="40" alt="avatar">
             <v-icon v-else size="large" :icon="'mdi-account'"></v-icon>
             {{ name }}
@@ -52,11 +52,13 @@ function useLogOut() {
 
 .menu-btn {
     color: $secondary-color;
+    cursor: pointer;
     display: flex;
     padding: 0 5px;
     align-items: center;
     height: 48px;
     min-width: 90px;
-
 }
+
+.menu-btn:hover {}
 </style>
