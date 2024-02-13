@@ -2,7 +2,7 @@
     <div>
 
         <div class="office_wrapper">
-            <router-link to="/companies/create" class="office_link">
+            <router-link v-if="role === 2" to="/companies/create" class="office_link">
                 <v-btn class="office_link__btn" variant="text">
                     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 512 512">
                         <path fill="currentColor"
@@ -32,7 +32,7 @@
                     Update user
                 </v-btn>
             </router-link>
-            <v-btn variant="text" @click="generatePDF" class="office_link btn--report">
+            <v-btn v-if="role === 2" variant="text" @click="generatePDF" class="office_link btn--report">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">
                     <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="1.5">
                         <path

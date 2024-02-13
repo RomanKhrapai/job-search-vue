@@ -28,20 +28,22 @@
                     <v-col v-for="company in companies" :key="company.id" cols="12" sm="4">
 
                         <v-sheet class="ma-2 pa-2">
-                            <v-card class="mx-auto" @click="redirectTo(`/companies/${company.id}`)" max-width="344">
+                            <router-link :to="`/companies/${company.id}`">
+                                <v-card class="mx-auto" max-width="344">
 
-                                <v-img v-if="company.image" :src="company.image" height="200" width="200" cover></v-img>
-                                <img v-if="!company.image" height="200" width="200" src="/src/assets/images/fix-poster.jpg"
-                                    alt="Постер фільму відсутній">
-                                <v-card-title>
-                                    {{ company.name }}
-                                </v-card-title>
-                                <v-rating half-increments :length="5" readonly :size="28" :model-value="company.avgVote / 2"
-                                    color="warning" active-color="warning" />
-                                <v-card-subtitle>
-                                    Вакансій: {{ company.vacancies.length }}
-                                </v-card-subtitle>
-                            </v-card>
+                                    <v-img v-if="company.image" :src="company.image" height="200" width="200" cover></v-img>
+                                    <img v-if="!company.image" height="200" width="200"
+                                        src="/src/assets/images/fix-poster.jpg" alt="Постер фільму відсутній">
+                                    <v-card-title>
+                                        {{ company.name }}
+                                    </v-card-title>
+                                    <v-rating half-increments :length="5" readonly :size="28"
+                                        :model-value="company.avgVote / 2" color="warning" active-color="warning" />
+                                    <v-card-subtitle>
+                                        Вакансій: {{ company.vacancies.length }}
+                                    </v-card-subtitle>
+                                </v-card>
+                            </router-link>
                         </v-sheet>
                     </v-col>
 
@@ -80,12 +82,7 @@ const isdesc = ref(route.query?.isdesc || false);
 const sort = ref(route.query?.sort || '');
 const page = ref(Number(route.query?.page) || 1);
 
-function redirectTo(path) {
 
-    router.push({
-        path,
-    })
-}
 
 watch([name, area, isdesc, sort, page], (
     [newName, newArea, newIsdesc, newSort, newPage], [oldName, oldArea, oldIsdesc, oldSort, oldPage]
@@ -120,9 +117,9 @@ watch([name, area, isdesc, sort, page], (
     min-width: 60px;
 }
 
-.filter_input {
+/* .filter_input {
     margin-bottom: -30px;
-}
+} */
 
 .swich_hide .v-selection-control__wrapper {
     visibility: hidden;

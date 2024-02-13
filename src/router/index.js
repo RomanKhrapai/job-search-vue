@@ -15,14 +15,13 @@ const routes = [
     {
         path: "/my-office",
         component: () => import("../components/pages/Office.vue"),
-        meta: { id: 2, role: true },
+        meta: { id: 2, user: true },
         children: [
             {
                 path: "",
                 name: "office",
                 component: () => import("../components/Office/Index.vue"),
                 meta: {},
-                alias: "sadd",
             },
             {
                 path: "chat",
@@ -42,7 +41,7 @@ const routes = [
     {
         path: "/candidates",
         component: () => import("../components/pages/Candidates.vue"),
-        meta: { role: "3", id: 3 },
+        meta: { user: true, id: 3 },
         children: [
             {
                 path: "",
@@ -52,11 +51,13 @@ const routes = [
             {
                 path: "create",
                 component: () => import("../components/Candidates/Store.vue"),
+                meta: { role: "3" },
             },
             {
                 path: ":id/edit",
                 component: () => import("../components/Candidates/Edit.vue"),
                 props: (route) => ({ id: route.params.id }),
+                meta: { role: "3" },
             },
             {
                 path: ":id",
@@ -68,7 +69,7 @@ const routes = [
     {
         path: "/vacancies",
         component: () => import("../components/pages/Vacancies.vue"),
-        meta: { role: "2", id: 4 },
+        meta: { id: 4 },
         children: [
             {
                 path: "",
@@ -78,11 +79,13 @@ const routes = [
             {
                 path: "create",
                 component: () => import("../components/Vacancies/Store.vue"),
+                meta: { role: "2" },
             },
             {
                 path: ":id/edit",
                 component: () => import("../components/Vacancies/Edit.vue"),
                 props: (route) => ({ id: route.params.id }),
+                meta: { role: "2" },
             },
             {
                 path: ":id",
@@ -94,7 +97,7 @@ const routes = [
     {
         path: "/companies",
         component: () => import("../components/pages/Companies.vue"),
-        meta: { role: "2", id: 5 },
+        meta: { id: 5 },
         children: [
             {
                 path: "",
@@ -104,11 +107,13 @@ const routes = [
             {
                 path: "create",
                 component: () => import("../components/Companies/Store.vue"),
+                meta: { role: "2" },
             },
             {
                 path: ":id/edit",
                 component: () => import("../components/Companies/Edit.vue"),
                 props: (route) => ({ id: route.params.id }),
+                meta: { role: "2" },
             },
             {
                 path: ":id",
@@ -122,13 +127,13 @@ const routes = [
         path: "/auth/registration",
         name: "registration",
         component: () => import("../components/pages/RegistrationPage.vue"),
-        meta: { role: "guest", id: 5 },
+        meta: { guest: true, id: 5 },
     },
     {
         path: "/auth/login",
         name: "login",
         component: () => import("../components/pages/LogInPage.vue"),
-        meta: { role: "guest", id: 6 },
+        meta: { guest: true, id: 6 },
     },
     {
         path: "/not-found",
@@ -168,61 +173,57 @@ function query(store, to, from) {
     setTimeout(store.startFetch, 1);
 }
 
-function googleRoute(to, from, next, onAuth, setIsAuthorized) {
-    if (to.query?.token) {
-        localStorage.access_token = to.query.token;
-        axiosInstance.defaults.headers.common[
-            "Authorization"
-        ] = `Bearer ${to.query.token}`;
-        const url = new URL(window.location.href);
-        url.search = "";
-        window.history.replaceState({}, "", url.href);
-        setIsAuthorized(true);
-        onAuth();
+function googleRoute(to) {
+    if (!to.query?.token) return;
+    localStorage.access_token = to.query.token;
+    axiosInstance.defaults.headers.common[
+        "Authorization"
+    ] = `Bearer ${to.query.token}`;
 
-        if (to.query?.new) {
-            return next({ name: "user-update" });
-        }
+    const url = new URL(window.location.href);
+    url.search = "";
+    window.history.replaceState({}, "", url.href);
 
-        return next({ name: "home" });
+    if (to.query?.new) {
+        return "user-update";
     }
+
+    return "home";
 }
 
-router.beforeEach((to, from, next) => {
-    // console.log("to= ", to);
-    // console.log("from= ", from);
-
+router.beforeEach(async (to, from, next) => {
     const { onAuth, setPath, setIsAuthorized } = useAuthStore();
     const { isAuthorized, role } = storeToRefs(useAuthStore());
-    googleRoute(to, from, next, onAuth, setIsAuthorized);
+    const isRedirect = googleRoute(to);
+    const isStart = !from.matched[0];
+
+    if (isStart) {
+        await onAuth();
+    }
+    const isAuth = isAuthorized.value;
 
     if (to.path !== from.path) {
     }
 
-    const isAuth = to.matched.find(
-        (record) => record.meta.isAuthorized === true
-    );
-    const isAuthorizedRoute = to.matched.find((record) => record.meta.role);
-    const isEmploer = to.matched.find((record) => record.meta.role == 2);
-    const isWorker = to.matched.find((record) => record.meta.role == 3);
+    const routeRole = to.matched.find((record) => record.meta.role)?.meta?.role;
+    const isRole = Boolean(to.matched.find((record) => record.meta?.role));
+    const isUser = Boolean(to.matched.find((record) => record.meta?.user));
+    const isGuest = Boolean(to.matched.find((record) => record.meta?.guest));
 
-    // console.log(to.matched.find((record) => record.meta.role));
-
-    // if (!isAuth) {
-    //     next();
-    // } else
-    if (!isAuthorized && isAuthorizedRoute) {
-        setPath(to.path);
+    if (isRedirect) {
+        next({ name: isRedirect });
+    } else if ((!isAuth && isGuest) || (!isRole && !isGuest && !isUser)) {
+        next();
+    } else if (!isAuth && isRole) {
         next({ name: "login" });
+    } else if (isAuth && routeRole == role.value) {
+        next({ name: "office" });
+        return;
+    } else if (isAuth && isUser) {
+        next();
+    } else {
+        next({ name: "NotFound" });
     }
-    // else if (authStatus === "guest") {
-    //     next();
-    // } else if (authStatus === "2"&&) {
-    //     next();
-    // } else if (authStatus === "3") {
-    //     next();
-    // } else next({ name: "NotFound" });
-    next();
 });
 
 export default router;

@@ -114,8 +114,6 @@ async function handleSubmit() {
     }
 }
 
-watch(isAuthorized, () => { if (isAuthorized) { router.push({ name: 'home' }) } })
-
 watch(area, () => { debounce(() => { getAreas(area.value.name, 10) }, 200) })
 
 getFormParameters();

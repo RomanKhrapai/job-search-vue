@@ -113,7 +113,7 @@ auth.onAuth();
       <!-- <Loader v-if="isLoading" /> -->
       <div :class="{ masck: !isNightMode }"></div>
     </main>
-    <!-- <TogleDayOrNight v-model="isNightMode" /> -->
+    <Footer />
   </div>
 </template>
 

@@ -24,14 +24,28 @@ export async function getVacancyOffer(vacancyId, deep) {
     }
 }
 
-export async function getVacancies(title, profession_id, area_id, page) {
+export async function getVacancies(
+    title,
+    profession_id,
+    area_id,
+    page,
+    sort,
+    isDesc
+) {
     const { setVacancies, setIsLoading, setLastPage } = useEmploymentStore();
     setIsLoading(true);
     setLastPage(1);
     setVacancies([]);
     try {
         const response = await axiosInstance.get(`/vacancies`, {
-            params: { title, area_id, profession_id, page },
+            params: {
+                title,
+                area_id,
+                profession_id,
+                page,
+                sort,
+                is_desc: isDesc ? "desc" : "asc",
+            },
         });
         setLastPage(response.data.meta.last_page);
         setVacancies(response.data.data);
@@ -78,7 +92,7 @@ export async function storeVacancy({
 }) {
     const { setVacancy, setIsLoading } = useEmploymentStore();
     const { company } = storeToRefs(useEmploymentStore());
-    const {authData} = useAuthStore();
+    const { authData } = useAuthStore();
     setIsLoading(true);
 
     try {
@@ -97,7 +111,6 @@ export async function storeVacancy({
 
         setVacancy(response.data.data);
         authData();
-        return response.data.data.id;
     } catch (error) {
         console.log(error);
     } finally {
@@ -107,7 +120,7 @@ export async function storeVacancy({
 
 export async function updateVacancyStatus(isClosed) {
     const { setVacancy, setIsLoading } = useEmploymentStore();
-    const {authData} = useAuthStore();
+    const { authData } = useAuthStore();
     const { setErrorMessage, setSuccessfulMessage } = useChatsStore();
     const { vacancy } = storeToRefs(useEmploymentStore());
     setIsLoading(true);
@@ -128,10 +141,9 @@ export async function updateVacancyStatus(isClosed) {
 }
 
 export async function deleteVacancy(id) {
-    const {authData} = useAuthStore(); 
+    const { authData } = useAuthStore();
     const { setIsLoading } = useEmploymentStore();
     setIsLoading(true);
-   
 
     try {
         const response = await axiosInstance.delete(`/vacancies/${id}`);

@@ -1,12 +1,39 @@
 <template>
     <div>
         <Loader v-if="isLoading" />
-        <FilterBox class="filter">
-            <CustomInput v-model="name" label='Search:' class="filter_input" />
-            <CustomOneSearchSelect v-model="profession" class="" :label="'profession'" name="profession"
-                :list-class="'relative'" :options="professions" :noBtn="true" />
-            <CustomOneSearchSelect v-model="area" class="" :label="'area'" name="area" :list-class="'relative'"
-                :options="areas" :noBtn="true" />
+        <FilterBox>
+            <div class="row">
+                <CustomInput v-model="name" label='Search:' class="filter_input" />
+                <CustomOneSearchSelect v-model="profession" class="" :label="'profession'" name="profession"
+                    :list-class="'relative'" :options="professions" :noBtn="true" />
+                <CustomOneSearchSelect v-model="area" class="" :label="'area'" name="area" :list-class="'relative'"
+                    :options="areas" :noBtn="true" />
+            </div>
+            <div class="row_sort ">
+                <div> <v-btn density="comfortable" icon="mdi-sort-clock-ascending-outline" class="sort_btn-text"
+                        :class="{ 'active': sort === 'created_at' && isdesc }" @click="setSort('created_at', true)"></v-btn>
+                    <span class="text_sort">creation date</span>
+                    <v-btn density="comfortable" icon="mdi-sort-clock-descending-outline" class="sort_btn-text"
+                        :class="{ 'active': sort === 'created_at' && !isdesc }"
+                        @click="setSort('created_at', false)"></v-btn>
+                </div>
+                <div>
+                    <v-btn density="comfortable" icon="mdi-arrow-down-bold-outline" class="sort_btn-text"
+                        :class="{ 'active': sort === 'salary' && isdesc }" @click="setSort('salary', true)"></v-btn>
+                    <span class="text_sort">salary</span>
+                    <v-btn density="comfortable" icon="mdi-arrow-up-bold-outline" class="sort_btn-text"
+                        :class="{ 'active': sort === 'salary' && !isdesc }" @click="setSort('salary', false)"></v-btn>
+                </div>
+                <div>
+                    <v-btn density="comfortable" icon="mdi-arrow-down-bold-outline" class="sort_btn-text"
+                        :class="{ 'active': sort === 'vote' && isdesc }" @click="setSort('vote', true)"></v-btn>
+                    <span class="text_sort">rating</span>
+                    <v-btn density="comfortable" icon="mdi-arrow-up-bold-outline" class="sort_btn-text"
+                        :class="{ 'active': sort === 'vote' && !isdesc }" @click="setSort('vote', false)"></v-btn>
+                </div>
+
+            </div>
+
         </FilterBox>
 
         <NoFoundJob v-if="!isLoading && !vacancies[0]" class="full-box" />
@@ -47,12 +74,12 @@ const name = ref(route.query?.name || "");
 const page = ref(Number(route.query?.page) || 1);
 const profession = ref({ id: '', name: '' });
 const area = ref({ id: '', name: '' });
+const isdesc = ref(route.query?.isdesc || false);
+const sort = ref(route.query?.sort || '');
 
-function redirectTo(path) {
-
-    router.push({
-        path,
-    })
+function setSort(name, value) {
+    sort.value = name;
+    isdesc.value = value;
 }
 
 watch(vacancies, () => {
@@ -61,7 +88,8 @@ watch(vacancies, () => {
     if (name.value) query.name = name.value;
     if (area.value.id) query.area = area.value.id;
     if (profession.value.id) query.profession = profession.value.id;
-    // if (newSort) query.sort = newSort;
+    if (sort.value) query.sort = sort.value;
+    if (isdesc.value) query.isdesc = isdesc.value;
     if (page.value && page.value !== 1) query.page = page.value;
 
     router.push({ query });
@@ -69,16 +97,16 @@ watch(vacancies, () => {
 
 
 watch(
-    [name, area, profession, page],
+    [name, area, profession, page, sort, isdesc],
     (
-        [newName, newArea, newProfession, newPage],
-        [oldName, oldArea, oldProfession, oldPage]
+        [newName, newArea, newProfession, newPage, newSort, newIsdesc],
+        [oldName, oldArea, oldProfession, oldPage, oldSort, oldIsdesc]
     ) => {
 
         if (newPage === oldPage) page.value = 1;
 
         debounce(() => {
-            getVacancies(newName, newProfession.id, newArea.id, newPage);
+            getVacancies(newName, newProfession.id, newArea.id, newPage, newSort, newIsdesc);
         }, 200, 'getVacancies');
 
     });
@@ -96,7 +124,9 @@ onMounted(async () => {
         route.query?.name,
         route.query?.profession,
         route.query?.area,
-        route.query?.page
+        route.query?.page,
+        route.query?.sort,
+        route.query?.isdesc
     );
 
     const [professionById, areaById] = await Promise.all(
@@ -116,10 +146,19 @@ onMounted(async () => {
 <style lang="scss" scoped>
 @import "../../assets/scss/variables.scss";
 
-.filter {
+.row {
     display: flex;
     justify-content: space-between;
-    border-radius: 0 0 10px 10px;
+}
+
+.row_sort {
+    padding: 5px;
+    display: flex;
+    justify-content: space-around;
+}
+
+.text_sort {
+    padding: 10px;
 }
 
 .btn {
@@ -135,5 +174,9 @@ onMounted(async () => {
 
 .full-box {
     margin-top: -45px;
+}
+
+.active {
+    background-color: aquamarine;
 }
 </style>

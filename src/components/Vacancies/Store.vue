@@ -50,7 +50,7 @@ import CustomInput from "../shared/form/CustomInput/CustomInput.vue";
 import Button from "../shared/form/Button/Button.vue";
 import CustomOneSelect from "../shared/form/CustomInput/CustomOneSelect.vue";
 import {
-    maxString, minString, isRequired,
+    maxString, minString, isRequired, isRequiredObjName,
 } from "../../utils/validationRules";
 import MainTitle from "../shared/MainTitle.vue";
 import { useAuthStore } from "../../store/authStore"
@@ -85,12 +85,13 @@ const form = ref(null);
 const { isAuthorized } = storeToRefs(useAuthStore());
 const { getAreas, getFormParameters } = useFormParametersStore();
 const { company, vacancy } = storeToRefs(useEmploymentStore());
+const { setVacancy } = useEmploymentStore();
 const { profession, types, natures, areas, skills } = storeToRefs(useFormParametersStore());
 
 const titleRules = computed(() => [isRequired, maxString(200), minString(3)]);
 const descriptionRules = computed(() => [isRequired, maxString(2000), minString(3)]);
 const skillsRules = computed(() => [isRequired, maxString(200), minString(3)]);
-const areaRules = computed(() => [isRequired]);
+const areaRules = computed(() => [isRequiredObjName]);
 const natureRules = computed(() => [isRequired]);
 const typeRules = computed(() => [isRequired]);
 const salaryRules = computed(() => [isRequired]);
@@ -100,7 +101,8 @@ async function handleSubmit() {
 
     const isFormValid = form.value.validate()
     if (isFormValid) {
-        const id = await storeVacancy({
+
+        await storeVacancy({
             title: title.value,
             profession: profession.value,
             area: area.value,
@@ -111,20 +113,25 @@ async function handleSubmit() {
             skills: selectedSkills.value,
             description: description.value
         });
+
+
+    }
+}
+watch(vacancy, (newVal) => {
+    if (newVal?.id) {
         form.value.reset()
 
         router.push({
-            path: `/vacancies/${id}`,
+            path: `/vacancies/${newVal?.id}`,
         })
     }
-}
-
+})
 watch(isAuthorized, () => { if (isAuthorized) { router.push({ name: 'home' }) } })
 
 watch(area, () => { debounce(() => { getAreas(area.value.name, 10) }, 200) })
 
 getFormParameters();
-
+setVacancy({});
 getAreas('', 10);
 </script>
   

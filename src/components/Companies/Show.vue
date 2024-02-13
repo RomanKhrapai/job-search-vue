@@ -235,7 +235,6 @@ getCompamyReviews(id);
 
 .vacancy_img-box {
     padding: 15px;
-
 }
 
 .vacancy_img {
@@ -250,6 +249,10 @@ getCompamyReviews(id);
 
 .card-form {
     overflow: hidden;
-
 }
+
+div.card-form {
+    overflow: visible !important;
+}
+
 </style>

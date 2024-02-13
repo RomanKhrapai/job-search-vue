@@ -38,6 +38,7 @@ export const oldPasswordValidation = (str) => {
 };
 
 export const isRequired = (val) => {
+    console.log(val);
     return !val?.trim() ? "field cannot be empty" : null;
 };
 

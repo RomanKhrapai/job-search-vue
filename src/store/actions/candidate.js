@@ -24,7 +24,14 @@ export async function getCandidateOffer(candidateId, deep) {
     }
 }
 
-export async function getCandidates(title, profession_id, area_id, page) {
+export async function getCandidates(
+    title,
+    profession_id,
+    area_id,
+    page,
+    sort,
+    isDesc
+) {
     const { setCandidates, setIsLoading, setLastPage } = useEmploymentStore();
     const { setErrorMessage } = useChatsStore();
     setIsLoading(true);
@@ -32,7 +39,14 @@ export async function getCandidates(title, profession_id, area_id, page) {
     setCandidates([]);
     try {
         const response = await axiosInstance.get(`/candidates`, {
-            params: { title, area_id, profession_id, page },
+            params: {
+                title,
+                area_id,
+                profession_id,
+                page,
+                sort,
+                is_desc: isDesc ? "desc" : "asc",
+            },
         });
         setLastPage(response.data.meta.last_page);
         setCandidates(response.data.data);

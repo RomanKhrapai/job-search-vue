@@ -1,6 +1,6 @@
 <template>
     <template v-for="candidate in candidates">
-        <router-link :to="`/candidates/${candidate.id}`">
+        <router-link class="link" :to="`/candidates/${candidate.id}`">
 
             <v-col cols="12">
                 <v-card class="mx-auto card" prepend-icon="mdi-twitter" :title="candidate.title">
@@ -28,11 +28,13 @@
 
                             <template v-slot:append>
                                 <div class="justify-self-end">
-                                    <v-icon class="me-1" icon="mdi-heart"></v-icon>
-                                    <span class="subheading me-2">256</span>
+
+                                    <v-rating half-increments :length="5" readonly :size="28"
+                                        :model-value="candidate.avgVote / 2" color="warning" active-color="warning" />
+
                                     <span class="me-1">·</span>
-                                    <v-icon class="me-1" icon="mdi-share-variant"></v-icon>
-                                    <span class="subheading">45</span>
+                                    <v-icon class="me-1" icon="mdi-message-text-outline"></v-icon>
+                                    <span class="subheading">{{ candidate.countReviews }}</span>
                                 </div>
                             </template>
                         </v-list-item>
