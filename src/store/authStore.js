@@ -11,7 +11,6 @@ export const useAuthStore = defineStore("auth", () => {
     const auth = ref({
         isError: false,
         isAuthorized: false,
-        oldPath: null,
         user: {
             id: null,
             role: null,
@@ -36,19 +35,8 @@ export const useAuthStore = defineStore("auth", () => {
             ? "http://127.0.0.1:8080/storage/" + auth.value.user.image
             : null;
     });
-    const path = computed(() => auth.value.oldPath);
+
     const isAuthorized = computed(() => auth.value.isAuthorized);
-
-    function setIsAuthorized(bool) {
-        auth.value.isAuthorized = bool;
-    }
-
-    function setPath(path) {
-        auth.value.oldPath = path;
-    }
-    function clearPath() {
-        auth.value.oldPath = null;
-    }
 
     async function authData() {
         auth.value.isLoading = true;
@@ -232,7 +220,6 @@ export const useAuthStore = defineStore("auth", () => {
         isAuthorized,
         role,
         name,
-        path,
         companies,
         candidates,
         image,
@@ -240,9 +227,6 @@ export const useAuthStore = defineStore("auth", () => {
         phone,
         userId,
 
-        setPath,
-        setIsAuthorized,
-        clearPath,
         onAuth,
         loginUser,
         logOut,

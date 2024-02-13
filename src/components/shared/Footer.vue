@@ -20,26 +20,8 @@
 <script setup>
 import { useAuthStore } from "../../store/authStore"
 import { storeToRefs } from "pinia"
-import { ref, watch } from "vue";
-import { useRouter, useRoute } from 'vue-router';
+const { isAuthorized } = storeToRefs(useAuthStore());
 
-const auth = useAuthStore();
-const router = useRouter();
-const route = useRoute();
-const tab = ref(null)
-const { isAuthorized, path } = storeToRefs(useAuthStore());
-
-watch(() => route.meta.id, (id) => {
-    tab.value = id;
-});
-
-watch(isAuthorized, (newVal) => {
-    if (newVal === true && path.value) {
-        router.push({ path: path.value });
-        auth.clearPath();
-    }
-})
-auth.onAuth();
 </script>
 
 

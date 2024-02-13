@@ -1,12 +1,8 @@
 import { defineStore, storeToRefs } from "pinia";
-import { useToast } from "vue-toastification";
 import { pusher } from "../services/pusher";
 import axiosInstance from "../services/axios";
 import { useAuthStore } from "./authStore";
-
 import { ref, computed } from "vue";
-
-const toast = useToast();
 
 export const useChatsStore = defineStore("chats", () => {
     const chats = ref({
@@ -121,7 +117,6 @@ export const useChatsStore = defineStore("chats", () => {
 
         try {
             const response = await axiosInstance.get(`/chats`);
-            console.log(response.data);
             chats.value.chatsList = response.data.data;
             if (!chats.value.currentChat) {
                 setCurrentChat(response.data.data[0]);

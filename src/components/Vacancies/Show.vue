@@ -68,7 +68,7 @@ getVacancy(id);
 <template>
     <div class="">
         <Loader v-if="isLoading" />
-        <v-container v-if="vacancy.id">
+        <v-container v-if="vacancy.id && !isLoading">
             <v-row>
                 <v-col>
                     <v-card class="wrapper_vacancies">

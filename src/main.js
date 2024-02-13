@@ -16,8 +16,6 @@ const vuetify = createVuetify({ components, directives });
 const pinia = createPinia();
 const app = createApp(App);
 
-// axios.defaults.headers.common["Access-Control-Allow-Origin"] = "*";
-
 app.use(router)
     .use(pinia)
     .directive("tooltip", (el, param) => {

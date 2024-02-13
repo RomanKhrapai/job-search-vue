@@ -1,20 +1,14 @@
 <script setup>
 
-import TogleDayOrNight from "@/components/TogleDayOrNight";
 import UserMenu from "./components/auth/UserMenu.vue";
-import Loader from "./components/Loader.vue";
 import { useAuthStore } from "./store/authStore"
 import { storeToRefs } from "pinia"
 import { ref, watch, onBeforeMount } from "vue";
-import { useRouter, useRoute } from 'vue-router';
+import { useRoute } from 'vue-router';
 import { toast } from 'vue3-toastify';
 import { useChatsStore } from "./store/chatsStore";
 import Footer from "./components/shared/Footer.vue";
 
-
-const auth = useAuthStore();
-
-const router = useRouter();
 const route = useRoute();
 
 const isNightMode = ref(null)
@@ -27,13 +21,6 @@ const { isAuthorized, path, role } = storeToRefs(useAuthStore());
 watch(() => route.meta.id, (id) => {
   tab.value = id;
 });
-
-watch(isAuthorized, (newVal) => {
-  if (newVal === true && path.value) {
-    router.push({ path: path.value });
-    auth.clearPath();
-  }
-})
 
 watch(nightMode, (val) => localStorage.setItem("nightMode", val))
 
@@ -63,7 +50,6 @@ watch(infoMessage, (newVal) => {
   })
 });
 
-auth.onAuth();
 </script>
 
 
@@ -110,7 +96,6 @@ auth.onAuth();
     </div>
     <main class="container">
       <RouterView />
-      <!-- <Loader v-if="isLoading" /> -->
       <div :class="{ masck: !isNightMode }"></div>
     </main>
     <Footer />

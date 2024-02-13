@@ -42,7 +42,7 @@
                 Download report
             </v-btn>
 
-            <v-dialog v-if="role == 3" v-model="dialogAddResume" width="auto" class="office_link">
+            <v-dialog v-if="role == 3" v-model="dialogAddResume" width="auto">
                 <template v-slot:activator="{ props }">
                     <v-btn class="office_link btn--report" v-bind="props">
                         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24">

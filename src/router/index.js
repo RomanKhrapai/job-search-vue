@@ -148,30 +148,6 @@ const router = createRouter({
     routes,
 });
 
-function query(store, to, from) {
-    if (to.query?.token) {
-        localStorage.access_token = to.query.token;
-        axiosInstance.defaults.headers.common[
-            "Authorization"
-        ] = `Bearer ${response.data.access_token}`;
-    }
-
-    if (
-        to.path === from.path ||
-        !from.meta?.id ||
-        to.fullPath.includes("/?search")
-    ) {
-        const search = to.query?.search;
-
-        store.setSearch(search ? search : null);
-        store.setPage(to.query?.page ? to.query.page : 1);
-    } else {
-        store.setPage(1);
-        store.setSearch(null);
-    }
-    setTimeout(store.startFetch, 1);
-}
-
 function googleRoute(to) {
     if (!to.query?.token) return;
     localStorage.access_token = to.query.token;
@@ -191,7 +167,7 @@ function googleRoute(to) {
 }
 
 router.beforeEach(async (to, from, next) => {
-    const { onAuth, setPath, setIsAuthorized } = useAuthStore();
+    const { onAuth } = useAuthStore();
     const { isAuthorized, role } = storeToRefs(useAuthStore());
     const isRedirect = googleRoute(to);
     const isStart = !from.matched[0];
@@ -200,9 +176,6 @@ router.beforeEach(async (to, from, next) => {
         await onAuth();
     }
     const isAuth = isAuthorized.value;
-
-    if (to.path !== from.path) {
-    }
 
     const routeRole = to.matched.find((record) => record.meta.role)?.meta?.role;
     const isRole = Boolean(to.matched.find((record) => record.meta?.role));
