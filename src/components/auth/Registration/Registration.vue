@@ -13,9 +13,9 @@
                 :label="'Confirm password'" />
             <div class="wrapper_radio">
                 <CustomRadio v-model="role" name="role" value='3' class="registration__input check-box__input"
-                    :label="'Employer'"  />
+                    :label="'Employer'" />
                 <CustomRadio v-model="role" name="role" value='2' class="registration__input check-box__input"
-                    :label="'Worker'"  />
+                    :label="'Worker'" />
             </div>
 
 
@@ -32,10 +32,10 @@
 <script setup>
 import CustomForm from "../../shared/form/CustomForm.vue";
 import AuthContainer from "../AuthContainer.vue"
-import CustomInput from "../../shared/form/CustomInput/CustomInput.vue";
-import CustomRadio from "../../shared/form/CustomInput/CustomRadio.vue";
-import CustomCheckBox from "../../shared/form/CustomInput/CustomCheckBox.vue";
-import Button from "../../shared/form/Button/Button.vue";
+import CustomInput from "../../shared/form/CustomInput.vue";
+import CustomRadio from "../../shared/form/CustomRadio.vue";
+import CustomCheckBox from "../../shared/form/CustomCheckBox.vue";
+import Button from "../../shared/form/Button.vue";
 import {
     emailValidation, passwordValidation, isRequired, nameValidation,
 } from "../../../utils/validationRules";

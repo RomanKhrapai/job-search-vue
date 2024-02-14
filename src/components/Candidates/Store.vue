@@ -39,13 +39,13 @@
 </template>
   
 <script setup>
-import CustomManySearchSelect from "../shared/form/CustomInput/CustomManySearchSelect.vue";
-import CustomOneSearchSelect from "../shared/form/CustomInput/CustomOneSearchSelect.vue";
-import CustomTextArea from "../shared/form/CustomInput/CustomTextArea.vue";
+import CustomManySearchSelect from "../shared/form/CustomManySearchSelect.vue";
+import CustomOneSearchSelect from "../shared/form/CustomOneSearchSelect.vue";
+import CustomTextArea from "../shared/form/CustomTextArea.vue";
 import CustomForm from "../shared/form/CustomForm.vue";
-import CustomInput from "../shared/form/CustomInput/CustomInput.vue";
-import Button from "../shared/form/Button/Button.vue";
-import CustomOneSelect from "../shared/form/CustomInput/CustomOneSelect.vue";
+import CustomInput from "../shared/form/CustomInput.vue";
+import Button from "../shared/form/Button.vue";
+import CustomOneSelect from "../shared/form/CustomOneSelect.vue";
 import {
     maxString, minString, isRequired, isNumber, isPositiveNumber, isRequiredObjName
 } from "../../utils/validationRules";

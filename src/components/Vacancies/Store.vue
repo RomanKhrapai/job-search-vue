@@ -42,15 +42,15 @@
 </template>
   
 <script setup>
-import CustomManySearchSelect from "../shared/form/CustomInput/CustomManySearchSelect.vue";
-import CustomOneSearchSelect from "../shared/form/CustomInput/CustomOneSearchSelect.vue";
-import CustomTextArea from "../shared/form/CustomInput/CustomTextArea.vue";
+import CustomManySearchSelect from "../shared/form/CustomManySearchSelect.vue";
+import CustomOneSearchSelect from "../shared/form/CustomOneSearchSelect.vue";
+import CustomTextArea from "../shared/form/CustomTextArea.vue";
 import CustomForm from "../shared/form/CustomForm.vue";
-import CustomInput from "../shared/form/CustomInput/CustomInput.vue";
-import Button from "../shared/form/Button/Button.vue";
-import CustomOneSelect from "../shared/form/CustomInput/CustomOneSelect.vue";
+import CustomInput from "../shared/form/CustomInput.vue";
+import Button from "../shared/form/Button.vue";
+import CustomOneSelect from "../shared/form/CustomOneSelect.vue";
 import {
-    maxString, minString, isRequired, isRequiredObjName,
+    maxString, minString, isRequired, isRequiredObjName, isNumber
 } from "../../utils/validationRules";
 import MainTitle from "../shared/MainTitle.vue";
 import { useAuthStore } from "../../store/authStore"
@@ -88,14 +88,14 @@ const { company, vacancy } = storeToRefs(useEmploymentStore());
 const { setVacancy } = useEmploymentStore();
 const { profession, types, natures, areas, skills } = storeToRefs(useFormParametersStore());
 
-const titleRules = computed(() => [isRequired, maxString(200), minString(3)]);
-const descriptionRules = computed(() => [isRequired, maxString(2000), minString(3)]);
-const skillsRules = computed(() => [isRequired, maxString(200), minString(3)]);
+const titleRules = computed(() => [isRequired, maxString(200), minString(1)]);
+const descriptionRules = computed(() => [isRequired, maxString(2000), minString(1)]);
+const skillsRules = computed(() => [isRequired, maxString(200), minString(1)]);
 const areaRules = computed(() => [isRequiredObjName]);
 const natureRules = computed(() => [isRequired]);
 const typeRules = computed(() => [isRequired]);
-const salaryRules = computed(() => [isRequired]);
-const maxSalaryRules = computed(() => [isRequired]);
+const salaryRules = computed(() => [isRequired, isNumber]);
+const maxSalaryRules = computed(() => [isNumber]);
 
 async function handleSubmit() {
 
@@ -126,6 +126,16 @@ watch(vacancy, (newVal) => {
         })
     }
 })
+// watch(maxSalary, (newVal) => {
+//     const val = Number(newVal);
+//     console.log(newVal);
+//     console.log(isNaN(val));
+//     // if (isNaN(val)) {
+//     //     maxSalary.value = "";
+//     // } else {
+//     maxSalary.value = String(val * 1);
+//     // }
+// })
 watch(isAuthorized, () => { if (isAuthorized) { router.push({ name: 'home' }) } })
 
 watch(area, () => { debounce(() => { getAreas(area.value.name, 10) }, 200) })

@@ -3,6 +3,7 @@ import { pusher } from "../services/pusher";
 import axiosInstance from "../services/axios";
 import { useAuthStore } from "./authStore";
 import { ref, computed } from "vue";
+import { debounce } from "../utils/debounce";
 
 export const useChatsStore = defineStore("chats", () => {
     const chats = ref({
@@ -65,22 +66,40 @@ export const useChatsStore = defineStore("chats", () => {
     }
 
     function setSuccessfulMessage(data) {
-        chats.value.successfulMessage = data;
-        setTimeout(() => {
-            chats.value.successfulMessage = null;
-        }, 200);
+        debounce(
+            () => {
+                chats.value.successfulMessage = data;
+                setTimeout(() => {
+                    chats.value.successfulMessage = null;
+                }, 200);
+            },
+            1000,
+            "Successful"
+        );
     }
     function setInfoMessage(data) {
-        chats.value.infoMessage = data;
-        setTimeout(() => {
-            chats.value.infoMessage = null;
-        }, 200);
+        debounce(
+            () => {
+                chats.value.infoMessage = data;
+                setTimeout(() => {
+                    chats.value.infoMessage = null;
+                }, 200);
+            },
+            1000,
+            "Info"
+        );
     }
     function setErrorMessage(data) {
-        chats.value.errorMessage = data;
-        setTimeout(() => {
-            chats.value.errorMessage = null;
-        }, 200);
+        debounce(
+            () => {
+                chats.value.errorMessage = data;
+                setTimeout(() => {
+                    chats.value.errorMessage = null;
+                }, 200);
+            },
+            1000,
+            "Error"
+        );
     }
 
     function setIsError(data) {
@@ -105,7 +124,11 @@ export const useChatsStore = defineStore("chats", () => {
             const response = await axiosInstance.get(`/reports/feedback`);
             setInfoMessage(response.data.message);
         } catch (error) {
-            console.log(error);
+            if (error?.response?.status === 401)
+                return setErrorMessage("Unauthenticated.");
+            if (error?.response?.status === 404)
+                return setErrorMessage("connection error");
+            setErrorMessage("error system generate PDF");
         } finally {
             chats.value.isLoading = false;
         }
@@ -118,11 +141,17 @@ export const useChatsStore = defineStore("chats", () => {
         try {
             const response = await axiosInstance.get(`/chats`);
             chats.value.chatsList = response.data.data;
-            if (!chats.value.currentChat) {
+            if (!chats.value.currentChat && response.data.data[0]) {
                 setCurrentChat(response.data.data[0]);
             }
         } catch (error) {
-            console.log(error);
+            if (error?.response?.status === 401)
+                return setErrorMessage("Unauthenticated.");
+            if (error?.response?.status === 422)
+                return setErrorMessage("data is incorrect");
+            if (error?.response?.status === 404)
+                return setErrorMessage("connection error");
+            setErrorMessage("error system get Chats");
         } finally {
             chats.value.isLoading = false;
         }
@@ -137,7 +166,13 @@ export const useChatsStore = defineStore("chats", () => {
 
             chats.value.messages = response.data.data;
         } catch (error) {
-            console.log(error);
+            if (error?.response?.status === 401)
+                return setErrorMessage("Unauthenticated.");
+            if (error?.response?.status === 422)
+                return setErrorMessage("data is incorrect");
+            if (error?.response?.status === 404)
+                return setErrorMessage("connection error");
+            setErrorMessage("error system get Messages List");
         } finally {
             chats.value.isLoading = false;
         }
@@ -158,7 +193,13 @@ export const useChatsStore = defineStore("chats", () => {
             ];
             setCurrentChat(response.data.data);
         } catch (error) {
-            console.log(error);
+            if (error?.response?.status === 401)
+                return setErrorMessage("Unauthenticated.");
+            if (error?.response?.status === 422)
+                return setErrorMessage("data is incorrect");
+            if (error?.response?.status === 404)
+                return setErrorMessage("connection error");
+            setErrorMessage("error system");
         } finally {
             setIsLoading(false);
         }
@@ -182,7 +223,69 @@ export const useChatsStore = defineStore("chats", () => {
                 }),
             ];
         } catch (error) {
-            console.log(error);
+            if (error?.response?.status === 401)
+                return setErrorMessage("Unauthenticated.");
+            if (error?.response?.status === 422)
+                return setErrorMessage("data is incorrect");
+            if (error?.response?.status === 404)
+                return setErrorMessage("connection error");
+            setErrorMessage("error system send Message");
+        } finally {
+            setIsLoading(false);
+        }
+    }
+
+    async function sendOffer(content, company, candidate) {
+        const { userId } = storeToRefs(useAuthStore());
+        setIsError(true);
+        setIsLoading(true);
+
+        let chatId = chats.value.chatsList.find(
+            (chat) =>
+                chat.userId == candidate.user.id && chat.companyId == company.id
+        )?.id;
+        if (!chatId) {
+            await createChats(company.id, candidate.user.id);
+            chatId = chats.value.chatsList.find(
+                (chat) =>
+                    chat.userId == candidate.user.id &&
+                    chat.companyId == company.id
+            )?.id;
+        }
+
+        const message = `<<<<sending resume>>>> 
+        Company 
+         <a href="/companies/${company.id} " target="_blank">
+         ${company.name}
+         </a>
+        has reviewed your profile
+        <a href="/candidates/${candidate.id}" target="_blank">
+         ${candidate.title}
+         </a>
+          and would like to offer you one of the open positions.
+         <br>                          
+         ${content}`;
+
+        if (!chatId) return;
+        try {
+            const response = await axiosInstance.post(`/chats/${chatId}`, {
+                content: message,
+            });
+            chats.value.messages = [
+                response.data.data,
+                ...chats.value.messages.map((item) => {
+                    item.read = false;
+                    return item;
+                }),
+            ];
+        } catch (error) {
+            if (error?.response?.status === 401)
+                return setErrorMessage("Unauthenticated.");
+            if (error?.response?.status === 422)
+                return setErrorMessage("data is incorrect");
+            if (error?.response?.status === 404)
+                return setErrorMessage("connection error");
+            setErrorMessage("error system send Offer");
         } finally {
             setIsLoading(false);
         }
@@ -228,7 +331,13 @@ export const useChatsStore = defineStore("chats", () => {
                 }),
             ];
         } catch (error) {
-            console.log(error);
+            if (error?.response?.status === 401)
+                return setErrorMessage("Unauthenticated.");
+            if (error?.response?.status === 422)
+                return setErrorMessage("data is incorrect");
+            if (error?.response?.status === 404)
+                return setErrorMessage("connection error");
+            setErrorMessage("error system send Apply Vacancy");
         } finally {
             setIsLoading(false);
         }
@@ -259,5 +368,6 @@ export const useChatsStore = defineStore("chats", () => {
         useChenel,
         sendApplyVacancy,
         generatePDF,
+        sendOffer,
     };
 });

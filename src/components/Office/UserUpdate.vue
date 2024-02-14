@@ -38,7 +38,7 @@
                     <v-btn color="primary" v-bind="props"> change password</v-btn>
                 </template>
                 <v-card class="card-form">
-                    <CustomForm ref="form" class="login__form" @submit.prevent="handleSubmitPassword">
+                    <CustomForm ref="formPassword" class="login__form" @submit.prevent="handleSubmitPassword">
 
                         <v-card-title class="text-h5"> change password
                         </v-card-title>
@@ -80,9 +80,9 @@
 <script setup>
 import MainTitle from '../shared/MainTitle.vue';
 import CustomForm from '../shared/form/CustomForm.vue';
-import CustomInput from '../shared/form/CustomInput/CustomInput.vue';
-import CustomRadio from '../shared/form/CustomInput/CustomRadio.vue';
-import Button from "../shared/form/Button/Button.vue";
+import CustomInput from '../shared/form/CustomInput.vue';
+import CustomRadio from '../shared/form/CustomRadio.vue';
+import Button from "../shared/form/Button.vue";
 
 import { useEmploymentStore } from '../../store/employmentStore';
 import { useAuthStore } from '../../store/authStore';
@@ -94,7 +94,7 @@ import { ref, computed, watch } from 'vue';
 
 const router = useRouter()
 const { updatePassword, updateUser } = useAuthStore();
-const { role: roleStore, name: nameStore, phone: phoneStore, email: emailStore, image } = storeToRefs(useAuthStore());
+const { role: roleStore, name: nameStore, phone: phoneStore, email: emailStore, image, imageMin } = storeToRefs(useAuthStore());
 const { uploadAvatar, } = useEmploymentStore();
 const { fullImageURL, errorImage, errors, imageURL } = storeToRefs(useEmploymentStore());
 
@@ -114,11 +114,12 @@ const confirmPasswordRules = computed(() => [(val) => val !== password.value ?
     "Passwords do not match" : null])
 
 const form = ref(null);
+const formPassword = ref(null);
 
 
 async function handleSubmitPassword() {
 
-    const isFormValid = form.value.validate()
+    const isFormValid = formPassword.value.validate()
 
     if (isFormValid) {
         const isSuccessful = await updatePassword(password.value, oldPassword.value, role.value);
@@ -153,7 +154,7 @@ async function handleSubmit() {
             name.value,
             phone.value,
             role.value,
-            imageURL.value
+            imageURL.value ?? imageMin.value
         );
         if (id) {
             form.value.reset();

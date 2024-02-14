@@ -1,6 +1,6 @@
 <script setup>
-import CustomTextArea from '../shared/form/CustomInput/CustomTextArea.vue';
-import CustomOneSearchSelect from '../shared/form/CustomInput/CustomOneSearchSelect.vue'
+import CustomTextArea from '../shared/form/CustomTextArea.vue';
+import CustomOneSearchSelect from '../shared/form/CustomOneSearchSelect.vue'
 import CustomForm from '../shared/form/CustomForm.vue';
 import NoFound from '.././NoFound.vue';
 import Loader from '../Loader.vue';
@@ -11,7 +11,6 @@ import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router'
 import { getVacancy, deleteVacancy, updateVacancyStatus } from "../../store/actions/vacancy"
 import { maxString, isRequiredId } from '../../utils/validationRules';
-import { getCandidates } from '../../store/actions/candidate';
 import { useChatsStore } from '../../store/chatsStore';
 import { useAuthStore } from '../../store/authStore';
 
@@ -20,9 +19,9 @@ const router = useRouter();
 const { id } = defineProps({
     id: String,
 });
-const { role, isAuthorized } = storeToRefs(useAuthStore());
-const { vacancy, isLoading, candidates } = storeToRefs(useEmploymentStore())
-const { sendApplyVacancy, getChatsList } = useChatsStore();
+const { role, isAuthorized, candidates } = storeToRefs(useAuthStore());
+const { vacancy, isLoading } = storeToRefs(useEmploymentStore())
+const { sendApplyVacancy, getChatsList, setInfoMessage } = useChatsStore();
 
 const dialogDelete = ref(false);
 const dialogSendApp = ref(false);
@@ -58,8 +57,13 @@ const resumes = computed(() => {
         return { id: item.id, name: item.title }
     })
 });
+watch(dialogSendApp, (newVal) => {
 
-if (candidates.value.length === 0 && isAuthorized.value) getCandidates();
+    if (newVal && candidates[0]) {
+        setInfoMessage("First, create a resume");
+    }
+})
+
 if (isAuthorized.value) getChatsList();
 
 getVacancy(id);
@@ -73,24 +77,23 @@ getVacancy(id);
                 <v-col>
                     <v-card class="wrapper_vacancies">
                         <v-card-title class="vacancies_title">{{ vacancy.title }}</v-card-title>
+
+                        <router-link :to="`/companies/${vacancy.company?.id}`">
+                            <strong>Company:</strong> {{ vacancy.company?.name }}
+                        </router-link>
+
                         <div class="box_second">
                             <div class="wrapper_vacancies__image">
                                 <v-img class="image_vacancies" v-if="vacancy?.company?.image" :src="vacancy.company.image"
                                     height="200" width="200" cover></v-img>
                                 <img class="image_vacancies" v-if="!vacancy?.company?.image" height="200" width="200"
-                                    src="/src/assets/images/fix-poster.jpg" alt="The movie poster is missing">
+                                    src="/src/assets/images/fix-poster.jpg" alt="">
                             </div>
 
                             <v-card-text class="wrapper_vacancies__text">
                                 <div class="block_text">
                                     <div class="block_text__first">
-                                        <v-row class="padding-bottom">
-                                            <router-link class="link" :to="`/companies/${vacancy.company?.id}`">
-                                                <v-col class="vacancies__text">
-                                                    <strong>Company:</strong> {{ vacancy.company?.name }}
-                                                </v-col>
-                                            </router-link>
-                                        </v-row>
+
                                         <v-row class="padding-bottom">
                                             <v-col class="vacancies__text">
                                                 <strong>Profession:</strong> {{ vacancy.profession }}
@@ -141,7 +144,7 @@ getVacancy(id);
 
                         </div>
                         <div class="box">
-                            <v-dialog v-model="dialogSendApp" width="auto">
+                            <v-dialog v-if="role != 2 && isAuthorized" v-model="dialogSendApp" width="auto">
                                 <template v-slot:activator="{ props }">
                                     <v-btn color="primary" v-bind="props">send apply for a job </v-btn>
                                 </template>
@@ -256,6 +259,7 @@ getVacancy(id);
 
 .block_text {
     display: flex;
+    justify-content: space-between;
     margin-bottom: 20px;
 }
 
@@ -263,11 +267,10 @@ getVacancy(id);
 .block_text__second {
     width: 45%;
     height: auto;
-
 }
 
 .vacancies__text {
-    padding: 0;
+    padding: 3px;
     font-size: 16px;
     line-height: 18px;
 }

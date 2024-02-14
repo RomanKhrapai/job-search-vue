@@ -1,9 +1,11 @@
 import axiosInstance from "../../services/axios.js";
 import { useEmploymentStore } from "../employmentStore.js";
-import { storeToRefs } from "pinia";
+import { useChatsStore } from "../chatsStore";
 
 export async function getCompamyReviews(id) {
     const { setReviews, setIsLoading } = useEmploymentStore();
+    const { setErrorMessage } =
+        useChatsStore();
     setIsLoading(true);
 
     try {
@@ -13,13 +15,21 @@ export async function getCompamyReviews(id) {
 
         setReviews(response.data.data);
     } catch (error) {
-        console.log(error);
+        if (error?.response?.status === 401)
+            return setErrorMessage("Unauthenticated.");
+        if (error?.response?.status === 422)
+            return setErrorMessage("data is incorrect");
+        if (error?.response?.status === 404)
+            return setErrorMessage("connection error");
+        setErrorMessage("error system  ");
     } finally {
         setIsLoading(false);
     }
 }
 export async function getCandidateReviews(id) {
     const { setReviews, setIsLoading } = useEmploymentStore();
+    const { setErrorMessage} =
+        useChatsStore();
     setIsLoading(true);
 
     try {
@@ -29,35 +39,17 @@ export async function getCandidateReviews(id) {
 
         setReviews(response.data.data);
     } catch (error) {
-        console.log(error);
+        if (error?.response?.status === 401)
+            return setErrorMessage("Unauthenticated.");
+        if (error?.response?.status === 422)
+            return setErrorMessage("data is incorrect");
+        if (error?.response?.status === 404)
+            return setErrorMessage("connection error");
+        setErrorMessage("error system");
     } finally {
         setIsLoading(false);
     }
 }
-
-// export async function getVacancy(id) {
-//     const { setVacancy, setIsLoading } = useEmploymentStore();
-//     const { vacancies } = storeToRefs(useEmploymentStore());
-//     setIsLoading(true);
-
-//     try {
-//         const vacancy = vacancies.value.find((item) => item.id === +id);
-
-//         if (vacancy) {
-//             setVacancy(vacancy);
-//             setIsLoading(false);
-//             return;
-//         }
-
-//         const response = await axiosInstance.get(`/vacancies/${id}`);
-
-//         setVacancy(response.data.data);
-//     } catch (error) {
-//         console.log(error);
-//     } finally {
-//         setIsLoading(false);
-//     }
-// }
 
 export async function storeReview(
     id,
@@ -68,6 +60,8 @@ export async function storeReview(
     company_id
 ) {
     const parameters = { review };
+    const { setErrorMessage } =
+        useChatsStore();
 
     if (isUser) parameters.evaluated_user_id = id;
     else parameters.evaluated_company_id = id;
@@ -86,7 +80,13 @@ export async function storeReview(
         if (isUser) getCandidateReviews(id);
         else getCompamyReviews(id);
     } catch (error) {
-        console.log(error);
+        if (error?.response?.status === 401)
+            return setErrorMessage("Unauthenticated.");
+        if (error?.response?.status === 422)
+            return setErrorMessage("data is incorrect");
+        if (error?.response?.status === 404)
+            return setErrorMessage("connection error");
+        setErrorMessage("error system ");
     } finally {
         setIsLoading(false);
     }
@@ -94,6 +94,8 @@ export async function storeReview(
 
 export async function updateReview(id, isUser, reviewId, review, vote) {
     const parameters = { review };
+    const { setErrorMessage } =
+        useChatsStore();
 
     if (vote !== 0) parameters.vote = vote * 2;
 
@@ -108,7 +110,13 @@ export async function updateReview(id, isUser, reviewId, review, vote) {
         if (isUser) getCandidateReviews(id);
         else getCompamyReviews(id);
     } catch (error) {
-        console.log(error);
+        if (error?.response?.status === 401)
+            return setErrorMessage("Unauthenticated.");
+        if (error?.response?.status === 422)
+            return setErrorMessage("data is incorrect");
+        if (error?.response?.status === 404)
+            return setErrorMessage("connection error");
+        setErrorMessage("error system ");
     } finally {
         setIsLoading(false);
     }
@@ -116,14 +124,23 @@ export async function updateReview(id, isUser, reviewId, review, vote) {
 
 export async function removeReview(reviewId, id, isUser) {
     const { setIsLoading } = useEmploymentStore();
+    const { setErrorMessage, setSuccessfulMessage } =
+        useChatsStore();
     setIsLoading(true);
 
     try {
         const response = await axiosInstance.delete(`/reviews/${reviewId}`);
         if (isUser) getCandidateReviews(id);
         else getCompamyReviews(id);
+        setSuccessfulMessage("Review removed");
     } catch (error) {
-        console.log(error);
+        if (error?.response?.status === 401)
+            return setErrorMessage("Unauthenticated.");
+        if (error?.response?.status === 422)
+            return setErrorMessage("data is incorrect");
+        if (error?.response?.status === 404)
+            return setErrorMessage("connection error");
+        setErrorMessage("error delete ");
     } finally {
         setIsLoading(false);
     }

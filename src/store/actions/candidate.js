@@ -7,6 +7,8 @@ import { storeToRefs } from "pinia";
 
 export async function getCandidateOffer(candidateId, deep) {
     const { setVacancies, setIsLoading, setLastPage } = useEmploymentStore();
+    const { setErrorMessage } =
+        useChatsStore();
     setIsLoading(true);
     setLastPage(1);
     try {
@@ -19,6 +21,11 @@ export async function getCandidateOffer(candidateId, deep) {
         setLastPage(response.data.meta.last_page);
         setVacancies(response.data.data);
     } catch (error) {
+        if (error?.response?.status === 401)
+            return setErrorMessage("Unauthenticated.");
+        if (error?.response?.status === 404)
+            return setErrorMessage("connection error");
+        setErrorMessage("error delete ");
     } finally {
         setIsLoading(false);
     }
@@ -33,7 +40,9 @@ export async function getCandidates(
     isDesc
 ) {
     const { setCandidates, setIsLoading, setLastPage } = useEmploymentStore();
-    const { setErrorMessage } = useChatsStore();
+    const { setErrorMessage } =
+        useChatsStore();
+
     setIsLoading(true);
     setLastPage(1);
     setCandidates([]);
@@ -51,10 +60,13 @@ export async function getCandidates(
         setLastPage(response.data.meta.last_page);
         setCandidates(response.data.data);
     } catch (error) {
-        if (error?.response?.status === 422) {
-            setErrorMessage("the query parameters are not valid");
-        }
-        console.log(error);
+        if (error?.response?.status === 401)
+            return setErrorMessage("Unauthenticated.");
+        if (error?.response?.status === 422)
+            return setErrorMessage("the query parameters are not valid");
+        if (error?.response?.status === 404)
+            return setErrorMessage("connection error");
+        setErrorMessage("error delete ");
     } finally {
         setIsLoading(false);
     }
@@ -63,6 +75,8 @@ export async function getCandidates(
 export async function getCandidate(id) {
     const { setCandidate, setIsLoading } = useEmploymentStore();
     const { candidates } = storeToRefs(useEmploymentStore());
+    const { setErrorMessage} =
+        useChatsStore();
     setIsLoading(true);
 
     try {
@@ -77,6 +91,13 @@ export async function getCandidate(id) {
         getCandidateReviews(response.data.data.user.id);
         setCandidate(response.data.data);
     } catch (error) {
+        if (error?.response?.status === 401)
+            return setErrorMessage("Unauthenticated.");
+        if (error?.response?.status === 422)
+            return setErrorMessage("data is incorrect");
+        if (error?.response?.status === 404)
+            return setErrorMessage("connection error");
+        setErrorMessage("error system");
     } finally {
         setIsLoading(false);
     }
@@ -95,6 +116,8 @@ export async function storeCandidate({
 }) {
     const { setCandidate, setIsLoading } = useEmploymentStore();
     const { authData } = useAuthStore();
+    const { setErrorMessage } =
+        useChatsStore();
     setIsLoading(true);
 
     try {
@@ -113,7 +136,13 @@ export async function storeCandidate({
         setCandidate(response.data.data);
         return response.data.data.id;
     } catch (error) {
-        console.log(error);
+        if (error?.response?.status === 401)
+            return setErrorMessage("Unauthenticated.");
+        if (error?.response?.status === 422)
+            return setErrorMessage("data is incorrect");
+        if (error?.response?.status === 404)
+            return setErrorMessage("connection error");
+        setErrorMessage("error system");
     } finally {
         setIsLoading(false);
     }
@@ -122,13 +151,20 @@ export async function storeCandidate({
 export async function deleteCandidate(id) {
     const { setIsLoading } = useEmploymentStore();
     const { authData } = useAuthStore();
+    const { setErrorMessage, setSuccessfulMessage} =
+        useChatsStore();
 
     setIsLoading(true);
     try {
         const response = await axiosInstance.delete(`/candidates/${id}`);
         authData();
+        setSuccessfulMessage("Candidate deleted");
     } catch (error) {
-        console.log(error);
+        if (error?.response?.status === 401)
+            return setErrorMessage("Unauthenticated.");
+        if (error?.response?.status === 404)
+            return setErrorMessage("connection error");
+        setErrorMessage("error delete");
     } finally {
         setIsLoading(false);
     }

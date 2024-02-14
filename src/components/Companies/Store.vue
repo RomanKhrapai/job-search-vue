@@ -29,25 +29,20 @@
 </template>
   
 <script setup>
-// import CustomManySearchSelect from "../shared/form/CustomInput/CustomManySearchSelect.vue";
-// import CustomOneSearchSelect from "../shared/form/CustomInput/CustomOneSearchSelect.vue";
-import CustomTextArea from "../shared/form/CustomInput/CustomTextArea.vue";
+import CustomTextArea from "../shared/form/CustomTextArea.vue";
 import CustomForm from "../shared/form/CustomForm.vue";
-import CustomInput from "../shared/form/CustomInput/CustomInput.vue";
-import Button from "../shared/form/Button/Button.vue";
-// import CustomOneSelect from "../shared/form/CustomInput/CustomOneSelect.vue";
+import CustomInput from "../shared/form/CustomInput.vue";
+import Button from "../shared/form/Button.vue";
 import MainTitle from "../shared/MainTitle.vue";
 
 import {
     maxString, minString, isRequired,
 } from "../../utils/validationRules";
 import { useAuthStore } from "../../store/authStore"
-import { useFormParametersStore } from '../../store/formParametersStore'
 import { useEmploymentStore } from '../../store/employmentStore'
 import { storeToRefs } from "pinia"
 import { ref, computed, watch } from "vue"
 import { useRouter } from "vue-router";
-import { debounce } from "../../utils/debounce";
 import { storeCompany } from "../../store/actions/company"
 
 const router = useRouter()
@@ -62,9 +57,9 @@ const { isAuthorized } = storeToRefs(useAuthStore());
 const { uploadAvatar, } = useEmploymentStore();
 const { fullImageURL, errorImage, errors } = storeToRefs(useEmploymentStore());
 
-const titleRules = computed(() => [isRequired, maxString(200), minString(3)]);
-const descriptionRules = computed(() => [isRequired, maxString(2000), minString(3)]);
-const addressRules = computed(() => [isRequired, maxString(200), minString(3)]);
+const titleRules = computed(() => [isRequired, maxString(200), minString(1)]);
+const descriptionRules = computed(() => [isRequired, maxString(2000), minString(1)]);
+const addressRules = computed(() => [isRequired, maxString(200), minString(1)]);
 
 
 function handleFile(e) {

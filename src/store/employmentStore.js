@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import axiosInstance from "../services/axios";
+import { useChatsStore } from "./chatsStore";
 
 import { ref, computed } from "vue";
 
@@ -8,7 +9,7 @@ export const useEmploymentStore = defineStore("employment", () => {
         isError: false,
         isLoading: false,
         companies: [],
-        imageURL: "",
+        imageURL: null,
         fullImageURL: "",
         errorImage: null,
         company: {},
@@ -74,6 +75,8 @@ export const useEmploymentStore = defineStore("employment", () => {
     }
 
     async function uploadAvatar(formData) {
+        const { setErrorMessage} =
+            useChatsStore();
         employment.value.fullImageURL = "";
         employment.value.isLoading = true;
         employment.value.errorImage = null;
@@ -101,6 +104,13 @@ export const useEmploymentStore = defineStore("employment", () => {
                 return;
             }
             employment.value.errorImage = "Error: select another file";
+            if (error?.response?.status === 401)
+                return setErrorMessage("Unauthenticated.");
+            if (error?.response?.status === 422)
+                return setErrorMessage("data is incorrect");
+            if (error?.response?.status === 404)
+                return setErrorMessage("connection error");
+            setErrorMessage("error image");
         } finally {
             employment.value.isLoading = false;
         }

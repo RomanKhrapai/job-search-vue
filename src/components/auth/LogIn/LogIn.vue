@@ -36,8 +36,8 @@
 <script setup>
 import CustomForm from "../../shared/form/CustomForm.vue";
 import AuthContainer from "../AuthContainer.vue"
-import CustomInput from "../../shared/form/CustomInput/CustomInput.vue";
-import Button from "../../shared/form/Button/Button.vue";
+import CustomInput from "../../shared/form/CustomInput.vue";
+import Button from "../../shared/form/Button.vue";
 import {
     emailValidation, passwordValidation, isRequired,
 } from "../../../utils/validationRules";

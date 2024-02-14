@@ -57,7 +57,7 @@
 
 <script setup>
 import FilterBox from "../shared/FilterBox.vue"
-import CustomInput from "../shared/form/custominput/CustomInput.vue";
+import CustomInput from "../shared/form/CustomInput.vue";
 import NoFound from "../NoFound.vue"
 import Loader from "../Loader.vue";
 

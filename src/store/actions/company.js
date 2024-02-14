@@ -22,10 +22,13 @@ export async function getCompanies(name, address, isDesc, sort, page) {
         setLastPage(response.data.meta.last_page);
         setCompamies(response.data.data);
     } catch (error) {
-        if (error?.response?.status === 422) {
-            setErrorMessage("the query parameters are not valid");
-        }
-        console.log(error);
+        if (error?.response?.status === 401)
+            return setErrorMessage("Unauthenticated.");
+        if (error?.response?.status === 422)
+            return setErrorMessage("the query parameters are not valid");
+        if (error?.response?.status === 404)
+            return setErrorMessage("connection error");
+        setErrorMessage("error delete ");
     } finally {
         setIsLoading(false);
     }
@@ -34,6 +37,7 @@ export async function getCompanies(name, address, isDesc, sort, page) {
 export async function getCompany(id) {
     const { setIsLoading, setCompany } = useEmploymentStore();
     const { companies } = storeToRefs(useEmploymentStore());
+    const { setErrorMessage } = useChatsStore();
     setIsLoading(true);
 
     try {
@@ -48,6 +52,13 @@ export async function getCompany(id) {
 
         setCompany(response.data.data);
     } catch (error) {
+        if (error?.response?.status === 401)
+            return setErrorMessage("Unauthenticated.");
+        if (error?.response?.status === 422)
+            return setErrorMessage("data is incorrect");
+        if (error?.response?.status === 404)
+            return setErrorMessage("connection error");
+        setErrorMessage("error system");
     } finally {
         setIsLoading(false);
     }
@@ -55,8 +66,9 @@ export async function getCompany(id) {
 
 export async function storeCompany({ name, address, description }) {
     const { setIsLoading, setCompamies } = useEmploymentStore();
-    const {authData} = useAuthStore();
+    const { authData } = useAuthStore();
     const { imageURL } = storeToRefs(useEmploymentStore());
+    const { setErrorMessage } = useChatsStore();
     setIsLoading(true);
 
     try {
@@ -70,7 +82,13 @@ export async function storeCompany({ name, address, description }) {
         authData();
         return response.data.data.id;
     } catch (error) {
-        console.log(error);
+        if (error?.response?.status === 401)
+            return setErrorMessage("Unauthenticated.");
+        if (error?.response?.status === 422)
+            return setErrorMessage("data is incorrect");
+        if (error?.response?.status === 404)
+            return setErrorMessage("connection error");
+        setErrorMessage("error system");
     } finally {
         setIsLoading(false);
     }
@@ -78,14 +96,21 @@ export async function storeCompany({ name, address, description }) {
 
 export async function deleteCompany(id) {
     const { setIsLoading } = useEmploymentStore();
-    const {authData} = useAuthStore();
+    const { authData } = useAuthStore();
+    const { setErrorMessage, setSuccessfulMessage } = useChatsStore();
     setIsLoading(true);
 
     try {
         const response = await axiosInstance.delete(`/companies/${id}`);
         getCompanies();
         authData();
+        setSuccessfulMessage("Company delete");
     } catch (error) {
+        if (error?.response?.status === 401)
+            return setErrorMessage("Unauthenticated.");
+        if (error?.response?.status === 404)
+            return setErrorMessage("connection error");
+        setErrorMessage("error delete");
     } finally {
         setIsLoading(false);
     }

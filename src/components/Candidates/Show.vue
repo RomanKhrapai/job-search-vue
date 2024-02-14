@@ -1,10 +1,17 @@
 <script setup>
+import CustomTextArea from '../shared/form/CustomTextArea.vue';
+import CustomOneSearchSelect from '../shared/form/CustomOneSearchSelect.vue'
+import CustomForm from '../shared/form/CustomForm.vue';
 import NoFound from '../NoFound.vue';
 import Reviews from '../Reviews.vue';
 import Loader from '../Loader.vue';
 import { useEmploymentStore } from "../../store/employmentStore";
+import { useAuthStore } from '../../store/authStore';
+import { useChatsStore } from '../../store/chatsStore';
 import { getCandidate, deleteCandidate } from '../../store/actions/candidate';
-import { ref, defineProps } from 'vue'
+import { maxString, isRequiredId } from '../../utils/validationRules';
+
+import { ref, defineProps, computed, watch } from 'vue'
 import { storeToRefs } from 'pinia';
 import { useRouter } from 'vue-router'
 const router = useRouter();
@@ -12,10 +19,19 @@ const router = useRouter();
 const { id } = defineProps({
     id: String,
 });
-
+const { sendOffer, setInfoMessage } = useChatsStore();
 const { candidate, isLoading } = storeToRefs(useEmploymentStore())
+const { companies, role, isAuthorized } = storeToRefs(useAuthStore());
 
 const dialogDelete = ref(false);
+const dialogSendOffer = ref(false);
+
+const company = ref({ id: '', name: '' });
+const message = ref('');
+const formSendOffer = ref(null);
+
+const messageRules = computed(() => [maxString(1000)]);
+const companyRules = computed(() => [isRequiredId,]);
 
 function handDestroy() {
     deleteCandidate(id)
@@ -24,6 +40,22 @@ function handDestroy() {
         path: '/candidates',
     })
 }
+
+function sendOfferJob() {
+    const isFormValid = formSendOffer.value.validate()
+    if (isFormValid) {
+        sendOffer(message.value, company.value, candidate.value)
+        dialogSendOffer.value = false;
+        router.push({
+            name: 'chat',
+        })
+    };
+}
+watch(dialogSendOffer, (newVal) => {
+    if (newVal && companies[0]) {
+        setInfoMessage("First, create a company");
+    }
+})
 
 getCandidate(id);
 
@@ -35,9 +67,42 @@ getCandidate(id);
         <v-container v-if="candidate.id">
             <v-row>
                 <v-col>
-                    <v-card>
+                    <v-card class="wrapper_candidate">
                         <div class="box">
                             <v-card-title>{{ candidate.title }}</v-card-title>
+                            <v-dialog v-if="role != 3 && isAuthorized" v-model="dialogSendOffer" width="auto">
+                                <template v-slot:activator="{ props }">
+                                    <v-btn color="primary" v-bind="props"> Offer a job </v-btn>
+                                </template>
+                                <v-card class="card-form">
+                                    <CustomForm ref="formSendOffer" class="login__form" @submit.prevent="sendOfferJob">
+
+                                        <v-card-title class="text-h5">
+                                            Offer a job to this candidate
+                                        </v-card-title>
+                                        <v-card-text>
+
+                                            <CustomOneSearchSelect v-model="company" class="login__input" label="company"
+                                                name="company" list-class='relative' :options="companies"
+                                                :rules="companyRules" :no-btn="true" />
+
+                                            <CustomTextArea v-model="message" autocomplete="message"
+                                                placeholder="enter message" name="message" :rules="messageRules"
+                                                class="login__input" label="message" />
+
+                                        </v-card-text>
+                                        <v-card-actions>
+                                            <v-spacer></v-spacer>
+                                            <v-btn color="green-darken-1" variant="text" @click="dialogSendOffer = false">
+                                                Close
+                                            </v-btn>
+                                            <v-btn color="green-darken-1" variant="text" type="submit">send
+                                            </v-btn>
+
+                                        </v-card-actions>
+                                    </CustomForm>
+                                </v-card>
+                            </v-dialog>
                             <v-dialog v-if="candidate.isOwner" v-model="dialogDelete" width="auto">
                                 <template v-slot:activator="{ props }">
                                     <v-btn color="primary" v-bind="props"> destroy </v-btn>
@@ -57,65 +122,87 @@ getCandidate(id);
                                 </v-card>
                             </v-dialog>
                         </div>
+                        <div class="box_second">
+                            <div class="wrapper_candidates__image">
+                                <v-img v-if="candidate?.user?.image" :src="candidate.user.image" height="200" width="200"
+                                    cover></v-img>
+                                <img v-if="!candidate?.user?.image" height="200" width="200"
+                                    src="/src/assets/images/fix-poster.jpg" alt="">
+                            </div>
 
-                        <v-img v-if="candidate?.user?.image" :src="candidate.user.image" height="200" width="200"
-                            cover></v-img>
-                        <img v-if="!candidate?.user?.image" height="200" width="200" src="/src/assets/images/fix-poster.jpg"
-                            alt="Постер фільму відсутній">
-                        <v-card-text>
+                            <v-card-text class="wrapper_candidates__text">
+                                <div class="block_text">
+                                    <div class="block_text__first">
+                                        <v-row>
+                                            <v-col class="candidate__text">
+                                                <strong>Candidate name:</strong> {{ candidate.user?.name }}
+                                            </v-col>
+                                        </v-row>
+                                        <v-row>
+                                            <v-col class="candidate__text">
+                                                <strong>phone:</strong> {{ candidate.user.phone }}
+                                            </v-col>
+                                        </v-row>
+                                        <v-row>
+                                            <v-col class="candidate__text">
+                                                <strong>email:</strong> {{ candidate.user.email }}
+                                            </v-col>
+                                        </v-row>
 
-                            <v-row>
-                                <router-link :to="`/companies/${candidate.user?.id}`">
+                                    </div>
+                                    <div class="block_text__second">
+                                        <v-row>
+                                            <v-col class="candidate__text">
+                                                <strong>Profession:</strong> {{ candidate.profession }}
+                                            </v-col>
+                                        </v-row>
+                                        <v-row>
+                                            <v-col class="candidate__text">
+                                                <strong>Experiance:</strong> {{ candidate.experience_months }} month
+                                            </v-col>
+                                        </v-row>
+                                        <v-row>
+                                            <v-col class="candidate__text">
+                                                <strong>Salary:</strong> {{ candidate.salary }}
+                                            </v-col>
+                                        </v-row>
+                                        <v-row>
+                                            <v-col class="candidate__text">
+                                                <strong>Area:</strong> {{ candidate.area }}
+                                            </v-col>
+                                        </v-row>
+                                        <v-row>
+                                            <v-col class="candidate__text">
+                                                <strong>Nature:</strong> {{ candidate.nature }}
+                                            </v-col>
+                                        </v-row>
+                                        <v-row>
+                                            <v-col class="candidate__text">
+                                                <strong>Type:</strong>
+                                                <span v-for="type, i in candidate.types" :key="i" variant="flat"
+                                                    color="secondary">
+                                                    {{ type }}
+                                                </span>
+                                            </v-col>
+                                        </v-row>
+                                    </div>
+                                </div>
+                                <v-row>
                                     <v-col>
-                                        <strong>Candidate name:</strong> {{ candidate.user?.name }}
+                                        <strong>Description:</strong> {{ candidate.description }}
                                     </v-col>
-                                </router-link>
-                            </v-row>
-                            <v-row>
-                                <v-col>
-                                    <strong>Profession:</strong> {{ candidate.profession }}
-                                </v-col>
-                                <v-col>
-                                    <strong>Experiance:</strong> {{ candidate.experience_months }} month
-                                </v-col>
-                            </v-row>
-                            <v-row>
-                                <v-col>
-                                    <strong>Salary:</strong> {{ candidate.salary }}
-                                </v-col>
-                            </v-row>
-                            <v-row>
-                                <v-col>
-                                    <strong>Area:</strong> {{ candidate.area }}
-                                </v-col>
-                            </v-row>
-                            <v-row>
-                                <v-col>
-                                    <strong>Nature:</strong> {{ candidate.nature }}
-                                </v-col>
-                            </v-row>
-                            <v-row>
-                                <v-col>
-                                    <strong>Type:</strong>
-                                    <v-chip v-for="type, i in candidate.types" :key="i" variant="flat" color="secondary">
-                                        {{ type }}
-                                    </v-chip>
-                                </v-col>
-                            </v-row>
-                            <v-row>
-                                <v-col>
-                                    <strong>Description:</strong> {{ candidate.description }}
-                                </v-col>
-                            </v-row>
-                            <v-row>
-                                <v-col>
-                                    <strong>Skills:</strong>
-                                    <v-chip v-for="skill, i in candidate.skills" :key="i" variant="flat" color="secondary">
-                                        {{ skill }}
-                                    </v-chip>
-                                </v-col>
-                            </v-row>
-                        </v-card-text>
+                                </v-row>
+                                <v-row>
+                                    <v-col>
+                                        <strong>Skills:</strong>
+                                        <v-chip v-for="skill, i in candidate.skills" :key="i" variant="flat"
+                                            color="secondary">
+                                            {{ skill }}
+                                        </v-chip>
+                                    </v-col>
+                                </v-row>
+                            </v-card-text>
+                        </div>
                     </v-card>
                     <Reviews v-if="candidate?.user" :id="Number(candidate.user.id)" :isUser='true' />
                 </v-col>
@@ -128,6 +215,52 @@ getCandidate(id);
 
     
 <style scoped>
+.wrapper_candidate {
+    padding: 20px;
+    height: auto;
+    border-radius: 30px;
+    background-image: linear-gradient(to right, #a3a19d 0, #768297 50%, #579BB1 100%);
+    box-shadow: 0px -14px 32px 3px rgba(220.5, 220.5, 220.5, 1), 0px 0px 0px -4px rgba(220.5, 220.5, 220.5, 1);
+}
+
+.box_second {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.wrapper_candidates__text {
+    display: flex;
+    flex-direction: column;
+    width: 65%;
+    height: 65%;
+    gap: 20px;
+    padding: 25px;
+    border-radius: 10px;
+}
+
+.wrapper_candidates__image {
+    width: 30%;
+    height: 30%;
+}
+
+.block_text {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.block_text__first,
+.block_text__second {
+    width: 45%;
+    height: auto;
+}
+
+.candidate__text {
+    padding: 3px;
+    font-size: 16px;
+    line-height: 18px;
+}
+
 .btn-box {
     padding: 5px;
     display: flex;
@@ -148,31 +281,6 @@ getCandidate(id);
     justify-content: space-around;
 }
 
-.film_box {
-    background-size: cover;
-    background-repeat: no-repeat;
-}
-
-.film_box-background {
-    background-image: linear-gradient(to right, rgba(220.5, 220.5, 220.5, 1) calc((50vw - 170px) - 340px), rgba(220.5, 220.5, 220.5, 0.44) 50%, rgba(220.5, 220.5, 220.5, 0.84) 100%);
-    display: flex;
-    align-items: flex-end;
-}
-
-.film_img-box {
-    padding: 15px;
-
-}
-
-.film_img {
-    box-shadow: 0px 2px 4px -1px rgba(0, 0, 0, 0.2), 0px 4px 5px 0px rgba(0, 0, 0, 0.14), 0px 1px 10px 0px rgba(0, 0, 0, 0.12);
-}
-
-.film_info {
-    border-radius: 30px 30px 0 0;
-    background-image: linear-gradient(to right, rgba(220.5, 220.5, 220.5, 1) 0, rgba(220.5, 220.5, 220.5, 0.44) 50%, rgba(220.5, 220.5, 220.5, 0.84) 100%);
-    box-shadow: 0px -14px 32px 3px rgba(220.5, 220.5, 220.5, 1), 0px 0px 0px -4px rgba(220.5, 220.5, 220.5, 1)
-}
 
 .box {
     display: flex;

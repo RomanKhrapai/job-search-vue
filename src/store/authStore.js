@@ -30,9 +30,11 @@ export const useAuthStore = defineStore("auth", () => {
     const phone = computed(() => auth.value.user.phone);
     const companies = computed(() => auth.value.companies);
     const candidates = computed(() => auth.value.candidates);
+    const imageMin = computed(() => auth.value.user.image);
     const image = computed(() => {
         return auth.value.user.image
-            ? "http://127.0.0.1:8080/storage/" + auth.value.user.image
+            ? `${import.meta.env.VITE_SERVER_HOST}/storage/` +
+                  auth.value.user.image
             : null;
     });
 
@@ -52,6 +54,7 @@ export const useAuthStore = defineStore("auth", () => {
     }
 
     async function onAuth() {
+        const { setErrorMessage } = useChatsStore();
         auth.value.isLoading = true;
 
         try {
@@ -73,7 +76,7 @@ export const useAuthStore = defineStore("auth", () => {
             auth.value.user.email = response.data.user.email;
             auth.value.user.image = response.data.user.image;
             auth.value.user.role = response.data.user.role_id;
-            auth.value.user.phone = response.data.user.phone;
+            auth.value.user.phone = response.data.user.telephone;
 
             auth.value.isAuthorized = true;
             authData();
@@ -82,12 +85,16 @@ export const useAuthStore = defineStore("auth", () => {
         } catch (error) {
             auth.value.isAuthorized = false;
             localStorage.removeItem("access_token");
+            if (error?.response?.status === 404)
+                return setErrorMessage("connection error");
+            setErrorMessage("error system");
         } finally {
             auth.value.isLoading = false;
         }
     }
 
     async function loginUser({ email, password }) {
+        const { setErrorMessage } = useChatsStore();
         auth.value.isLoading = true;
         try {
             const response = await axiosInstance.post(`login`, {
@@ -107,22 +114,31 @@ export const useAuthStore = defineStore("auth", () => {
             ] = `Bearer ${response.data.access_token}`;
 
             auth.value.isAuthorized = true;
-            useChenel();
-            authData();
+            onAuth();
         } catch (error) {
+            if (error?.response?.status == 401)
+                return setErrorMessage(
+                    "Authentication email or password is not valid"
+                );
+            if (error?.response?.status == 422)
+                return setErrorMessage("data is incorrect");
+            if (error?.response?.status == 404)
+                return setErrorMessage("connection error");
+            setErrorMessage("error system");
         } finally {
             auth.value.isLoading = false;
         }
     }
 
     async function updateUser(name, phone, role_id, image) {
+        const { setErrorMessage } = useChatsStore();
         auth.value.isLoading = true;
         try {
             const response = await axiosInstance.patch(
                 `update/user/${auth.value.user.id}`,
                 {
                     name,
-                    phone,
+                    telephone: phone,
                     role_id,
                     image,
                 }
@@ -131,17 +147,25 @@ export const useAuthStore = defineStore("auth", () => {
             auth.value.user.id = response.data.user.id;
             auth.value.user.name = response.data.user.name;
             auth.value.user.image = response.data.user.image;
-            auth.value.user.role = response.data.role_id;
-            auth.value.user.phone = response.data.user.phone;
+            auth.value.user.role = response.data.user.role;
+            auth.value.user.phone = response.data.user.telephone;
             auth.value.isAuthorized = true;
             return true;
         } catch (error) {
+            if (error?.response?.status === 401)
+                return setErrorMessage("Unauthenticated.");
+            if (error?.response?.status === 422)
+                return setErrorMessage("data is incorrect");
+            if (error?.response?.status === 404)
+                return setErrorMessage("connection error");
+            setErrorMessage("error system");
         } finally {
             auth.value.isLoading = false;
         }
     }
 
     async function updatePassword(password, oldPassword, role) {
+        const { setErrorMessage } = useChatsStore();
         auth.value.isLoading = true;
         try {
             const response = await axiosInstance.patch(
@@ -161,12 +185,20 @@ export const useAuthStore = defineStore("auth", () => {
             auth.value.isAuthorized = true;
             return true;
         } catch (error) {
+            if (error?.response?.status === 401)
+                return setErrorMessage("Unauthenticated.");
+            if (error?.response?.status === 422)
+                return setErrorMessage("data is incorrect");
+            if (error?.response?.status === 404)
+                return setErrorMessage("connection error");
+            setErrorMessage("error system");
         } finally {
             auth.value.isLoading = false;
         }
     }
 
     async function logOut() {
+        const { setErrorMessage } = useChatsStore();
         auth.value.isLoading = true;
         try {
             const response = await axiosInstance.post(`logout`);
@@ -179,12 +211,16 @@ export const useAuthStore = defineStore("auth", () => {
 
             auth.value.isAuthorized = false;
         } catch (error) {
+            if (error?.response?.status === 404)
+                return setErrorMessage("connection error");
+            setErrorMessage("error system");
         } finally {
             localStorage.removeItem("access_token");
             auth.value.isLoading = false;
         }
     }
     async function registerUser(payload) {
+        const { setErrorMessage } = useChatsStore();
         auth.value.isLoading = true;
         try {
             const { email, password, name, role } = payload;
@@ -208,9 +244,13 @@ export const useAuthStore = defineStore("auth", () => {
             ] = `Bearer ${response.data.access_token}`;
 
             auth.value.isAuthorized = true;
-            useChenel();
-            authData();
+            onAuth();
         } catch (error) {
+            if (error?.response?.status === 422)
+                return setErrorMessage("password or email is incorrect");
+            if (error?.response?.status === 404)
+                return setErrorMessage("connection error");
+            setErrorMessage("error system");
         } finally {
             auth.value.isLoading = false;
         }
@@ -226,6 +266,7 @@ export const useAuthStore = defineStore("auth", () => {
         email,
         phone,
         userId,
+        imageMin,
 
         onAuth,
         loginUser,

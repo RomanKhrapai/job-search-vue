@@ -6,6 +6,8 @@ import { storeToRefs } from "pinia";
 
 export async function getVacancyOffer(vacancyId, deep) {
     const { setCandidates, setIsLoading, setLastPage } = useEmploymentStore();
+    const { setErrorMessage } =
+        useChatsStore();
     setIsLoading(true);
     setLastPage(1);
     try {
@@ -19,6 +21,13 @@ export async function getVacancyOffer(vacancyId, deep) {
         setLastPage(response.data.meta.last_page);
         setCandidates(response.data.data);
     } catch (error) {
+        if (error?.response?.status === 401)
+            return setErrorMessage("Unauthenticated.");
+        if (error?.response?.status === 422)
+            return setErrorMessage("the query parameters are not valid");
+        if (error?.response?.status === 404)
+            return setErrorMessage("connection error");
+        setErrorMessage("error delete ");
     } finally {
         setIsLoading(false);
     }
@@ -33,6 +42,8 @@ export async function getVacancies(
     isDesc
 ) {
     const { setVacancies, setIsLoading, setLastPage } = useEmploymentStore();
+    const { setErrorMessage } =
+        useChatsStore();
     setIsLoading(true);
     setLastPage(1);
     setVacancies([]);
@@ -50,6 +61,13 @@ export async function getVacancies(
         setLastPage(response.data.meta.last_page);
         setVacancies(response.data.data);
     } catch (error) {
+        if (error?.response?.status === 401)
+            return setErrorMessage("Unauthenticated.");
+        if (error?.response?.status === 422)
+            return setErrorMessage("the query parameters are not valid");
+        if (error?.response?.status === 404)
+            return setErrorMessage("connection error");
+        setErrorMessage("error delete ");
     } finally {
         setIsLoading(false);
     }
@@ -58,6 +76,8 @@ export async function getVacancies(
 export async function getVacancy(id) {
     const { setVacancy, setIsLoading } = useEmploymentStore();
     const { vacancies } = storeToRefs(useEmploymentStore());
+    const { setErrorMessage } =
+        useChatsStore();
     setIsLoading(true);
 
     try {
@@ -73,7 +93,13 @@ export async function getVacancy(id) {
 
         setVacancy(response.data.data);
     } catch (error) {
-        console.log(error);
+        if (error?.response?.status === 401)
+            return setErrorMessage("Unauthenticated.");
+        if (error?.response?.status === 422)
+            return setErrorMessage("data is incorrect");
+        if (error?.response?.status === 404)
+            return setErrorMessage("connection error");
+        setErrorMessage("error system");
     } finally {
         setIsLoading(false);
     }
@@ -93,6 +119,8 @@ export async function storeVacancy({
     const { setVacancy, setIsLoading } = useEmploymentStore();
     const { company } = storeToRefs(useEmploymentStore());
     const { authData } = useAuthStore();
+    const { setErrorMessage } =
+        useChatsStore();
     setIsLoading(true);
 
     try {
@@ -112,7 +140,13 @@ export async function storeVacancy({
         setVacancy(response.data.data);
         authData();
     } catch (error) {
-        console.log(error);
+        if (error?.response?.status === 401)
+            return setErrorMessage("Unauthenticated.");
+        if (error?.response?.status === 422)
+            return setErrorMessage("data is incorrect");
+        if (error?.response?.status === 404)
+            return setErrorMessage("connection error");
+        setErrorMessage("error system store Vacancy");
     } finally {
         setIsLoading(false);
     }
@@ -121,8 +155,9 @@ export async function storeVacancy({
 export async function updateVacancyStatus(isClosed) {
     const { setVacancy, setIsLoading } = useEmploymentStore();
     const { authData } = useAuthStore();
-    const { setErrorMessage, setSuccessfulMessage } = useChatsStore();
     const { vacancy } = storeToRefs(useEmploymentStore());
+    const { setErrorMessage, setSuccessfulMessage } =
+        useChatsStore();
     setIsLoading(true);
 
     try {
@@ -134,7 +169,13 @@ export async function updateVacancyStatus(isClosed) {
         setVacancy(response.data.data);
         setSuccessfulMessage(" status changed");
     } catch (error) {
-        setErrorMessage("status change error");
+        if (error?.response?.status === 401)
+            return setErrorMessage("Unauthenticated.");
+        if (error?.response?.status === 422)
+            return setErrorMessage("data is incorrect");
+        if (error?.response?.status === 404)
+            return setErrorMessage("connection error");
+        setErrorMessage("error system update Status Vacancy ");
     } finally {
         setIsLoading(false);
     }
@@ -143,13 +184,20 @@ export async function updateVacancyStatus(isClosed) {
 export async function deleteVacancy(id) {
     const { authData } = useAuthStore();
     const { setIsLoading } = useEmploymentStore();
+    const { setErrorMessage, setSuccessfulMessagee } =
+        useChatsStore();
     setIsLoading(true);
 
     try {
         const response = await axiosInstance.delete(`/vacancies/${id}`);
         authData();
+        setSuccessfulMessage("Vacancy deleted");
     } catch (error) {
-        console.log(error);
+        if (error?.response?.status === 401)
+            return setErrorMessage("Unauthenticated.");
+        if (error?.response?.status === 404)
+            return setErrorMessage("connection error");
+        setErrorMessage("error delete vacancy ");
     } finally {
         setIsLoading(false);
     }

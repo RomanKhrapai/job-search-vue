@@ -50,8 +50,8 @@
 <script setup>
 import Vacancies from "./Vacancies.vue";
 import FilterBox from "../shared/FilterBox.vue"
-import CustomInput from "../shared/form/CustomInput/CustomInput.vue";
-import CustomOneSearchSelect from "../shared/form/CustomInput/CustomOneSearchSelect.vue";
+import CustomInput from "../shared/form/CustomInput.vue";
+import CustomOneSearchSelect from "../shared/form/CustomOneSearchSelect.vue";
 import NoFoundJob from "../NoFoundJob.vue";
 import Loader from "../Loader.vue";
 import { storeToRefs } from "pinia"
@@ -74,8 +74,8 @@ const name = ref(route.query?.name || "");
 const page = ref(Number(route.query?.page) || 1);
 const profession = ref({ id: '', name: '' });
 const area = ref({ id: '', name: '' });
-const isdesc = ref(route.query?.isdesc || false);
-const sort = ref(route.query?.sort || '');
+const isdesc = ref(route.query?.isdesc || true);
+const sort = ref(route.query?.sort || 'created_at');
 
 function setSort(name, value) {
     sort.value = name;

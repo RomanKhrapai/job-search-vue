@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import axiosInstance from "../services/axios";
 import { ref, computed } from "vue";
+import { useChatsStore } from "./chatsStore";
 
 export const useFormParametersStore = defineStore("formParameters", () => {
     const formParameters = ref({
@@ -40,6 +41,7 @@ export const useFormParametersStore = defineStore("formParameters", () => {
     }
 
     async function getProfessions(name, limit) {
+        const { setErrorMessage } = useChatsStore();
         formParameters.value.isLoading = true;
         try {
             const response = await axiosInstance.get(`professions/search`, {
@@ -47,12 +49,16 @@ export const useFormParametersStore = defineStore("formParameters", () => {
             });
             formParameters.value.professions = response.data;
         } catch (error) {
+            if (error?.response?.status === 404)
+                return setErrorMessage("connection error");
+            setErrorMessage("error system");
         } finally {
             formParameters.value.isLoading = false;
         }
     }
 
     async function getAreas(name, limit) {
+        const { setErrorMessage } = useChatsStore();
         formParameters.value.isLoading = true;
         try {
             const response = await axiosInstance.get(`areas/search`, {
@@ -61,12 +67,16 @@ export const useFormParametersStore = defineStore("formParameters", () => {
 
             formParameters.value.areas = response.data;
         } catch (error) {
+            if (error?.response?.status === 404)
+                return setErrorMessage("connection error");
+            setErrorMessage("error system");
         } finally {
             formParameters.value.isLoading = false;
         }
     }
 
     async function getSkills(id) {
+        const { setErrorMessage } = useChatsStore();
         formParameters.value.isLoading = true;
         try {
             const response = await axiosInstance.get(`skillByProfesion`, {
@@ -75,12 +85,16 @@ export const useFormParametersStore = defineStore("formParameters", () => {
 
             formParameters.value.skills = response.data;
         } catch (error) {
+            if (error?.response?.status === 404)
+                return setErrorMessage("connection error");
+            setErrorMessage("error system");
         } finally {
             formParameters.value.isLoading = false;
         }
     }
 
     async function getFormParameters() {
+        const { setErrorMessage } = useChatsStore();
         formParameters.value.isLoading = true;
         try {
             const response = await axiosInstance.get(`parameters`);
@@ -88,6 +102,9 @@ export const useFormParametersStore = defineStore("formParameters", () => {
             formParameters.value.types = response.data.types;
             formParameters.value.natures = response.data.natures;
         } catch (error) {
+            if (error?.response?.status === 404)
+                return setErrorMessage("connection error");
+            setErrorMessage("error system");
         } finally {
             formParameters.value.isLoading = false;
         }

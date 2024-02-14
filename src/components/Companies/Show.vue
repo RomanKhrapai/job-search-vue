@@ -1,5 +1,5 @@
 <script setup>
-import CustomOneSearchSelect from "../shared/form/CustomInput/CustomOneSearchSelect.vue";
+import CustomOneSearchSelect from "../shared/form/CustomOneSearchSelect.vue";
 import CustomForm from "../shared/form/CustomForm.vue";
 import NoFound from '.././NoFound.vue';
 import Reviews from '../Reviews.vue';

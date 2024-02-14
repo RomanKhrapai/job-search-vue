@@ -123,9 +123,9 @@
 import Candidates from '../Candidates/Candidates.vue';
 import NoFoundJob from '../NoFoundJob.vue';
 import Vacancies from '../Vacancies/Vacancies.vue';
-import CustomOneSelect from '../shared/form/CustomInput/CustomOneSelect.vue';
-import CustomOneSearchSelect from '../shared/form/CustomInput/CustomOneSearchSelect.vue';
-import CustomInput from '../shared/form/CustomInput/CustomInput.vue';
+import CustomOneSelect from '../shared/form/CustomOneSelect.vue';
+import CustomOneSearchSelect from '../shared/form/CustomOneSearchSelect.vue';
+import CustomInput from '../shared/form/CustomInput.vue';
 import CustomForm from '../shared/form/CustomForm.vue';
 import { useEmploymentStore } from '../../store/employmentStore';
 import { useFormParametersStore } from '../../store/formParametersStore';

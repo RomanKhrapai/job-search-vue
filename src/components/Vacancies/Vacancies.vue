@@ -9,7 +9,7 @@
                     </template>
 
                     <v-card-text class="text-h5 py-2">
-                        {{ vacancy.description }}
+                        {{ truncatedText(vacancy.description, 150) }}
                     </v-card-text>
 
                     <v-card-actions>
@@ -45,6 +45,14 @@ import { defineProps } from 'vue'
 const { vacancies } = defineProps({
     vacancies: Array,
 });
+
+function truncatedText(text, maxLength = 200) {
+    if (text.length > maxLength) {
+        return text.slice(0, maxLength) + '...';
+    } else {
+        return text;
+    }
+}
 
 </script>
 

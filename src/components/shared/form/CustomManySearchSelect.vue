@@ -28,7 +28,7 @@
 </template>
 
 <script setup>
-import Button from "../Button/Button.vue";
+import Button from "./Button.vue";
 import { ref, inject, computed, onBeforeUnmount, onMounted, useAttrs } from "vue"
 const attrs = useAttrs()
 const emit = defineEmits(['update:modelValue', 'input'])

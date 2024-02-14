@@ -24,7 +24,7 @@
                     <v-btn density="comfortable" icon="mdi-arrow-up-bold-outline" class="sort_btn-text"
                         :class="{ 'active': sort === 'salary' && !isdesc }" @click="setSort('salary', false)"></v-btn>
                 </div>
-                <div v-if="role == 3">
+                <div v-if="role == 2">
                     <v-btn density="comfortable" icon="mdi-arrow-down-bold-outline" class="sort_btn-text"
                         :class="{ 'active': sort === 'vote' && isdesc }" @click="setSort('vote', true)"></v-btn>
                     <span class="text_sort">rating</span>
@@ -50,8 +50,8 @@
 <script setup>
 import Candidates from "./Candidates.vue";
 import FilterBox from "../shared/FilterBox.vue"
-import CustomInput from "../shared/form/CustomInput/CustomInput.vue";
-import CustomOneSearchSelect from "../shared/form/CustomInput/CustomOneSearchSelect.vue";
+import CustomInput from "../shared/form/CustomInput.vue";
+import CustomOneSearchSelect from "../shared/form/CustomOneSearchSelect.vue";
 import NoFound from "../NoFound.vue"
 import Loader from "../Loader.vue";
 
@@ -60,7 +60,7 @@ import { storeToRefs } from "pinia"
 import { debounce } from "../../utils/debounce"
 import { useEmploymentStore } from '../../store/employmentStore';
 import { useFormParametersStore } from '../../store/formParametersStore';
-import { ref, watch, onMounted, computed } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { getCandidates } from '../../store/actions/candidate';
 import { getProfesionById, getAreaById } from "../../store/actions/form";
@@ -68,6 +68,7 @@ import { getProfesionById, getAreaById } from "../../store/actions/form";
 const { candidates, lastPage, isLoading } = storeToRefs(useEmploymentStore());
 const { professions, areas } = storeToRefs(useFormParametersStore());
 const { getProfessions, getAreas } = useFormParametersStore();
+const { role } = storeToRefs(useAuthStore());
 
 const router = useRouter();
 const route = useRoute();
@@ -76,8 +77,8 @@ const name = ref(route.query?.name || '')
 const page = ref(Number(route.query?.page) || 1);
 const profession = ref({ id: '', name: '' });
 const area = ref({ id: '', name: '' });
-const isdesc = ref(route.query?.isdesc || false);
-const sort = ref(route.query?.sort || '');
+const isdesc = ref(route.query?.isdesc || true);
+const sort = ref(route.query?.sort || 'created_at');
 
 function setSort(name, value) {
     sort.value = name;

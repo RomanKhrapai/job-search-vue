@@ -1,6 +1,6 @@
 <template>
     <div class="menu-container">
-        <a v-if="role !== '' && role !== 2 && role !== 3" :href="serverHost"><v-tab>admin panel</v-tab></a>
+        <a v-if="role != '' && role != 2 && role != 3" :href="serverHost"><v-tab>admin panel</v-tab></a>
         <div class="menu-btn" @click="useLogOut()">
             <img v-if="image" loading="lazy" :src="image" height="40" width="40" alt="avatar">
             <v-icon v-else size="large" :icon="'mdi-account'"></v-icon>
@@ -23,11 +23,8 @@ const { name, image, role } = storeToRefs(useAuthStore())
 const { logOut } = useAuthStore()
 
 function useLogOut() {
-
     logOut();
-    if (route.meta?.auth === 'user') {
-        router.push({ name: 'home' })
-    }
+    router.push({ name: 'home' })
 }
 
 </script>
@@ -58,7 +55,10 @@ function useLogOut() {
     align-items: center;
     height: 48px;
     min-width: 90px;
+    transition: all 0.3s ease;
 }
 
-.menu-btn:hover {}
+.menu-btn:hover {
+    transform: scale(1.1);
+}
 </style>

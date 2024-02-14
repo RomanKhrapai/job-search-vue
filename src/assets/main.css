@@ -146,3 +146,7 @@ div .custom-label> .filter_input {
 .active {
   background-color: aquamarine;
 }
+
+.wrapper_flex .custom-label .custom-input__error {
+  top: 70px;
+}
