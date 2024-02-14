@@ -76,7 +76,7 @@ getVacancy(id);
             <v-row>
                 <v-col>
                     <v-card class="wrapper_vacancies">
-                        <v-card-title class="vacancies_title">{{ vacancy.title }}</v-card-title>
+                        <v-card-title class="  card__title vacancies_title">{{ vacancy.title }}</v-card-title>
 
                         <router-link :to="`/companies/${vacancy.company?.id}`">
                             <strong>Company:</strong> {{ vacancy.company?.name }}
@@ -85,8 +85,8 @@ getVacancy(id);
                         <div class="box_second">
                             <div class="wrapper_vacancies__image">
                                 <v-img class="image_vacancies" v-if="vacancy?.company?.image" :src="vacancy.company.image"
-                                    height="200" width="200" cover></v-img>
-                                <img class="image_vacancies" v-if="!vacancy?.company?.image" height="200" width="200"
+                                    width="200" cover></v-img>
+                                <img class="image_vacancies" v-if="!vacancy?.company?.image" width="200"
                                     src="/src/assets/images/fix-poster.jpg" alt="">
                             </div>
 

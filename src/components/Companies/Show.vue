@@ -99,8 +99,8 @@ getCompamyReviews(id);
 
                         <div class="vacancy_img-box">
                             <div class="vacancy_img">
-                                <v-img v-if="company?.image" :src="company.image" height="200" width="200" cover></v-img>
-                                <img v-if="!company?.image" height="200" width="200" src="/src/assets/images/fix-poster.jpg"
+                                <v-img v-if="company?.image" :src="company.image" width="200" cover></v-img>
+                                <img v-if="!company?.image" width="200" src="/src/assets/images/fix-poster.jpg"
                                     alt="Постер фільму відсутній">
                             </div>
 

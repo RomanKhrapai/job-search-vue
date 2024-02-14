@@ -150,3 +150,9 @@ div .custom-label> .filter_input {
 .wrapper_flex .custom-label .custom-input__error {
   top: 70px;
 }
+img{
+  height: auto;
+}
+.card__title{
+  width: calc(100% - 150px);
+}

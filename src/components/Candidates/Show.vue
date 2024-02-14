@@ -69,7 +69,7 @@ getCandidate(id);
                 <v-col>
                     <v-card class="wrapper_candidate">
                         <div class="box">
-                            <v-card-title>{{ candidate.title }}</v-card-title>
+                            <v-card-title class="card__title">{{ candidate.title }}</v-card-title>
                             <v-dialog v-if="role != 3 && isAuthorized" v-model="dialogSendOffer" width="auto">
                                 <template v-slot:activator="{ props }">
                                     <v-btn color="primary" v-bind="props"> Offer a job </v-btn>
@@ -124,9 +124,9 @@ getCandidate(id);
                         </div>
                         <div class="box_second">
                             <div class="wrapper_candidates__image">
-                                <v-img v-if="candidate?.user?.image" :src="candidate.user.image" height="200" width="200"
+                                <v-img v-if="candidate?.user?.image" :src="candidate.user.image"  width="200"
                                     cover></v-img>
-                                <img v-if="!candidate?.user?.image" height="200" width="200"
+                                <img v-if="!candidate?.user?.image"  width="200"
                                     src="/src/assets/images/fix-poster.jpg" alt="">
                             </div>
 
