@@ -2,7 +2,7 @@
     <div class="box-content">
         <v-card class="mx-auto my-12 ">
             <div class="box">
-                <img src="/src/assets/images/camera.jpg" alt="Фільми відсутні">
+                <img src="/src/assets/images/camera.jpg" alt="">
             </div>
             <h2> EMPLOYMENT NOT FOUND </h2>
         </v-card>

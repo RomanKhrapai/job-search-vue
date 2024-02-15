@@ -104,11 +104,17 @@ watch(
     ) => {
 
         if (newPage === oldPage) page.value = 1;
-
-        debounce(() => {
-            getVacancies(newName, newProfession.id, newArea.id, newPage, newSort, newIsdesc);
-        }, 200, 'getVacancies');
-
+        if (newName != oldName ||
+            newArea.id != oldArea.id ||
+            newProfession.id != oldProfession.id ||
+            newIsdesc != oldIsdesc ||
+            newSort != oldSort ||
+            newPage != oldPage
+        ) {
+            debounce(() => {
+                getVacancies(newName, newProfession.id, newArea.id, newPage, newSort, newIsdesc);
+            }, 200, 'getVacancies');
+        }
     });
 
 watch(area, (newArea) => {

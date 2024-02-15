@@ -96,6 +96,7 @@ watch([name, area, isdesc, sort, page], (
     if (newSort) query.sort = newSort;
     if (newPage && newPage !== 1) query.page = newPage;
     router.push({ query });
+
     debounce(() => {
         getCompanies(newName, newArea, newIsdesc, newSort, newPage);
     },
