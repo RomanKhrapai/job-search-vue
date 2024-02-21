@@ -156,3 +156,6 @@ img{
 .card__title{
   width: calc(100% - 150px);
 }
+div .v-img__img--cover {
+  object-fit: contain;
+}

@@ -12,9 +12,9 @@
                 placeholder="Confirm password" name="password" :rules="confirmPasswordRules" class="registration__input"
                 :label="'Confirm password'" />
             <div class="wrapper_radio">
-                <CustomRadio v-model="role" name="role" value='3' class="registration__input check-box__input"
-                    :label="'Employer'" />
                 <CustomRadio v-model="role" name="role" value='2' class="registration__input check-box__input"
+                    :label="'Employer'" />
+                <CustomRadio v-model="role" name="role" value='3' class="registration__input check-box__input"
                     :label="'Worker'" />
             </div>
 

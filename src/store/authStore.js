@@ -83,6 +83,7 @@ export const useAuthStore = defineStore("auth", () => {
             const { useChenel } = useChatsStore();
             useChenel();
         } catch (error) {
+            console.log(error);
             auth.value.isAuthorized = false;
             localStorage.removeItem("access_token");
             if (error?.response?.status === 404)

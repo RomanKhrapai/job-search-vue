@@ -1,9 +1,13 @@
 import { defineStore, storeToRefs } from "pinia";
-import { pusher } from "../services/pusher";
+import { pusher, echoOptions } from "../services/pusher";
+
 import axiosInstance from "../services/axios";
 import { useAuthStore } from "./authStore";
 import { ref, computed } from "vue";
 import { debounce } from "../utils/debounce";
+
+const token = `Bearer ${localStorage.getItem("access_token")}`;
+import Echo from "laravel-echo";
 
 export const useChatsStore = defineStore("chats", () => {
     const chats = ref({
@@ -32,7 +36,7 @@ export const useChatsStore = defineStore("chats", () => {
             console.log("error");
         }
 
-        const channel = pusher.subscribe(`users_${userId.value}`);
+        const channel = pusher.subscribe(`private-users_${userId.value}`);
 
         channel.bind("send_message", (data) => {
             setInfoMessage("you have a new message");

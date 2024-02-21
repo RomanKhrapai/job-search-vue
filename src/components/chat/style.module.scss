@@ -32,7 +32,8 @@
 }
 
 .chats_list {
-    height: calc(100vh - 105px);
+    // height: calc(100vh - 105px);
+    height: calc(100vh - 380px);
     overflow-y: auto;
 }
 .chat_foto {
@@ -61,7 +62,8 @@
 
 .messages_list {
     padding: 10px 20px;
-    height: calc(100vh - 200px);
+    // height: calc(100vh - 200px);
+    height: calc(100vh - 380px);
     overflow-y: scroll;
     display: flex;
     flex-direction: column-reverse;
