@@ -135,15 +135,12 @@ export const useAuthStore = defineStore("auth", () => {
         const { setErrorMessage } = useChatsStore();
         auth.value.isLoading = true;
         try {
-            const response = await axiosInstance.patch(
-                `update/user/${auth.value.user.id}`,
-                {
-                    name,
-                    telephone: phone,
-                    role_id,
-                    image,
-                }
-            );
+            const response = await axiosInstance.patch(`update/user`, {
+                name,
+                telephone: phone,
+                role_id,
+                image,
+            });
 
             auth.value.user.id = response.data.user.id;
             auth.value.user.name = response.data.user.name;
@@ -169,14 +166,11 @@ export const useAuthStore = defineStore("auth", () => {
         const { setErrorMessage } = useChatsStore();
         auth.value.isLoading = true;
         try {
-            const response = await axiosInstance.patch(
-                `update/password/${auth.value.user.id}`,
-                {
-                    password,
-                    oldPassword,
-                    role,
-                }
-            );
+            const response = await axiosInstance.patch(`update/password`, {
+                password,
+                oldPassword,
+                role,
+            });
 
             localStorage.access_token = response.data.access_token;
             axiosInstance.defaults.headers.common[

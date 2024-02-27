@@ -1,5 +1,5 @@
 import { defineStore, storeToRefs } from "pinia";
-import { pusher, echoOptions } from "../services/pusher";
+import { pusher } from "../services/pusher";
 
 import axiosInstance from "../services/axios";
 import { useAuthStore } from "./authStore";
